@@ -59,7 +59,7 @@ For prod-grade quality, add TypeScript and [`typescript-eslint`](https://typescr
 
 ## 👏 Contributors
 
-- [![AswinAsokan2004](https://github.com/AswinAsokan2004.png?size=40)](https://github.com/AswinAsokan2004) [Aswin Asokan](https://github.com/AswinAsokan2004)
+- [![AswinAsokan2004](https://github.com/AswinAsokan2004.png?size=100)](https://github.com/AswinAsokan2004) [Aswin Asokan](https://github.com/AswinAsokan2004)
 
 ---
 
