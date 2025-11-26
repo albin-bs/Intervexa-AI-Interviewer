@@ -23,8 +23,8 @@ export default function Navbar({ scrolled }) {
               />
             </div>
             <span className="text-lg sm:text-xl md:text-2xl font-medium">
-              <span className="text-white">Code</span>
-              <span className="text-blue-400">Flow</span>
+              <span className="text-white">Mock</span>
+              <span className="text-blue-400">Mate</span>
             </span>
           </div>
 
