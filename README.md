@@ -59,35 +59,30 @@ For prod-grade quality, add TypeScript and [`typescript-eslint`](https://typescr
 
 ## 👏 Team members
 
-<!-- Aswin Asokan -->
-<div align="left">
-  <img src="https://github.com/AswinAsokan2004.png" width="80" style="border-radius: 50%; margin-bottom: 8px;" />
-  <br>
-  <a href="https://github.com/AswinAsokan2004" style="font-size:1.2em; font-weight:bold;">Aswin Asokan</a>
-  <br>
-  <img src="https://img.shields.io/badge/Followers-1-black?logo=github" style="margin-top: 8px;" />
-</div>
-<br>
+<div align="center">
 
-<!-- Albin B S -->
-<div align="left">
-  <img src="https://github.com/albin-bs.png" width="80" style="border-radius: 50%; margin-bottom: 8px;" />
-  <br>
-  <a href="https://github.com/albin-bs" style="font-size:1.2em; font-weight:bold;">Albin B S</a>
-  <br>
-  <img src="https://img.shields.io/badge/Followers-0-black?logo=github" style="margin-top: 8px;" />
-</div>
-<br>
+  <!-- Aswin Asokan -->
+  <a href="https://github.com/AswinAsokan2004" style="margin: 0 24px; text-align: center;">
+    <img src="https://github.com/AswinAsokan2004.png" width="80" style="border-radius: 50%; margin-bottom: 8px;" />
+    <br>
+    <span style="font-size:1.1em; font-weight:bold; color:#1976d2;">Aswin Asokan</span>
+  </a>
 
-<!-- Actinker -->
-<div align="left">
-  <img src="https://github.com/Actinker.png" width="80" style="border-radius: 50%; margin-bottom: 8px;" />
-  <br>
-  <a href="https://github.com/Actinker" style="font-size:1.2em; font-weight:bold;">Actinker</a>
-  <br>
-  <img src="https://img.shields.io/badge/Followers-4-black?logo=github" style="margin-top: 8px;" />
+  <!-- Albin B S -->
+  <a href="https://github.com/albin-bs" style="margin: 0 24px; text-align: center;">
+    <img src="https://github.com/albin-bs.png" width="80" style="border-radius:50%; margin-bottom: 8px;" />
+    <br>
+    <span style="font-size:1.1em; font-weight:bold; color:#1976d2;">Albin B S</span>
+  </a>
+
+  <!-- Actinker -->
+  <a href="https://github.com/Actinker" style="margin: 0 24px; text-align: center;">
+    <img src="https://github.com/Actinker.png" width="80" style="border-radius:50%; margin-bottom: 8px;" />
+    <br>
+    <span style="font-size:1.1em; font-weight:bold; color:#1976d2;">Actinker</span>
+  </a>
+
 </div>
-<br>
 
 ---
 
