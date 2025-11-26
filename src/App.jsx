@@ -5,6 +5,7 @@ import Pricing from "./components/Pricing";
 import Testimonials from "./components/Testimonials";
 import Footer from "./components/Footer";
 import { useEffect, useState } from "react";
+import { Analytics } from "@vercel/analytics/next"
 
 function App() {
   const [scrolled, setScrolled] = useState(false);
