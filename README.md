@@ -59,31 +59,35 @@ For prod-grade quality, add TypeScript and [`typescript-eslint`](https://typescr
 
 ## 👏 Team members
 
-<div style="display: flex; gap: 40px;">
-  <div style="display: flex; align-items: center; gap: 15px; flex-direction: column; width: 150px;">
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <img src="https://github.com/AswinAsokan2004.png" width="80" style="border-radius:50%" />
-      <a href="https://github.com/AswinAsokan2004" style="font-weight: bold; text-decoration: none; color: inherit;">Aswin Asokan</a>
-    </div>
-    <img src="https://img.shields.io/github/followers/AswinAsokan2004?style=social" alt="followers badge" />
-  </div>
-
-  <div style="display: flex; align-items: center; gap: 15px; flex-direction: column; width: 150px;">
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <img src="https://github.com/albin-bs.png" width="80" style="border-radius:50%" />
-      <a href="https://github.com/albin-bs" style="font-weight: bold; text-decoration: none; color: inherit;">Albin B S</a>
-    </div>
-    <img src="https://img.shields.io/github/followers/albin-bs?style=social" alt="followers badge" />
-  </div>
-
-  <div style="display: flex; align-items: center; gap: 15px; flex-direction: column; width: 150px;">
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <img src="https://github.com/Actinker.png" width="80" style="border-radius:50%" />
-      <a href="https://github.com/Actinker" style="font-weight: bold; text-decoration: none; color: inherit;">Actinker</a>
-    </div>
-    <img src="https://img.shields.io/github/followers/Actinker?style=social" alt="followers badge" />
-  </div>
+<!-- Aswin Asokan -->
+<div align="left">
+  <img src="https://github.com/AswinAsokan2004.png" width="80" style="border-radius: 50%; margin-bottom: 8px;" />
+  <br>
+  <a href="https://github.com/AswinAsokan2004" style="font-size:1.2em; font-weight:bold;">Aswin Asokan</a>
+  <br>
+  <img src="https://img.shields.io/badge/Followers-1-black?logo=github" style="margin-top: 8px;" />
 </div>
+<br>
+
+<!-- Albin B S -->
+<div align="left">
+  <img src="https://github.com/albin-bs.png" width="80" style="border-radius: 50%; margin-bottom: 8px;" />
+  <br>
+  <a href="https://github.com/albin-bs" style="font-size:1.2em; font-weight:bold;">Albin B S</a>
+  <br>
+  <img src="https://img.shields.io/badge/Followers-0-black?logo=github" style="margin-top: 8px;" />
+</div>
+<br>
+
+<!-- Actinker -->
+<div align="left">
+  <img src="https://github.com/Actinker.png" width="80" style="border-radius: 50%; margin-bottom: 8px;" />
+  <br>
+  <a href="https://github.com/Actinker" style="font-size:1.2em; font-weight:bold;">Actinker</a>
+  <br>
+  <img src="https://img.shields.io/badge/Followers-4-black?logo=github" style="margin-top: 8px;" />
+</div>
+<br>
 
 ---
 
