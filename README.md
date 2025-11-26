@@ -12,11 +12,11 @@
 
 ## 🛠 Tech Stack
 
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=FFD62E)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
-![HeadlessUI](https://img.shields.io/badge/HeadlessUI-fff?style=for-the-badge&logo=headlessui&logoColor=4B5563)
-![HeroIcons](https://img.shields.io/badge/HeroIcons-4B5563?style=for-the-badge&logo=heroicons&logoColor=06B6D4)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![HeadlessUI](https://img.shields.io/badge/HeadlessUI-fff?style=for-the-badge&logo=headlessui&logoColor=4B5563)](https://headlessui.com/)
+[![HeroIcons](https://img.shields.io/badge/HeroIcons-4B5563?style=for-the-badge&logo=heroicons&logoColor=06B6D4)](https://heroicons.com/)
 
 ---
 
