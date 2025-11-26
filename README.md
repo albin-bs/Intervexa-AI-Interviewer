@@ -92,7 +92,7 @@
 </a>
 
 ![Profile views](https://komarev.com/ghpvc/?username=albin-bs&color=blue)
-![Website](https://img.shields.io/website-up-down-green-red/https://mockmate.tech)
+![Website](https://img.shields.io/website-up-down-green-red/http/mockmate.tech)
 
 <div align="center">
 <img src="https://user-images.githubusercontent.com/74038190/212257465-7ce8d493-cac5-494e-982a-5a9deb852c4b.gif" width="100">
