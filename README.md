@@ -1,4 +1,4 @@
-<img src="public/preview.png" alt="Mockmate AI Social Preview Card" style="max-width: 100%;">
+<img src="public/mockmate.png" alt="Mockmate AI logo" style="max-width: 100%;">
 
 <img width="200" height="200" src="public/logo.png" alt="Particle Light" align="right" />
 
