@@ -1,6 +1,6 @@
 <img width="200" height="200" src="public/logo.png" alt="Particle Light" align="right" />
 
-## Mockmate AI: Your personal Interview coach  🚀
+Mockmate AI: Your personal Interview coach  🚀
 
 > **Mockmate is a comprehensive, AI-powered interview preparation and coaching platform designed for next-gen software engineers, technical candidates, and career builders. With personalized feedback, realistic mock interviews, and adaptive practice prompts, Mockmate helps users overcome interview anxiety, master diverse technical and behavioral questions, and confidently showcase their skills to employers. The platform leverages advanced AI to analyze responses, track improvement, and provide actionable insights—ensuring every candidate can practice on demand, focus on their weaknesses, and prepare for job-specific roles in any industry. Whether you’re a student, developer, or executive, Mockmate delivers real-time coaching, progress analytics, and unlimited practice to help you land your dream job faster and smarter in today’s competitive market.**
 
