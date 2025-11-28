@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 const faqs = [
   {
@@ -31,43 +32,79 @@ const faqs = [
 export default function Faq() {
   const [openIndex, setOpenIndex] = useState(0);
 
-  return (
-    <section className="min-h-screen bg-slate-950 px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white">
-          Frequently asked questions
-        </h1>
+  const toggle = (i) => setOpenIndex((prev) => (prev === i ? -1 : i));
 
-        <div className="mt-10 divide-y divide-slate-800 border-t border-b border-slate-800">
-          {faqs.map((item, index) => {
-            const isOpen = index === openIndex;
+  const handleKey = (e, i) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggle(i);
+    }
+  };
+
+  return (
+    <motion.section
+      id="faq"
+      className="min-h-screen bg-slate-950 px-4 sm:px-6 lg:px-8 py-20"
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
+      <div className="max-w-3xl mx-auto">
+        <motion.h1
+          className="text-4xl font-semibold text-white mb-8"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+        >
+          Frequently asked questions
+        </motion.h1>
+
+        <div className="divide-y divide-slate-800 border-t border-b border-slate-800">
+          {faqs.map((item, i) => {
+            const isOpen = i === openIndex;
             return (
-              <button
+              <motion.div
                 key={item.question}
-                type="button"
-                onClick={() =>
-                  setOpenIndex(isOpen ? -1 : index)
-                }
-                className="w-full text-left py-4 sm:py-5"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.35, delay: i * 0.03, ease: "easeOut" }}
               >
-                <div className="flex items-center justify-between">
-                  <p className="text-sm sm:text-base font-semibold text-white">
+                <button
+                  type="button"
+                  onClick={() => toggle(i)}
+                  onKeyDown={(e) => handleKey(e, i)}
+                  className="w-full flex items-center justify-between py-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  aria-expanded={isOpen}
+                >
+                  <span className="text-sm sm:text-base font-semibold text-white">
                     {item.question}
-                  </p>
+                  </span>
                   <span className="ml-4 text-xl text-slate-400">
                     {isOpen ? "−" : "+"}
                   </span>
+                </button>
+
+                <div
+                  className={`grid transition-[grid-template-rows,opacity] duration-300 ${
+                    isOpen
+                      ? "grid-rows-[1fr] opacity-100"
+                      : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                  <div className="overflow-hidden pb-4">
+                    <p className="text-sm sm:text-base text-slate-400">
+                      {item.answer}
+                    </p>
+                  </div>
                 </div>
-                {isOpen && (
-                  <p className="mt-2 text-sm sm:text-base text-slate-400 max-w-2xl">
-                    {item.answer}
-                  </p>
-                )}
-              </button>
+              </motion.div>
             );
           })}
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

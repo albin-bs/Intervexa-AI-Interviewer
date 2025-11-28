@@ -19,6 +19,12 @@ import Login from "./pages/Login";
 import Contact from "./pages/Contact";
 import Faq from "./pages/Faq";
 import FloatingAnnouncement from "./components/FloatingAnnouncement";
+import BackToTop from "./components/BackToTop";
+import DemoApp from "./pages/DemoApp";
+import Dashboard from "./pages/Dashboard";
+import Sessions from "./pages/Sessions";
+import SessionReport from "./pages/SessionReport";
+import Changelog from "./pages/Changelog";
 
 function App() {
   const [scrolled, setScrolled] = useState(false);
@@ -73,11 +79,17 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/faq" element={<Faq />} />
+            <Route path="/demo" element={<DemoApp />} />
+            <Route path="/dashboard" element={<Dashboard />} />           
+            <Route path="/sessions" element={<Sessions />} />
+            <Route path="/sessions/:id" element={<SessionReport />} />
+            <Route path="/changelog" element={<Changelog />} />
           </Routes>
         </motion.div>
       </AnimatePresence>
 
       <FloatingAnnouncement />
+      <BackToTop />  
       <Footer />
       <Analytics />
     </div>

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { ArrowRight, ChevronDown, Play, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { codeExamples, floatingCards } from "../data/CodeExamples";
 import { nightOwl } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import PrimaryButton from "./common/PrimaryButton";
+import { codeExamples, floatingCards } from "../data/CodeExamples";
 
 export default function Hero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -21,8 +23,13 @@ export default function Hero() {
 
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-slate-950">
-        {/* Top blurred blob (from Tailwind example) */}
+      <motion.section
+        className="relative isolate overflow-hidden bg-slate-950"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        {/* Top blurred blob */}
         <div
           aria-hidden="true"
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
@@ -31,12 +38,12 @@ export default function Hero() {
             className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#2563eb] to-[#22d3ee] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72rem]"
             style={{
               clipPath:
-                "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
+                "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
             }}
           />
         </div>
 
-        {/* Radial mouse highlight from your original hero */}
+        {/* Radial mouse highlight */}
         <div
           className="pointer-events-none absolute inset-0 opacity-30"
           style={{
@@ -46,8 +53,13 @@ export default function Hero() {
 
         <div className="px-6 pt-24 pb-24 sm:pt-28 sm:pb-28 lg:px-8">
           <div className="mx-auto max-w-7xl lg:grid lg:grid-cols-2 lg:gap-16 items-center">
-            {/* Left column – text + buttons (your content) */}
-            <div>
+            {/* Left column */}
+            <motion.div
+              initial={{ opacity: 0, x: -24 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="inline-flex items-center space-x-2 rounded-full bg-blue-500/10 px-3 sm:px-4 py-2 border border-blue-500/20 mb-5">
                 <Sparkles className="w-4 h-4 text-blue-400" />
                 <span className="text-xs sm:text-sm text-blue-300">
@@ -68,15 +80,16 @@ export default function Hero() {
               </h1>
 
               <p className="mt-4 text-base sm:text-lg text-gray-400 max-w-xl">
-                Accelerate your prep with adaptive mock questions, instant AI feedback, and
-                data-driven insights—so you’re always ready for the real thing.
+                Accelerate your prep with adaptive mock questions, instant AI
+                feedback, and data-driven insights—so you’re always ready for
+                the real thing.
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-                <button className="group w-full sm:w-auto rounded-lg bg-gradient-to-b from-blue-600 to-blue-400 px-6 sm:px-8 py-3.5 text-sm sm:text-base font-semibold text-white shadow-lg shadow-blue-500/40 transition hover:scale-[1.02] flex items-center justify-center gap-2">
+                <PrimaryButton className="w-full sm:w-auto gap-2">
                   <span>Start Practicing Free</span>
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                </PrimaryButton>
 
                 <button
                   type="button"
@@ -89,10 +102,16 @@ export default function Hero() {
                   <span>See How It Works</span>
                 </button>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Right column – your code card & floating card */}
-            <div className="mt-12 lg:mt-0 relative">
+            {/* Right column */}
+            <motion.div
+              className="mt-12 lg:mt-0 relative"
+              initial={{ opacity: 0, x: 24 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+            >
               <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white/10">
                 <div className="bg-gradient-to-br from-slate-900/40 to-slate-800/40 rounded-xl overflow-hidden h-[320px] sm:h-[380px] lg:h-[430px] border border-white/5">
                   {/* IDE header */}
@@ -174,11 +193,11 @@ export default function Hero() {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
 
-        {/* Bottom blurred blob (from Tailwind example) */}
+        {/* Bottom blurred blob */}
         <div
           aria-hidden="true"
           className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
@@ -187,23 +206,31 @@ export default function Hero() {
             className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36rem] -translate-x-1/2 bg-gradient-to-tr from-[#22d3ee] to-[#6366f1] opacity-25 sm:left-[calc(50%+36rem)] sm:w-[72rem]"
             style={{
               clipPath:
-                "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
+                "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5, 60.2% 62.4, 52.4% 68.1, 47.5% 58.3, 45.2% 34.5, 27.5% 76.7, 0.1% 64.9, 17.9% 100, 27.6% 76.8, 76.1% 97.7, 74.1% 44.1)",
             }}
           />
         </div>
-      </section>
+      </motion.section>
 
-      {/* Demo video modal (unchanged) */}
+      {/* Demo video modal */}
       {isVideoOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="demo-title"
+        >
           <div className="w-[90vw] max-w-3xl bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
-              <h2 className="text-sm font-semibold text-slate-100">
+              <h2
+                id="demo-title"
+                className="text-sm font-semibold text-slate-100"
+              >
                 MockMateAI — Product Demo
               </h2>
               <button
                 onClick={() => setIsVideoOpen(false)}
-                className="text-slate-400 hover:text-slate-100 text-xl leading-none"
+                className="text-slate-400 hover:text-slate-100 text-xl leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
               >
                 ×
               </button>

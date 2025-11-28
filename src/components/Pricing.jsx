@@ -1,9 +1,11 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { Check, Star } from "lucide-react";
 
 const plans = [
   {
     name: "Starter",
-    price: "29.99",
+    price: "29.99", // monthly
     description: "Essential tools for solo learners and job seekers",
     features: [
       "Up to 5 AI interview sessions/mo",
@@ -50,15 +52,40 @@ const plans = [
   },
 ];
 
+const comparisonFeatures = [
+  {
+    label: "AI interview sessions",
+    availability: ["Up to 5 / mo", "Up to 25 / mo", "Unlimited"],
+  },
+  {
+    label: "Advanced feedback",
+    availability: ["–", "✓", "✓"],
+  },
+  {
+    label: "Analytics dashboard",
+    availability: ["Basic", "Full", "Full + team"],
+  },
+  {
+    label: "Support",
+    availability: ["Email", "Priority", "24/7"],
+  },
+];
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Pricing() {
+  const [billingPeriod, setBillingPeriod] = useState("monthly"); // "yearly"
+
   return (
-    <section
+    <motion.section
       id="pricing"
       className="relative isolate bg-gray-900 px-6 py-24 sm:py-32 lg:px-8"
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
     >
       {/* Top blurred blob */}
       <div
@@ -69,7 +96,7 @@ export default function Pricing() {
           className="mx-auto aspect-[1155/678] w-[72rem] bg-gradient-to-tr from-[#2563eb] to-[#22c1c3] opacity-20"
           style={{
             clipPath:
-              "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
+              "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
           }}
         />
       </div>
@@ -86,71 +113,168 @@ export default function Pricing() {
         AI-powered coaching.
       </p>
 
+      {/* Billing toggle */}
+      <div className="flex justify-center items-center gap-3 mt-10">
+        <span className="text-sm text-slate-400">Monthly</span>
+        <button
+          type="button"
+          onClick={() =>
+            setBillingPeriod((prev) =>
+              prev === "monthly" ? "yearly" : "monthly"
+            )
+          }
+          className="relative inline-flex h-6 w-11 items-center rounded-full bg-slate-800"
+        >
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+              billingPeriod === "yearly" ? "translate-x-5" : "translate-x-1"
+            }`}
+          />
+        </button>
+        <span className="text-sm text-slate-400">
+          Yearly
+          <span className="ml-1 text-green-400">-20%</span>
+        </span>
+      </div>
+
       {/* Cards */}
       <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-stretch gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-5xl lg:grid-cols-3 lg:gap-x-6">
-        {plans.map((plan, idx) => (
-          <div
-            key={plan.name}
-            className={classNames(
-              plan.mostPopular ? "relative bg-slate-900" : "bg-white/5",
-              idx === 0
-                ? "lg:rounded-l-3xl"
-                : idx === plans.length - 1
-                ? "lg:rounded-r-3xl"
-                : "",
-              "rounded-3xl p-8 ring-1 ring-white/10 sm:p-10 flex flex-col"
-            )}
-          >
-            {plan.mostPopular && (
-              <div className="absolute -top-3 inset-x-0 flex justify-center">
-                <div className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 px-3 py-1 text-xs font-semibold text-white shadow-lg">
-                  <Star className="w-3 h-3 fill-white" />
-                  Most popular
-                </div>
-              </div>
-            )}
+        {plans.map((plan, idx) => {
+          const monthlyPrice = parseFloat(plan.price);
+          const displayPrice =
+            billingPeriod === "monthly"
+              ? monthlyPrice.toFixed(2)
+              : (monthlyPrice * 12 * 0.8).toFixed(2); // 20% off yearly
 
-            <h3
+          return (
+            <motion.div
+              key={plan.name}
               className={classNames(
-                "text-base font-semibold",
-                plan.mostPopular ? "text-indigo-400" : "text-indigo-300"
+                plan.mostPopular ? "relative bg-slate-900" : "bg-white/5",
+                idx === 0
+                  ? "lg:rounded-l-3xl"
+                  : idx === plans.length - 1
+                  ? "lg:rounded-r-3xl"
+                  : "",
+                "rounded-3xl p-8 ring-1 ring-white/10 sm:p-10 flex flex-col",
+                "transition-transform duration-200 ease-out",
+                "hover:-translate-y-1 hover:scale-[1.01] hover:rotate-[0.5deg]"
               )}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.45, delay: 0.05 * idx, ease: "easeOut" }}
             >
-              {plan.name}
-            </h3>
-
-            <p className="mt-3 text-sm text-gray-300">{plan.description}</p>
-
-            <p className="mt-6 flex items-baseline gap-x-2">
-              <span className="text-4xl sm:text-5xl font-semibold tracking-tight text-white">
-                ${plan.price}
-              </span>
-              <span className="text-base text-gray-400">/month</span>
-            </p>
-
-            <ul className="mt-8 space-y-3 text-sm text-gray-300 sm:mt-10 flex-1">
-              {plan.features.map((feature) => (
-                <li key={feature} className="flex gap-x-3">
-                  <div className="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-blue-500/20">
-                    <Check className="h-3 w-3 text-blue-400" />
+              {plan.mostPopular && (
+                <div className="absolute -top-3 inset-x-0 flex justify-center">
+                  <div className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 px-3 py-1 text-xs font-semibold text-white shadow-lg">
+                    <Star className="w-3 h-3 fill-white" />
+                    Most popular
                   </div>
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-
-            <button
-              className={classNames(
-                plan.mostPopular
-                  ? "bg-indigo-500 text-white hover:bg-indigo-400 focus-visible:outline-indigo-500"
-                  : "bg-white/10 text-white hover:bg-white/20 focus-visible:outline-white/70",
-                "mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10"
+                </div>
               )}
-            >
-              Get started
-            </button>
-          </div>
-        ))}
+
+              <h3
+                className={classNames(
+                  "text-base font-semibold",
+                  plan.mostPopular ? "text-indigo-400" : "text-indigo-300"
+                )}
+              >
+                {plan.name}
+              </h3>
+
+              <p className="mt-3 text-sm text-gray-300">
+                {plan.description}
+              </p>
+
+              <p className="mt-6 flex items-baseline gap-x-2">
+                <span className="text-4xl sm:text-5xl font-semibold tracking-tight text-white">
+                  ${displayPrice}
+                </span>
+                <span className="text-base text-gray-400">
+                  /{billingPeriod === "monthly" ? "month" : "year"}
+                </span>
+              </p>
+
+              <ul className="mt-8 space-y-3 text-sm text-gray-300 sm:mt-10 flex-1">
+                {plan.features.map((feature) => (
+                  <li key={feature} className="flex gap-x-3">
+                    <div className="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-blue-500/20">
+                      <Check className="h-3 w-3 text-blue-400" />
+                    </div>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                className={classNames(
+                  plan.mostPopular
+                    ? "bg-indigo-500 text-white hover:bg-indigo-400 focus-visible:outline-indigo-500"
+                    : "bg-white/10 text-white hover:bg-white/20 focus-visible:outline-white/70",
+                  "mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10"
+                )}
+              >
+                Get started
+              </button>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Comparison table */}
+      <div className="mx-auto mt-12 max-w-5xl rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6">
+        <h3 className="mb-4 text-sm font-semibold text-slate-200">
+          Compare plans
+        </h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-xs sm:text-sm text-slate-200">
+            <thead>
+              <tr className="border-b border-slate-800">
+                <th className="py-2 pr-4 text-left font-medium text-slate-400">
+                  Feature
+                </th>
+                {plans.map((plan) => (
+                  <th
+                    key={plan.name}
+                    className="py-2 px-3 text-center font-medium text-slate-400"
+                  >
+                    {plan.name}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {comparisonFeatures.map((row) => (
+                <tr key={row.label} className="border-b border-slate-800/70">
+                  <td className="py-2 pr-4 text-left text-slate-300">
+                    {row.label}
+                  </td>
+                  {row.availability.map((val, idx) => (
+                    <td
+                      key={idx}
+                      className="py-2 px-3 text-center text-slate-200"
+                    >
+                      {val === "✓" || val === "–" ? (
+                        <span
+                          className={
+                            val === "✓"
+                              ? "text-green-400 font-semibold"
+                              : "text-slate-500"
+                          }
+                        >
+                          {val}
+                        </span>
+                      ) : (
+                        val
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div className="mt-10 text-center">
@@ -161,6 +285,6 @@ export default function Pricing() {
           </a>
         </p>
       </div>
-    </section>
+    </motion.section>
   );
 }

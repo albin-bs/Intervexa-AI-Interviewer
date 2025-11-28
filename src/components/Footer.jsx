@@ -19,183 +19,254 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="border-t border-slate-800 bg-slate-950/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-          {/* Main footer content - hidden on mobile, visible on sm and up */}
-          <div className="hidden sm:grid sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-12">
-            <div className="col-span-1 sm:col-span-3 lg:col-span-2 text-center sm:text-left">
-              <div className="flex items-center justify-center sm:justify-start space-x-2 mb-3 sm:mb-4">
-                <div className="rounded-lg">
+      <footer className="border-t border-slate-900 bg-slate-950">
+        <div className="max-w-6xl lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+          <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-stretch">
+            {/* Left: CTA / hero block */}
+            <div className="lg:w-1/2 flex flex-col justify-between rounded-3xl bg-gradient-to-br from-slate-950 via-slate-950 to-slate-900 px-6 sm:px-8 py-10 sm:py-12 shadow-[0_0_80px_rgba(15,23,42,0.9)]">
+              <div>
+                <div className="flex items-center gap-2 mb-5">
                   <img
                     src="/logo.png"
                     alt="Mockmate Logo"
-                    className="w-6 h-6 sm:w-8 sm:h-8"
+                    className="w-8 h-8 rounded-lg"
                   />
-                </div>
-                <span className="text-lg sm:text-xl font-bold">
-                  <span className="text-white">Mock</span>
-                  <span className="text-blue-400">MateAI</span>
-                </span>
-              </div>
-              <p className="text-gray-400 mb-4 sm:mb-6 max-w-xs mx-auto sm:mx-0 text-sm sm:text-base">
-                Ace your next interview with AI-powered practice, feedback, and
-                tools for every stage of your career.
-              </p>
-
-              {/* Social + member links */}
-              <div className="space-y-3 sm:space-y-4">
-                <a
-                  href="https://github.com/albin-bs/MockMate-AI"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group inline-flex items-center justify-center px-4 py-2 rounded-xl bg-slate-900/60 hover:bg-slate-800 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/10"
-                >
-                  <Github className="w-4 h-4 mr-2 text-slate-200 transition-transform duration-200 group-hover:rotate-3" />
-                  <span className="text-sm text-slate-200">
-                    View project on GitHub
+                  <span className="text-xl font-bold">
+                    <span className="text-white">Mock</span>
+                    <span className="text-blue-400">MateAI</span>
                   </span>
-                </a>
+                </div>
 
-                <p className="text-blue-300 mb-2 max-w-xs mx-auto sm:mx-0 text-sm sm:text-base font-semibold tracking-wide uppercase">
+                <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-3">
+                  MockMateAI helps you grow your career faster.
+                </h2>
+                <p className="text-sm sm:text-base text-slate-300 max-w-md">
+                  Ace your next interview with AI‑powered practice, instant
+                  feedback, and tools for every stage of your journey.
+                </p>
+              </div>
+
+              <div className="mt-8">
+                <a
+                  href="#pricing"
+                  className="inline-flex items-center justify-center rounded-full border border-blue-400/80 px-6 py-2.5 text-sm font-semibold text-blue-100 hover:bg-blue-500/10 transition"
+                >
+                  Start 14‑day free trial
+                </a>
+                <p className="mt-3 text-xs text-slate-400">
+                  No credit card required. Cancel anytime.
+                </p>
+              </div>
+            </div>
+
+            {/* Right: links + social card */}
+            <div className="lg:w-1/2">
+              <div className="h-full rounded-3xl bg-slate-950/95 ring-1 ring-slate-800 px-6 sm:px-8 py-8 sm:py-10">
+                {/* top: link columns */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
+                  {Object.entries(footerLinks).map(([category, links]) => (
+                    <div key={category}>
+                      <h3 className="text-sm font-semibold text-white mb-3">
+                        {category}
+                      </h3>
+                      <ul className="space-y-2 text-xs sm:text-sm text-slate-400">
+                        {links.map((link) => (
+                          <li key={link}>
+                            {category === "Product" &&
+                            (link === "Features" || link === "Pricing") ? (
+                              <Link
+                                to={
+                                  link === "Features"
+                                    ? "/#features"
+                                    : "/#pricing"
+                                }
+                                className="hover:text-white transition-colors"
+                              >
+                                {link}
+                              </Link>
+                            ) : category === "Company" &&
+                              link === "About us" ? (
+                              <Link
+                                to="/about"
+                                className="hover:text-white transition-colors"
+                              >
+                                {link}
+                              </Link>
+                            ) : category === "Company" &&
+                              link === "Contact us" ? (
+                              <Link
+                                to="/contact"
+                                className="hover:text-white transition-colors"
+                              >
+                                {link}
+                              </Link>
+                            ) : category === "Company" && link === "FAQ" ? (
+                              <Link
+                                to="/faq"
+                                className="hover:text-white transition-colors"
+                              >
+                                {link}
+                              </Link>
+                            ) : category === "Resources" &&
+                              link === "Demo Video" ? (
+                              <button
+                                type="button"
+                                onClick={() => setIsVideoOpen(true)}
+                                className="hover:text-white underline-offset-2 hover:underline transition-colors"
+                              >
+                                {link}
+                              </button>
+                            ) : (
+                              <a
+                                href="#"
+                                className="hover:text-white transition-colors"
+                              >
+                                {link}
+                              </a>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+
+                {/* middle: team + github (desktop) */}
+                <div className="mt-8 border-t border-slate-800 pt-6 hidden lg:block">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="space-y-3">
+                      <a
+                        href="https://github.com/albin-bs/MockMate-AI"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group inline-flex items-center justify-center px-4 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/10"
+                      >
+                        <Github className="w-4 h-4 mr-2 text-slate-200 transition-transform duration-200 group-hover:rotate-3" />
+                        <span className="text-sm text-slate-200">
+                          View project on GitHub
+                        </span>
+                      </a>
+
+                      <p className="text-blue-300 text-xs font-semibold tracking-wide uppercase">
+                        Team members
+                      </p>
+                      <div className="grid grid-cols-2 gap-2 text-xs text-slate-200">
+                        <a
+                          href="https://www.linkedin.com/in/albin-binu-sebastian/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-start px-3 py-2 rounded-xl bg-slate-900/60 hover:bg-slate-800 transition"
+                        >
+                          <Linkedin className="w-4 h-4 mr-2" />
+                          Albin Binu Sebastian
+                        </a>
+                        <a
+                          href="https://www.linkedin.com/in/aswinasokan2004/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-start px-3 py-2 rounded-xl bg-slate-900/60 hover:bg-slate-800 transition"
+                        >
+                          <Linkedin className="w-4 h-4 mr-2" />
+                          Aswin Asokan
+                        </a>
+                        <a
+                          href="https://www.linkedin.com/in/abin-a-c/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-start px-3 py-2 rounded-xl bg-slate-900/60 hover:bg-slate-800 transition"
+                        >
+                          <Linkedin className="w-4 h-4 mr-2" />
+                          Abin AC
+                        </a>
+                        <a
+                          href="https://www.linkedin.com/in/aaron-stephen-cherian-69383224a/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-start px-3 py-2 rounded-xl bg-slate-900/60 hover:bg-slate-800 transition"
+                        >
+                          <Linkedin className="w-4 h-4 mr-2" />
+                          Aaron Stephan Cherian
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* bottom: copyright + legal links */}
+                <div className="mt-8 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <p className="text-slate-500 text-xs sm:text-sm">
+                    © {new Date().getFullYear()} Mockmate. All rights reserved.
+                  </p>
+                  <div className="flex items-center flex-wrap gap-3 text-[11px] sm:text-xs text-slate-400">
+                    <Link
+                      to="/privacy"
+                      className="hover:text-white transition-colors"
+                    >
+                      Privacy Policy
+                    </Link>
+                    <span>•</span>
+                    <Link
+                      to="/terms"
+                      className="hover:text-white transition-colors"
+                    >
+                      Terms of Service
+                    </Link>
+                    <span>•</span>
+                    <button
+                      type="button"
+                      onClick={() => setIsCookieOpen(true)}
+                      className="hover:text-white transition-colors"
+                    >
+                      Cookie Settings
+                    </button>
+                    <Link to="/changelog" className="hover:text-slate-200">
+                      Changelog
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* mobile team section */}
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300 lg:hidden">
+                <p className="col-span-full text-blue-300 font-semibold uppercase tracking-wide text-[11px]">
                   Team members
                 </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <a
-                    href="https://www.linkedin.com/in/albin-binu-sebastian/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-start px-3 py-2 rounded-xl bg-slate-900/60 hover:bg-slate-800 transition text-sm text-slate-200"
-                  >
-                    <Linkedin className="w-4 h-4 mr-2" />
-                    Albin Binu Sebastian
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/in/aswinasokan2004/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-start px-3 py-2 rounded-xl bg-slate-900/60 hover:bg-slate-800 transition text-sm text-slate-200"
-                  >
-                    <Linkedin className="w-4 h-4 mr-2" />
-                    Aswin Asokan
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/in/abin-a-c/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-start px-3 py-2 rounded-xl bg-slate-900/60 hover:bg-slate-800 transition text-sm text-slate-200"
-                  >
-                    <Linkedin className="w-4 h-4 mr-2" />
-                    Abin AC
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/in/aaron-stephen-cherian-69383224a/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-start px-3 py-2 rounded-xl bg-slate-900/60 hover:bg-slate-800 transition text-sm text-slate-200"
-                  >
-                    <Linkedin className="w-4 h-4 mr-2" />
-                    Aaron Stephan Cherian
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Footer links - visible on sm and up */}
-            <div className="sm:col-span-3 lg:col-span-4">
-              <div className="grid grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
-                {Object.entries(footerLinks).map(([category, links]) => (
-                  <div key={category}>
-                    <h3 className="font-semibold text-white mb-3 sm:mb-4 text-sm sm:text-base">
-                      {category}
-                    </h3>
-                    <ul className="space-y-2 sm:space-y-3">
-                      {links.map((link) => (
-                        <li key={link}>
-                          {category === "Product" &&
-                          (link === "Features" || link === "Pricing") ? (
-                            <Link
-                              to={
-                                link === "Features" ? "/#features" : "/#pricing"
-                              }
-                              className="text-gray-400 hover:text-white transition-colors duration-200 text-xs sm:text-sm"
-                            >
-                              {link}
-                            </Link>
-                          ) : category === "Company" && link === "About us" ? (
-                            <Link
-                              to="/about"
-                              className="text-gray-400 hover:text-white transition-colors duration-200 text-xs sm:text-sm"
-                            >
-                              {link}
-                            </Link>
-                          ) : category === "Company" &&
-                            link === "Contact us" ? (
-                            <Link
-                              to="/contact"
-                              className="text-gray-400 hover:text-white transition-colors duration-200 text-xs sm:text-sm"
-                            >
-                              {link}
-                            </Link>
-                          ) : category === "Company" && link === "FAQ" ? (
-                            <Link
-                              to="/faq"
-                              className="text-gray-400 hover:text-white transition-colors duration-200 text-xs sm:text-sm"
-                            >
-                              {link}
-                            </Link>
-                          ) : category === "Resources" &&
-                            link === "Demo Video" ? (
-                            <button
-                              type="button"
-                              onClick={() => setIsVideoOpen(true)}
-                              className="text-gray-400 hover:text-white transition-colors duration-200 text-xs sm:text-sm underline-offset-2 hover:underline"
-                            >
-                              {link}
-                            </button>
-                          ) : (
-                            <a
-                              href="#"
-                              className="text-gray-400 hover:text-white transition-colors duration-200 text-xs sm:text-sm"
-                            >
-                              {link}
-                            </a>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom bar */}
-          <div className="pt-6 sm:pt-8 border-t-0 sm:border-t border-slate-800">
-            <div className="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
-              <p className="text-gray-400 text-xs sm:text-sm">
-                © {new Date().getFullYear()} Mockmate. All rights reserved.
-              </p>
-              <div className="flex items-center space-x-4 sm:space-x-6 text-xs sm:text-sm">
-                <Link
-                  to="/privacy"
-                  className="text-gray-400 hover:text-white transition-colors duration-200"
+                <a
+                  href="https://www.linkedin.com/in/albin-binu-sebastian/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-start px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800 transition"
                 >
-                  Privacy Policy
-                </Link>
-                <Link
-                  to="/terms"
-                  className="text-gray-400 hover:text-white transition-colors duration-200"
+                  <Linkedin className="w-4 h-4 mr-2" />
+                  Albin Binu Sebastian
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/aswinasokan2004/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-start px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800 transition"
                 >
-                  Terms of Service
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setIsCookieOpen(true)}
-                  className="text-gray-400 hover:text-white transition-colors duration-200"
+                  <Linkedin className="w-4 h-4 mr-2" />
+                  Aswin Asokan
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/abin-a-c/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-start px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800 transition"
                 >
-                  Cookie Settings
-                </button>
+                  <Linkedin className="w-4 h-4 mr-2" />
+                  Abin AC
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/aaron-stephen-cherian-69383224a/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-start px-3 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800 transition"
+                >
+                  <Linkedin className="w-4 h-4 mr-2" />
+                  Aaron Stephan Cherian
+                </a>
               </div>
             </div>
           </div>
