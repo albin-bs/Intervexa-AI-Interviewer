@@ -1,20 +1,47 @@
 <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" sizes="32x32" href="/logo.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mockmate AI – Your personal interview coach</title>
-  <meta name="description" content="Mockmate is your AI-powered interview coach. Practice, get feedback, and ace your next job interview with Mockmate's modern, interactive web app." />
+  <meta
+    name="description"
+    content="Mockmate is your AI-powered interview coach. Practice, get feedback, and ace your next job interview with Mockmate's modern, interactive web app."
+  />
 
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-J2MKZY3R47"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-J2MKZY3R47');
+    function gtag() { dataLayer.push(arguments); }
+    gtag("js", new Date());
+    gtag("config", "G-J2MKZY3R47");
   </script>
 </head>
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
+
+  <!-- Typebot bubble -->
+  <script type="module">
+    import Typebot from "https://cdn.jsdelivr.net/npm/@typebot.io/js@0/dist/web.js";
+
+    Typebot.initBubble({
+      typebot: "my-typebot-w26ubw8",
+      theme: {
+        button: {
+          backgroundColor: "#020618",
+          customIconSrc:
+            "https://s3.typebot.io/public/workspaces/cmggm71ex001tl7043d54fz4d/typebots/cmggm9kwi0001jy042w26ubw8/bubble-icon?v=1764499093251",
+        },
+      },
+      placement: "left", // optional: bottom-left bubble
+    });
+  </script>
 </body>

@@ -222,61 +222,6 @@ export default function Pricing() {
         })}
       </div>
 
-      {/* Comparison table */}
-      <div className="mx-auto mt-12 max-w-5xl rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6">
-        <h3 className="mb-4 text-sm font-semibold text-slate-200">
-          Compare plans
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-xs sm:text-sm text-slate-200">
-            <thead>
-              <tr className="border-b border-slate-800">
-                <th className="py-2 pr-4 text-left font-medium text-slate-400">
-                  Feature
-                </th>
-                {plans.map((plan) => (
-                  <th
-                    key={plan.name}
-                    className="py-2 px-3 text-center font-medium text-slate-400"
-                  >
-                    {plan.name}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {comparisonFeatures.map((row) => (
-                <tr key={row.label} className="border-b border-slate-800/70">
-                  <td className="py-2 pr-4 text-left text-slate-300">
-                    {row.label}
-                  </td>
-                  {row.availability.map((val, idx) => (
-                    <td
-                      key={idx}
-                      className="py-2 px-3 text-center text-slate-200"
-                    >
-                      {val === "✓" || val === "–" ? (
-                        <span
-                          className={
-                            val === "✓"
-                              ? "text-green-400 font-semibold"
-                              : "text-slate-500"
-                          }
-                        >
-                          {val}
-                        </span>
-                      ) : (
-                        val
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
       <div className="mt-10 text-center">
         <p className="text-gray-400 text-sm sm:text-base">
           Need a custom plan?{" "}

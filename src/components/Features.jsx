@@ -64,21 +64,21 @@ export default function Features() {
   return (
     <motion.section
       id="features"
-      className="bg-gray-900 py-24 sm:py-32"
+      className="py-24 bg-gray-900 sm:py-32"
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
-      <div className="mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
-        <h2 className="text-center text-sm font-semibold text-indigo-400">
+      <div className="max-w-2xl px-6 mx-auto lg:max-w-7xl lg:px-8">
+        <h2 className="text-sm font-semibold text-center text-indigo-400">
           Mockmate Interview Practice Suite
         </h2>
-        <p className="mx-auto mt-2 max-w-xl text-center text-3xl sm:text-4xl font-semibold tracking-tight text-balance text-white">
+        <p className="max-w-xl mx-auto mt-2 text-3xl font-semibold tracking-tight text-center text-white sm:text-4xl text-balance">
           Everything you need to prep smarter and ace real interviews
         </p>
 
-        <div className="mt-10 grid gap-4 sm:mt-16 lg:grid-cols-3 lg:grid-rows-2">
+        <div className="grid gap-4 mt-10 sm:mt-16 lg:grid-cols-3 lg:grid-rows-2">
           {/* Card 1 – AI Interview Simulation */}
           <motion.div
             className="relative lg:row-span-2"
@@ -87,7 +87,7 @@ export default function Features() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5, delay: 0.05, ease: "easeOut" }}
           >
-            <div className="absolute inset-px rounded-lg bg-gray-800 lg:rounded-l-4xl" />
+            <div className="absolute bg-gray-800 rounded-lg inset-px lg:rounded-l-4xl" />
             <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] lg:rounded-l-[calc(2rem+1px)]">
               <div className="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0">
                 <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-indigo-300 max-lg:text-center">
@@ -96,7 +96,7 @@ export default function Features() {
                 <p className="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center">
                   {features[0].heading}
                 </p>
-                <p className="mt-2 max-w-lg text-sm leading-6 text-gray-400 max-lg:text-center">
+                <p className="max-w-lg mt-2 text-sm leading-6 text-gray-400 max-lg:text-center">
                   {features[0].description}
                 </p>
                 <div className="mt-4 max-lg:text-center">
@@ -114,12 +114,12 @@ export default function Features() {
                   <img
                     src={features[0].imageSrc}
                     alt="Mobile-friendly AI interview practice preview"
-                    className="size-full object-cover object-top"
+                    className="object-cover object-top size-full"
                   />
                 </div>
               </div>
             </div>
-            <div className="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 lg:rounded-l-4xl" />
+            <div className="absolute rounded-lg shadow-sm pointer-events-none inset-px outline outline-white/15 lg:rounded-l-4xl" />
           </motion.div>
 
           {/* Card 2 – Instant AI Feedback */}
@@ -130,7 +130,7 @@ export default function Features() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
           >
-            <div className="absolute inset-px rounded-lg bg-gray-800 max-lg:rounded-t-4xl" />
+            <div className="absolute bg-gray-800 rounded-lg inset-px max-lg:rounded-t-4xl" />
             <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)]">
               <div className="px-8 pt-8 sm:px-10 sm:pt-10">
                 <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-indigo-300 max-lg:text-center">
@@ -139,7 +139,7 @@ export default function Features() {
                 <p className="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center">
                   {features[1].heading}
                 </p>
-                <p className="mt-2 max-w-lg text-sm leading-6 text-gray-400 max-lg:text-center">
+                <p className="max-w-lg mt-2 text-sm leading-6 text-gray-400 max-lg:text-center">
                   {features[1].description}
                 </p>
                 <div className="mt-4 max-lg:text-center">
@@ -152,7 +152,7 @@ export default function Features() {
                   </Link>
                 </div>
               </div>
-              <div className="flex flex-1 items-center justify-center px-8 max-lg:pt-10 max-lg:pb-12 sm:px-10 lg:pb-2">
+              <div className="flex items-center justify-center flex-1 px-8 max-lg:pt-10 max-lg:pb-12 sm:px-10 lg:pb-2">
                 <img
                   src={features[1].imageSrc}
                   alt="Performance analytics preview"
@@ -160,7 +160,7 @@ export default function Features() {
                 />
               </div>
             </div>
-            <div className="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 max-lg:rounded-t-4xl" />
+            <div className="absolute rounded-lg shadow-sm pointer-events-none inset-px outline outline-white/15 max-lg:rounded-t-4xl" />
           </motion.div>
 
           {/* Card 3 – Progress Analytics & Insights */}
@@ -171,7 +171,7 @@ export default function Features() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
           >
-            <div className="absolute inset-px rounded-lg bg-gray-800" />
+            <div className="absolute bg-gray-800 rounded-lg inset-px" />
             <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)]">
               <div className="px-8 pt-8 sm:px-10 sm:pt-10">
                 <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-indigo-300 max-lg:text-center">
@@ -180,7 +180,7 @@ export default function Features() {
                 <p className="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center">
                   {features[2].heading}
                 </p>
-                <p className="mt-2 max-w-lg text-sm leading-6 text-gray-400 max-lg:text-center">
+                <p className="max-w-lg mt-2 text-sm leading-6 text-gray-400 max-lg:text-center">
                   {features[2].description}
                 </p>
                 <div className="mt-4 max-lg:text-center">
@@ -201,10 +201,10 @@ export default function Features() {
                 />
               </div>
             </div>
-            <div className="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15" />
+            <div className="absolute rounded-lg shadow-sm pointer-events-none inset-px outline outline-white/15" />
           </motion.div>
 
-          {/* Card 4 – Code panel using your snippets */}
+          {/* Card 4 – Live code practice (links to /code-demo) */}
           <motion.div
             className="relative lg:row-span-2"
             initial={{ opacity: 0, y: 24 }}
@@ -212,37 +212,44 @@ export default function Features() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
           >
-            <div className="absolute inset-px rounded-lg bg-gray-800 max-lg:rounded-b-4xl lg:rounded-r-4xl" />
+            <div className="absolute bg-gray-800 rounded-lg inset-px max-lg:rounded-b-4xl lg:rounded-r-4xl" />
             <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-r-[calc(2rem+1px)]">
               <div className="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0">
                 <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-indigo-300 max-lg:text-center">
-                  Developer-friendly APIs
+                  Live Code Practice
                 </p>
                 <p className="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center">
-                  Powerful prompts, feedback, and analytics in code
+                  Practice coding questions in your browser
                 </p>
-                <p className="mt-2 max-w-lg text-sm leading-6 text-gray-400 max-lg:text-center">
-                  Use MockMate’s SDK to generate prompts, analyze answers, and
-                  pull progress stats directly into your own tools or
-                  dashboards.
+                <p className="max-w-lg mt-2 text-sm leading-6 text-gray-400 max-lg:text-center">
+                  Use MockMate’s built-in code editor to write and run
+                  solutions instantly, powered by the Judge0 execution engine.
+                  Test algorithms during your interview prep without leaving
+                  the page.
                 </p>
+                <div className="mt-4 max-lg:text-center">
+                  <Link
+                    to="/code-demo"
+                    className="inline-flex items-center text-sm font-semibold text-blue-400 hover:text-blue-300"
+                  >
+                    Try the coding demo
+                    <span className="ml-1">→</span>
+                  </Link>
+                </div>
               </div>
-              <div className="relative min-h-60 w-full grow">
-                <div className="absolute top-10 right-0 bottom-0 left-10 overflow-hidden rounded-tl-xl bg-gray-900/60 outline outline-white/10">
+              <div className="relative w-full min-h-60 grow">
+                <div className="absolute bottom-0 right-0 overflow-hidden top-10 left-10 rounded-tl-xl bg-gray-900/60 outline outline-white/10">
                   <div className="flex bg-gray-900 outline outline-white/5">
-                    <div className="-mb-px flex text-sm font-medium text-gray-400">
-                      <div className="border-r border-b border-r-white/10 border-b-white/20 bg-white/5 px-4 py-2 text-white">
-                        prompts.ts
+                    <div className="flex -mb-px text-sm font-medium text-gray-400">
+                      <div className="px-4 py-2 text-white border-b border-r border-r-white/10 border-b-white/20 bg-white/5">
+                        codeDemo.tsx
                       </div>
-                      <div className="border-r border-gray-600/10 px-4 py-2">
-                        feedback.ts
-                      </div>
-                      <div className="border-r border-gray-600/10 px-4 py-2">
-                        analytics.ts
+                      <div className="px-4 py-2 border-r border-gray-600/10">
+                        output.log
                       </div>
                     </div>
                   </div>
-                  <div className="px-6 pt-6 pb-10 text-xs sm:text-sm font-mono text-gray-100">
+                  <div className="px-6 pt-6 pb-10 font-mono text-xs text-gray-100 sm:text-sm">
                     <SyntaxHighlighter
                       language="javascript"
                       style={nightOwl}
@@ -253,21 +260,18 @@ export default function Features() {
                         lineHeight: "1.4",
                       }}
                     >
-{`${features[0].codeSnippet}
+{`const res = await axios.post("/api/execute", {
+  sourceCode: "print('hello from mockmate')",
+  languageId: 71,
+});
 
-
-
-${features[1].codeSnippet}
-
-
-
-${features[2].codeSnippet}`}
+console.log(res.data.stdout); // "hello from mockmate"`}
                     </SyntaxHighlighter>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 max-lg:rounded-b-4xl lg:rounded-r-4xl" />
+            <div className="absolute rounded-lg shadow-sm pointer-events-none inset-px outline outline-white/15 max-lg:rounded-b-4xl lg:rounded-r-4xl" />
           </motion.div>
         </div>
       </div>

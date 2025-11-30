@@ -25,6 +25,8 @@ import Dashboard from "./pages/Dashboard";
 import Sessions from "./pages/Sessions";
 import SessionReport from "./pages/SessionReport";
 import Changelog from "./pages/Changelog";
+import CodeDemo from "./pages/CodeDemo";
+import Settings from "./pages/Settings";
 
 function App() {
   const [scrolled, setScrolled] = useState(false);
@@ -59,7 +61,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white overflow-hidden">
+    <div className="min-h-screen overflow-hidden font-sans text-white bg-slate-950">
       <Navbar scrolled={scrolled} />
       <ScrollToTop />
 
@@ -80,16 +82,18 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/faq" element={<Faq />} />
             <Route path="/demo" element={<DemoApp />} />
-            <Route path="/dashboard" element={<Dashboard />} />           
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/sessions" element={<Sessions />} />
             <Route path="/sessions/:id" element={<SessionReport />} />
             <Route path="/changelog" element={<Changelog />} />
+            <Route path="/code-demo" element={<CodeDemo />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </motion.div>
       </AnimatePresence>
 
       <FloatingAnnouncement />
-      <BackToTop />  
+      <BackToTop />
       <Footer />
       <Analytics />
     </div>

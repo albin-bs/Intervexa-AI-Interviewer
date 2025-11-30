@@ -68,7 +68,7 @@ function About() {
                     <img
                       alt={person.name}
                       src={person.imageUrl}
-                      className="h-16 w-16 rounded-full object-cover outline outline-1 -outline-offset-1 outline-white/10"
+                      className="h-16 w-16 rounded-full object-cover outline-1 -outline-offset-1 outline-white/10"
                     />
                     <div>
                       <h3 className="text-sm sm:text-base font-semibold tracking-tight text-white">
