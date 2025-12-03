@@ -3,7 +3,6 @@
 > **MockMate is a next-generation AI-powered platform combining realistic mock interviews, interactive coding practice, and community-driven learning. Built for software engineers, students, and technical candidates, MockMate delivers personalized feedback, real-time code execution, AI-assisted debugging, and comprehensive analytics to help you master technical interviews, ace coding challenges, and land your dream job with confidence.**
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-mockmate.tech-blue?style=for-the-badge&logo=vercel)](https://mockmate.tech)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 ![Website](https://img.shields.io/website-up-down-green-red/https/mockmate.tech?style=for-the-badge)
 
 </div>
@@ -48,7 +47,7 @@
 - 🏆 **Leaderboard System** — Track your progress against 12.5K+ active users
 - 🔥 **Streak Tracking** — Maintain daily coding habits with visual streak badges
 - 📊 **User Statistics** — View solve counts by difficulty, language preferences
-- 🎮 **Discord Integration** — Join 3.2K+ developers in live chat
+- 🎮 **Discord Integration** — Join developers in live chat
 
 #### **4. Progress Analytics Dashboard**
 - 📈 **Performance Metrics** — Visualize acceptance rates, average runtimes, memory usage
@@ -56,12 +55,6 @@
 - 📊 **Session History** — Review all past interviews and coding sessions
 - 🏅 **Achievement System** — Earn badges for milestones (100-day streak, top-10 solver, etc.)
 - 📥 **Export & Sharing** — Download reports or share highlights with mentors
-
-#### **5. Premium Features**
-- 💳 **Razorpay Integration** — Secure payment gateway for premium plans
-- 🎓 **Campus Placement Prep** — Specialized questions for college recruitment
-- 🌍 **Location-Based Interviews** — Region-specific interview styles (India, US, Europe)
-- 👨‍💼 **1-on-1 Coaching** — Book sessions with industry experts
 
 ---
 
@@ -77,7 +70,6 @@
 ### **Backend & APIs**
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
 ![Judge0](https://img.shields.io/badge/Judge0-FF6C37?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAowAAAKMB8MeazgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAE)
 
 ### **AI & ML**
@@ -109,7 +101,7 @@
 
 ## 👨‍💻 Team Members
 
-<table align="left">
+<table align="center">
   <tr>
     <td align="center">
       <a href="https://github.com/AswinAsokan2004">
