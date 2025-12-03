@@ -1,8 +1,4 @@
-<div align="center">
-
 <img src="public/mockmate.png" alt="Mockmate AI" width="800"/>
-
-# 🚀 MockMate — AI-Powered Interview & Coding Platform
 
 > **MockMate is a next-generation AI-powered platform combining realistic mock interviews, interactive coding practice, and community-driven learning. Built for software engineers, students, and technical candidates, MockMate delivers personalized feedback, real-time code execution, AI-assisted debugging, and comprehensive analytics to help you master technical interviews, ace coding challenges, and land your dream job with confidence.**
 
@@ -85,8 +81,6 @@
 ![Judge0](https://img.shields.io/badge/Judge0-FF6C37?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAowAAAKMB8MeazgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAE)
 
 ### **AI & ML**
-![Google Gemini](https://img.shields.io/badge/Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white)
-![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
 ![Whisper](https://img.shields.io/badge/Whisper_API-412991?style=for-the-badge&logo=openai&logoColor=white)
 
 ### **Dev Tools**
@@ -97,43 +91,6 @@
 ### **Deployment**
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
-
----
-
-## 🏗 Architecture
-
-mockmate/
-├── client/ # Frontend (React + Vite)
-│ ├── src/
-│ │ ├── components/ # Reusable UI components
-│ │ ├── pages/ # Main pages (Home, Practice, Community, etc.)
-│ │ ├── data/ # Problem definitions, test cases
-│ │ ├── utils/ # Helper functions, API clients
-│ │ └── App.jsx # Root component with routing
-│ ├── public/ # Static assets
-│ └── index.html # Entry point
-│
-├── server/ # Backend (Express + Node.js)
-│ ├── routes/ # API endpoints
-│ │ ├── execute.js # Code execution via Judge0
-│ │ ├── ai.js # AI feedback, explanations, refactoring
-│ │ └── auth.js # User authentication
-│ ├── problems/ # Problem test case definitions
-│ ├── middleware/ # Auth, rate limiting, error handling
-│ └── server.js # Express app entry
-│
-├── docs/ # Documentation
-│ ├── setup.md # Installation & deployment guide
-│ ├── api.md # Backend API reference
-│ ├── ai.md # AI model integration details
-│ ├── customization.md # Theming & config guide
-│ ├── testing.md # Testing strategies
-│ └── faq.md # Common questions
-│
-├── CONTRIBUTING.md # Contribution guidelines
-├── CHANGELOG.md # Version history
-├── LICENSE # MIT License
-└── README.md # This file
 
 ---
 
@@ -152,7 +109,7 @@ mockmate/
 
 ## 👨‍💻 Team Members
 
-<table align="center">
+<table align="left">
   <tr>
     <td align="center">
       <a href="https://github.com/AswinAsokan2004">
@@ -195,20 +152,11 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for:
 - 🔧 Submitting pull requests
 - 📝 Improving documentation
 
-### Development Workflow
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
 ---
 
 ## 🏆 Acknowledgments
 
 - **Judge0** for code execution infrastructure
-- **Google Gemini** for AI-powered feedback
 - **Tailwind UI** for design inspiration
 - **Open Source Community** for amazing tools and libraries
 
@@ -237,22 +185,12 @@ If MockMate helped you, consider supporting the developers:
 
 ---
 
-## 📊 Stats
-
-![Profile views](https://komarev.com/ghpvc/?username=albin-bs&color=blue&style=for-the-badge)
-![GitHub Stars](https://img.shields.io/github/stars/albin-bs/mockmate?style=for-the-badge)
-![GitHub Forks](https://img.shields.io/github/forks/albin-bs/mockmate?style=for-the-badge)
-![GitHub Issues](https://img.shields.io/github/issues/albin-bs/mockmate?style=for-the-badge)
-
----
-
 <div align="center">
-
-### Built with ❤️ by the MockMate Team
 
 <img src="https://user-images.githubusercontent.com/74038190/212257465-7ce8d493-cac5-494e-982a-5a9deb852c4b.gif" width="100">
 <img src="https://user-images.githubusercontent.com/74038190/212284087-bbe7e430-757e-4901-90bf-4cd2ce3e1852.gif" width="100">
 <img src="https://user-images.githubusercontent.com/74038190/212257468-1e9a91f1-b626-4baa-b15d-5c385dfa7ed2.gif" width="100">
+
 
 **© 2025 MockMate — Empowering the next generation of developers**
 
