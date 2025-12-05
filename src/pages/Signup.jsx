@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -56,11 +57,48 @@ export default function Signup() {
 
     setLoading(true);
     setSuccess(false);
+    
     try {
-      // TODO: call backend / Firebase / Clerk etc.
+      // ✅ TODO: Replace with your actual backend API call
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
+      // For now, simulate successful signup
       await new Promise((r) => setTimeout(r, 1200));
-      console.log("Signup attempt:", form);
+      
+      const data = {
+        accessToken: "mock-token-" + Date.now(),
+        userId: "user-" + Date.now(),
+        email: form.email,
+      };
+
+      // ✅ Store auth tokens
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("userEmail", data.email);
+      localStorage.setItem("userName", form.name);
+      
+      // ✅ Mark as new user who needs onboarding
+      localStorage.setItem("needsOnboarding", "true");
+      
+      console.log("Signup successful:", form);
       setSuccess(true);
+
+      // ✅ Navigate to onboarding after 1 second
+      setTimeout(() => {
+        navigate("/onboarding");
+      }, 1000);
+
+    } catch (error) {
+      console.error("Signup error:", error);
+      setErrors({ submit: "Something went wrong. Please try again." });
     } finally {
       setLoading(false);
     }
@@ -106,6 +144,13 @@ export default function Signup() {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+              {/* General error message */}
+              {errors.submit && (
+                <div className="px-4 py-3 text-sm border rounded-lg bg-rose-500/10 border-rose-500/20 text-rose-400">
+                  {errors.submit}
+                </div>
+              )}
+
               <div>
                 <label
                   htmlFor="name"
@@ -233,7 +278,7 @@ export default function Signup() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center justify-center w-full gap-2 px-4 py-3 text-sm font-semibold text-white transition-all duration-200 bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 disabled:bg-blue-500/50 shadow-blue-500/30"
+                className="flex items-center justify-center w-full gap-2 px-4 py-3 text-sm font-semibold text-white transition-all duration-200 bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 disabled:bg-blue-500/50 disabled:cursor-not-allowed shadow-blue-500/30"
               >
                 {loading ? (
                   <>
@@ -246,16 +291,31 @@ export default function Signup() {
               </button>
             </form>
 
-            {/* Simple success toast */}
+            {/* Success message */}
             {success && (
-              <div className="px-4 py-3 mt-4 text-xs text-white rounded-lg shadow-lg bg-emerald-600">
-                Account created successfully. You can now sign in.
+              <div className="flex items-center gap-2 px-4 py-3 mt-4 text-sm text-white rounded-lg shadow-lg bg-emerald-600">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Account created! Redirecting to onboarding...
               </div>
             )}
+
+            {/* Terms notice */}
+            <p className="mt-6 text-xs text-center text-slate-500">
+              By creating an account, you agree to our{" "}
+              <Link to="/terms" className="text-slate-400 hover:text-slate-300">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link to="/privacy" className="text-slate-400 hover:text-slate-300">
+                Privacy Policy
+              </Link>
+            </p>
           </div>
         </div>
 
-        {/* Right side - Image (reuse from login) */}
+        {/* Right side - Image */}
         <div className="relative hidden lg:block lg:w-1/2">
           <img
             src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=1200&auto=format&fit=crop"

@@ -1,67 +1,148 @@
-import { useEffect, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { useEffect, useState, lazy, Suspense } from "react";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { AnimatePresence, motion } from "framer-motion";
 
+// ✅ Keep critical components loaded immediately
 import SplashScreen from "./components/SplashScreen";
 import ScrollToTop from "./components/ScrollToTop";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
-import Stats from "./components/Stats";
-import Features from "./components/Features";
-import Pricing from "./components/Pricing";
-import Testimonials from "./components/Testimonials";
 import Footer from "./components/Footer";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsOfService from "./pages/TermsOfService";
-import About from "./pages/About";
-import Login from "./pages/Login";
-import Contact from "./pages/Contact";
-import Faq from "./pages/Faq";
-import FloatingAnnouncement from "./components/FloatingAnnouncement";
-import BackToTop from "./components/BackToTop";
-import DemoApp from "./pages/DemoApp";
-import Dashboard from "./pages/Dashboard";
-import Sessions from "./pages/Sessions";
-import SessionReport from "./pages/SessionReport";
-import Changelog from "./pages/Changelog";
-import CodeDemo from "./pages/CodeDemo";
-import Settings from "./pages/Settings";
-import SignupOverview from "./pages/SignupOverview";
-import VerifyMethod from "./pages/VerifyMethod";
-import VerifyStart from "./pages/VerifyStart";
-import VerifyCode from "./pages/VerifyCode";
-import VerifySuccess from "./pages/VerifySuccess";
-import Signup from "./pages/Signup";
-import Problems from "./pages/Problems";
-import Community from "./pages/Community";
-import ProblemDiscussion from "./pages/ProblemDiscussion"; 
+
+// ✅ Lazy load non-critical components
+const Stats = lazy(() => import("./components/Stats"));
+const Features = lazy(() => import("./components/Features"));
+const Pricing = lazy(() => import("./components/Pricing"));
+const Testimonials = lazy(() => import("./components/Testimonials"));
+const FloatingAnnouncement = lazy(() => import("./components/FloatingAnnouncement"));
+const BackToTop = lazy(() => import("./components/BackToTop"));
+
+// ✅ Lazy load pages
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Faq = lazy(() => import("./pages/Faq"));
+const Changelog = lazy(() => import("./pages/Changelog"));
+const DemoApp = lazy(() => import("./pages/DemoApp"));
+const CodeDemo = lazy(() => import("./pages/CodeDemo"));
+
+// Auth pages
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const UserOnboarding = lazy(() => import("./pages/UserOnboarding"));
+
+// Verification pages
+const VerifyMethod = lazy(() => import("./pages/VerifyMethod"));
+const VerifyStart = lazy(() => import("./pages/VerifyStart"));
+const VerifyCode = lazy(() => import("./pages/VerifyCode"));
+const VerifySuccess = lazy(() => import("./pages/VerifySuccess"));
+
+// Protected pages
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Sessions = lazy(() => import("./pages/Sessions"));
+const SessionReport = lazy(() => import("./pages/SessionReport"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Interview = lazy(() => import("./pages/Interview"));
+const Problems = lazy(() => import("./pages/Problems"));
+const ProblemDiscussion = lazy(() => import("./pages/ProblemDiscussion"));
+const Community = lazy(() => import("./pages/Community"));
+
+// ✅ Loading Fallback Component
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-screen bg-slate-950">
+    <div className="flex flex-col items-center gap-4">
+      <div className="relative">
+        <div className="w-12 h-12 border-4 rounded-full border-slate-800" />
+        <motion.div
+          className="absolute inset-0 w-12 h-12 border-4 border-transparent rounded-full border-t-blue-500"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+      <p className="text-sm text-slate-400">Loading...</p>
+    </div>
+  </div>
+);
+
+// ✅ Protected Route Component
+function ProtectedRoute({ children }) {
+  const isAuthenticated = !!localStorage.getItem("accessToken");
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <Suspense fallback={<LoadingFallback />}>{children}</Suspense>;
+}
+
+// ✅ Onboarding Route Component
+function OnboardingRoute({ children }) {
+  const needsOnboarding = localStorage.getItem("needsOnboarding") === "true";
+  const isAuthenticated = !!localStorage.getItem("accessToken");
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  if (!needsOnboarding) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return <Suspense fallback={<LoadingFallback />}>{children}</Suspense>;
+}
 
 function App() {
   const [scrolled, setScrolled] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
+  const [isRouteChanging, setIsRouteChanging] = useState(false);
   const location = useLocation();
 
+  // Splash screen timer
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 2500);
     return () => clearTimeout(timer);
   }, []);
 
+  // Throttled scroll handler
   useEffect(() => {
-    function handleScroll() {
+    const handleScroll = () => {
       setScrolled(window.scrollY > 50);
-    }
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    };
+    
+    let ticking = false;
+    const throttledScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    
+    window.addEventListener("scroll", throttledScroll, { passive: true });
+    return () => window.removeEventListener("scroll", throttledScroll);
   }, []);
 
+  // Track route changes for loading indicator
+  useEffect(() => {
+    setIsRouteChanging(true);
+    const timer = setTimeout(() => setIsRouteChanging(false), 300);
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+
+  // ✅ Home component with lazy loaded sections
   const Home = () => (
     <>
       <Hero />
-      <Stats />
-      <Features />
-      <Pricing />
-      <Testimonials />
+      <Suspense fallback={<div className="h-96 bg-slate-950" />}>
+        <Stats />
+        <Features />
+        <Pricing />
+        <Testimonials />
+      </Suspense>
     </>
   );
 
@@ -74,6 +155,28 @@ function App() {
       <Navbar scrolled={scrolled} />
       <ScrollToTop />
 
+      {/* ✅ Route transition loading overlay */}
+      <AnimatePresence>
+        {isRouteChanging && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none bg-slate-950/60 backdrop-blur-sm"
+          >
+            <div className="relative">
+              <div className="w-12 h-12 border-4 rounded-full border-slate-800" />
+              <motion.div
+                className="absolute inset-0 w-12 h-12 border-4 border-transparent rounded-full border-t-blue-500"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence mode="wait">
         <motion.div
           key={location.pathname}
@@ -82,36 +185,145 @@ function App() {
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
         >
-          <Routes location={location}>
-            <Route path="/" element={<Home />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<TermsOfService />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/faq" element={<Faq />} />
-            <Route path="/demo" element={<DemoApp />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/sessions" element={<Sessions />} />
-            <Route path="/sessions/:id" element={<SessionReport />} />
-            <Route path="/changelog" element={<Changelog />} />
-            <Route path="/code-demo" element={<CodeDemo />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/verify/method" element={<VerifyMethod />} />
-            <Route path="/verify/start" element={<VerifyStart />} />
-            <Route path="/verify/code" element={<VerifyCode />} />
-            <Route path="/verify/success" element={<VerifySuccess />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/signup-flow/overview" element={<SignupOverview />} />
-            <Route path="/problems" element={<Problems />} />
-            <Route path="/community" element={<Community />} />
-            <Route path="/problems/:id/discuss" element={<ProblemDiscussion />} />
-          </Routes>
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes location={location}>
+              {/* ========== Public Routes ========== */}
+              <Route path="/" element={<Home />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/faq" element={<Faq />} />
+              <Route path="/changelog" element={<Changelog />} />
+              <Route path="/demo" element={<DemoApp />} />
+              <Route path="/code-demo" element={<CodeDemo />} />
+              
+              {/* ========== Auth Routes ========== */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+
+              {/* ========== Onboarding Route ========== */}
+              <Route 
+                path="/onboarding" 
+                element={
+                  <OnboardingRoute>
+                    <UserOnboarding />
+                  </OnboardingRoute>
+                } 
+              />
+
+              {/* ========== Verification Routes ========== */}
+              <Route 
+                path="/verify/method" 
+                element={
+                  <ProtectedRoute>
+                    <VerifyMethod />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/verify/start" 
+                element={
+                  <ProtectedRoute>
+                    <VerifyStart />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/verify/code" 
+                element={
+                  <ProtectedRoute>
+                    <VerifyCode />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/verify/success" 
+                element={
+                  <ProtectedRoute>
+                    <VerifySuccess />
+                  </ProtectedRoute>
+                } 
+              />
+
+              {/* ========== Protected App Routes ========== */}
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/sessions" 
+                element={
+                  <ProtectedRoute>
+                    <Sessions />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/sessions/:id" 
+                element={
+                  <ProtectedRoute>
+                    <SessionReport />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/settings" 
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/interview" 
+                element={
+                  <ProtectedRoute>
+                    <Interview />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/problems" 
+                element={
+                  <ProtectedRoute>
+                    <Problems />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/problems/:id/discuss" 
+                element={
+                  <ProtectedRoute>
+                    <ProblemDiscussion />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/community" 
+                element={
+                  <ProtectedRoute>
+                    <Community />
+                  </ProtectedRoute>
+                } 
+              />
+
+              {/* ========== Catch All (404) ========== */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
         </motion.div>
       </AnimatePresence>
 
-      <FloatingAnnouncement />
-      <BackToTop />
+      <Suspense fallback={null}>
+        <FloatingAnnouncement />
+        <BackToTop />
+      </Suspense>
+      
       <Footer />
       <Analytics />
     </div>

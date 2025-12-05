@@ -1,19 +1,28 @@
-import { useState, useEffect } from "react";
-import { ArrowRight, ChevronDown, Play, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { ArrowRight, ChevronDown, Play, Sparkles, X, Code2, Zap, CheckCircle } from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { nightOwl } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import PrimaryButton from "./common/PrimaryButton";
 import { codeExamples, floatingCards } from "../data/CodeExamples";
 
-// Typing effect hook for code window
+// Typing effect hook - only runs once
 function useTypingEffect(text, speed = 12) {
   const [displayed, setDisplayed] = useState("");
+  const hasTypedRef = useRef(false);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (!text) {
-      setDisplayed("");
+    if (!text || hasTypedRef.current) {
+      if (hasTypedRef.current) {
+        setDisplayed(text);
+      }
+      return;
+    }
+
+    if (prefersReducedMotion) {
+      setDisplayed(text);
+      hasTypedRef.current = true;
       return;
     }
 
@@ -23,326 +32,452 @@ function useTypingEffect(text, speed = 12) {
     const interval = setInterval(() => {
       i += 1;
       setDisplayed(text.slice(0, i));
-      if (i >= text.length) clearInterval(interval);
+      if (i >= text.length) {
+        clearInterval(interval);
+        hasTypedRef.current = true;
+      }
     }, speed);
 
     return () => clearInterval(interval);
-  }, [text, speed]);
+  }, [text, speed, prefersReducedMotion]);
 
   return displayed;
 }
 
-// Variants for staggered title reveal
-const titleContainerVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
-      ease: "easeOut",
-      duration: 0.4,
-    },
-  },
-};
-
-const titleLineVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { ease: "easeOut", duration: 0.45 },
-  },
-};
+const features = [
+  { icon: <Zap className="w-4 h-4" />, text: "AI-Powered Feedback" },
+  { icon: <Code2 className="w-4 h-4" />, text: "Real Coding Practice" },
+  { icon: <CheckCircle className="w-4 h-4" />, text: "Track Progress" },
+];
 
 export default function Hero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [activeTab, setActiveTab] = useState("App.jsx");
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  
+  // ✅ Track if component has mounted (animations played)
+  const hasMountedRef = useRef(false);
 
   const navigate = useNavigate();
-  const isAuthenticated = !!localStorage.getItem("accessToken"); // adjust key to your auth
+  const isAuthenticated = !!localStorage.getItem("accessToken");
 
   const handleStartPracticing = () => {
-    if (!isAuthenticated) {
-      navigate("/login");
-    } else {
-      navigate("/app"); // or "/dashboard"
-    }
+    navigate(isAuthenticated ? "/dashboard" : "/signup");
   };
 
+  // Mark as mounted on first render
   useEffect(() => {
-    function handleMouseMove(e) {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    }
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    hasMountedRef.current = true;
   }, []);
 
-  const currentFloatingCard = floatingCards[activeTab];
-  const fullCode = codeExamples[activeTab];
-  const typedCode = useTypingEffect(fullCode, 12); // smaller = faster typing
+  // Throttled mouse tracking
+  useEffect(() => {
+    let timeoutId;
+    function handleMouseMove(e) {
+      if (timeoutId) return;
+      timeoutId = setTimeout(() => {
+        setMousePosition({ x: e.clientX, y: e.clientY });
+        timeoutId = null;
+      }, 16);
+    }
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, []);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    document.body.style.overflow = isVideoOpen ? "hidden" : "unset";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isVideoOpen]);
+
+  const currentFloatingCard = useMemo(() => floatingCards[activeTab], [activeTab]);
+  const fullCode = useMemo(() => codeExamples[activeTab], [activeTab]);
+  const typedCode = useTypingEffect(fullCode, 12);
 
   return (
     <>
-      <motion.section
-        className="relative overflow-hidden isolate bg-slate-950"
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        {/* Top blurred blob */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 overflow-hidden -top-40 -z-10 transform-gpu blur-3xl sm:-top-80"
-        >
-          <div
-            className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#2563eb] to-[#22d3ee] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72rem]"
-            style={{
-              clipPath:
-                "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5, 60.2% 62.4, 52.4% 68.1, 47.5% 58.3, 45.2% 34.5, 27.5% 76.7, 0.1% 64.9, 17.9% 100, 27.6% 76.8, 76.1% 97.7, 74.1% 44.1)",
+      <section className="relative overflow-hidden isolate bg-slate-950">
+        {/* Animated background layers */}
+        <div className="absolute inset-0 -z-10">
+          {/* Top gradient blob */}
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
             }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            aria-hidden="true"
+            className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-to-r from-blue-600/30 via-cyan-500/20 to-indigo-600/30 rounded-full blur-3xl"
+          />
+
+          {/* Bottom gradient blob */}
+          <motion.div
+            animate={{
+              scale: [1.2, 1, 1.2],
+              opacity: [0.2, 0.4, 0.2],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2,
+            }}
+            aria-hidden="true"
+            className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-l from-indigo-600/20 via-purple-500/20 to-pink-500/10 rounded-full blur-3xl"
+          />
+
+          {/* Grid pattern overlay */}
+          <div
+            className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20"
+            aria-hidden="true"
+          />
+
+          {/* Radial mouse highlight */}
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(59,130,246,0.15), transparent 40%)`,
+            }}
+            aria-hidden="true"
           />
         </div>
 
-        {/* Radial mouse highlight */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-30"
-          style={{
-            background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(59,130,246,0.18), transparent 40%)`,
-          }}
-        />
-
-        <div className="px-6 pt-24 pb-24 sm:pt-28 sm:pb-28 lg:px-8">
-          <div className="items-center mx-auto max-w-7xl lg:grid lg:grid-cols-2 lg:gap-16">
-            {/* Left column */}
-            <motion.div
-              initial={{ opacity: 0, x: -24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            >
-              <div className="inline-flex items-center px-3 py-2 mb-5 space-x-2 border rounded-full bg-blue-500/10 sm:px-4 border-blue-500/20">
+        <div className="relative px-6 pt-24 pb-24 sm:pt-32 sm:pb-32 lg:px-8">
+          <div className="items-center mx-auto max-w-7xl lg:grid lg:grid-cols-2 lg:gap-20">
+            {/* Left column - Content - ✅ NO initial/animate props */}
+            <div className="duration-700 animate-in fade-in-up">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 duration-500 delay-200 border rounded-full bg-blue-500/10 border-blue-500/20 backdrop-blur-sm animate-in scale-in">
                 <Sparkles className="w-4 h-4 text-blue-400" />
-                <span className="text-xs text-blue-300 sm:text-sm">
-                  Meet Mockmate AI – Interview Redefined
+                <span className="text-sm font-medium text-blue-300">
+                  Meet MockMate AI – Interview Redefined
                 </span>
               </div>
 
-              {/* Sequential title reveal */}
-              <motion.div
-                variants={titleContainerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.6 }}
-                className="mb-4 space-y-1 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl text-balance"
-              >
-                <motion.h1 variants={titleLineVariants}>
-                  <span className="block text-transparent bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text">
+              {/* Main title - ✅ Using CSS animations only */}
+              <div className="mb-6 space-y-2">
+                <h1 className="text-5xl font-bold tracking-tight duration-700 delay-100 sm:text-6xl lg:text-7xl animate-in slide-in-from-bottom">
+                  <span className="block text-transparent bg-gradient-to-r from-white via-blue-50 to-white bg-clip-text">
                     Practice Smarter
                   </span>
-                </motion.h1>
+                </h1>
 
-                <motion.h1 variants={titleLineVariants}>
-                  <span className="block text-transparent bg-gradient-to-b from-blue-400 via-cyan-400 to-blue-400 bg-clip-text">
+                <h1 className="text-5xl font-bold tracking-tight duration-700 delay-200 sm:text-6xl lg:text-7xl animate-in slide-in-from-bottom">
+                  <span className="block text-transparent bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text">
                     Ace Every Interview
                   </span>
-                </motion.h1>
+                </h1>
 
-                <motion.h1 variants={titleLineVariants}>
-                  <span className="block text-transparent bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text">
-                    With Mockmate AI
+                <h1 className="text-5xl font-bold tracking-tight duration-700 delay-300 sm:text-6xl lg:text-7xl animate-in slide-in-from-bottom">
+                  <span className="block text-transparent bg-gradient-to-r from-white via-blue-50 to-white bg-clip-text">
+                    With MockMate AI
                   </span>
-                </motion.h1>
-              </motion.div>
+                </h1>
+              </div>
 
-              <p className="max-w-xl mt-4 text-base text-gray-400 sm:text-lg">
+              {/* Description */}
+              <p className="max-w-xl text-lg leading-relaxed text-gray-300 duration-700 delay-500 sm:text-xl animate-in fade-in-up">
                 Accelerate your prep with adaptive mock questions, instant AI
                 feedback, and data-driven insights—so you're always ready for
                 the real thing.
               </p>
 
-              <div className="flex flex-col items-center gap-3 mt-8 sm:flex-row sm:gap-4">
-                <motion.div
-                  className="overflow-hidden rounded-full"
-                  whileHover={{
-                    y: -6,
-                    scale: 1.03,
-                    boxShadow: "0 0 40px rgba(37,99,235,0.8)",
-                  }}
-                  transition={{ type: "spring", stiffness: 400, damping: 18 }}
-                >
-                  <PrimaryButton
-                    className="w-full gap-2 rounded-full sm:w-auto"
-                    onClick={handleStartPracticing}
+              {/* Feature badges */}
+              <div className="flex flex-wrap gap-3 mt-6">
+                {features.map((feature, i) => (
+                  <div
+                    key={i}
+                    className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-100 duration-500 border rounded-lg bg-white/5 border-white/10 backdrop-blur-sm animate-in scale-in"
+                    style={{ animationDelay: `${700 + i * 100}ms` }}
                   >
-                    <span>Start Practicing Free</span>
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </PrimaryButton>
-                </motion.div>
-
-                <button
-                  type="button"
-                  onClick={() => setIsVideoOpen(true)}
-                  className="group w-full sm:w-auto rounded-lg border border-white/10 bg-white/5 px-6 sm:px-8 py-3.5 text-sm sm:text-base font-semibold text-white/90 backdrop-blur-md transition hover:bg-white/10 flex items-center justify-center gap-2"
-                >
-                  <div className="p-2 transition rounded-full bg-white/10 group-hover:bg-white/20">
-                    <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
+                    <div className="text-blue-400">{feature.icon}</div>
+                    {feature.text}
                   </div>
-                  <span>See How It Works</span>
-                </button>
+                ))}
               </div>
-            </motion.div>
 
-            {/* Right column with typing effect */}
-            <motion.div
-              className="relative mt-12 lg:mt-0"
-              initial={{ opacity: 0, x: 24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-            >
-              <div className="relative p-4 border shadow-2xl bg-white/5 backdrop-blur-xl rounded-2xl border-white/10">
-                <div className="bg-gradient-to-br from-slate-900/40 to-slate-800/40 rounded-xl overflow-hidden h-[320px] sm:h-[380px] lg:h-[430px] border border-white/5">
-                  <div className="flex items-center justify-between px-4 py-3 border-b bg-white/5 border-white/10">
-                    <div className="flex items-center space-x-2">
-                      <div className="flex items-center space-x-1">
-                        <span className="w-3 h-3 bg-red-500 rounded-full" />
-                        <span className="w-3 h-3 bg-yellow-500 rounded-full" />
-                        <span className="w-3 h-3 bg-green-500 rounded-full" />
+              {/* CTA Buttons */}
+              <div className="flex flex-col items-stretch gap-4 mt-10 duration-700 delay-700 sm:flex-row sm:items-center animate-in fade-in-up">
+                {/* Primary CTA */}
+                <motion.button
+                  onClick={handleStartPracticing}
+                  onHoverStart={() => setIsHovering(true)}
+                  onHoverEnd={() => setIsHovering(false)}
+                  whileHover={{ scale: 1.05, y: -4 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                  className="relative flex items-center justify-center w-full gap-2 px-8 py-4 overflow-hidden text-lg font-bold text-white rounded-full sm:w-auto group"
+                >
+                  <div className="absolute inset-0 transition-all duration-300 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 group-hover:from-blue-500 group-hover:via-blue-600 group-hover:to-indigo-500" />
+                  
+                  <motion.div
+                    className="absolute inset-0 opacity-50 blur-2xl bg-gradient-to-r from-blue-400 via-cyan-400 to-indigo-400"
+                    animate={{
+                      scale: isHovering ? [1, 1.2, 1] : 1,
+                      opacity: isHovering ? [0.5, 0.8, 0.5] : 0.5,
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: isHovering ? Infinity : 0,
+                    }}
+                  />
+                  
+                  <span className="relative flex items-center gap-2">
+                    Start Practicing Free
+                    <motion.div
+                      animate={{ x: isHovering ? [0, 4, 0] : 0 }}
+                      transition={{ duration: 0.8, repeat: Infinity }}
+                    >
+                      <ArrowRight className="w-5 h-5" />
+                    </motion.div>
+                  </span>
+                </motion.button>
+
+                {/* Secondary CTA */}
+                <motion.button
+                  onClick={() => setIsVideoOpen(true)}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center justify-center w-full gap-3 px-6 py-4 text-base font-semibold transition-all border rounded-full group sm:w-auto border-white/10 bg-white/5 text-white/90 backdrop-blur-md hover:bg-white/10 hover:border-white/20"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    className="flex items-center justify-center w-10 h-10 transition rounded-full bg-white/10 group-hover:bg-white/20"
+                  >
+                    <Play className="w-5 h-5 fill-white" />
+                  </motion.div>
+                  <span>See How It Works</span>
+                </motion.button>
+              </div>
+
+              {/* Trust indicators */}
+              <div className="flex items-center gap-6 mt-8 text-sm text-gray-400 duration-700 delay-1000 animate-in fade-in">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-emerald-400" />
+                  <span>Free 14-day trial</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-emerald-400" />
+                  <span>No credit card</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-emerald-400" />
+                  <span>50K+ users</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right column - Code window */}
+            <div className="relative mt-16 duration-700 delay-200 lg:mt-0 animate-in slide-in-from-right">
+              {/* Main code editor */}
+              <motion.div
+                whileHover={{ y: -4 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="relative p-1 overflow-hidden border shadow-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 backdrop-blur-xl rounded-2xl border-white/10"
+              >
+                {/* Animated border glow */}
+                <motion.div
+                  animate={{
+                    opacity: [0.5, 1, 0.5],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/20 via-cyan-500/20 to-indigo-500/20 blur-xl"
+                />
+
+                <div className="relative bg-slate-900/90 backdrop-blur-xl rounded-xl overflow-hidden h-[400px] sm:h-[450px] lg:h-[500px] border border-white/5">
+                  {/* Window header */}
+                  <div className="flex items-center justify-between px-4 py-3 border-b bg-slate-800/50 border-white/10">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-red-500 rounded-full" />
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full" />
+                        <div className="w-3 h-3 bg-green-500 rounded-full" />
                       </div>
-                      <span className="text-xs text-gray-300 sm:text-sm">
-                        Mockmate AI
+                      <span className="text-sm font-medium text-gray-300">
+                        MockMate AI Editor
                       </span>
                     </div>
                     <ChevronDown className="w-4 h-4 text-gray-400" />
                   </div>
 
-                  <div className="flex flex-col h-full p-4">
-                    <div className="flex mb-3 space-x-2 overflow-x-auto">
-                      {["App.jsx", "Hero.jsx", "Navbar.jsx"].map((tab) => (
-                        <button
-                          key={tab}
-                          onClick={() => setActiveTab(tab)}
-                          className={`px-3 py-2 rounded-t-lg border text-xs sm:text-sm whitespace-nowrap ${
-                            activeTab === tab
-                              ? "bg-blue-500/30 text-white border-blue-400/30"
-                              : "bg-white/5 text-gray-300 border-white/10 hover:bg-white/10"
-                          }`}
-                        >
-                          {tab}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="relative flex-1 overflow-hidden">
-                      <SyntaxHighlighter
-                        language="javascript"
-                        style={nightOwl}
-                        customStyle={{
-                          margin: 0,
-                          borderRadius: "10px",
-                          fontSize: "11px",
-                          lineHeight: "1.4",
-                          height: "100%",
-                          border: "1px solid #1f2937",
-                          wordWrap: "break-word",
-                          whiteSpace: "pre-wrap",
-                          textAlign: "left",
-                        }}
+                  {/* Tab bar */}
+                  <div className="flex gap-1 p-2 overflow-x-auto border-b bg-slate-900/50 border-white/5">
+                    {["App.jsx", "Hero.jsx", "Navbar.jsx"].map((tab) => (
+                      <motion.button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        whileHover={{ y: -1 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`relative px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+                          activeTab === tab
+                            ? "bg-blue-500/20 text-white border border-blue-500/30"
+                            : "bg-transparent text-gray-400 hover:text-white hover:bg-white/5"
+                        }`}
                       >
-                        {typedCode}
-                      </SyntaxHighlighter>
-                    </div>
+                        {activeTab === tab && (
+                          <motion.div
+                            layoutId="activeTab"
+                            className="absolute inset-0 border rounded-lg bg-blue-500/20 border-blue-500/30"
+                            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                          />
+                        )}
+                        <span className="relative">{tab}</span>
+                      </motion.button>
+                    ))}
+                  </div>
+
+                  {/* Code content */}
+                  <div className="relative flex-1 h-full overflow-auto">
+                    <SyntaxHighlighter
+                      language="javascript"
+                      style={nightOwl}
+                      customStyle={{
+                        margin: 0,
+                        padding: "1rem",
+                        background: "transparent",
+                        fontSize: "12px",
+                        lineHeight: "1.6",
+                        height: "100%",
+                      }}
+                      showLineNumbers
+                    >
+                      {typedCode}
+                    </SyntaxHighlighter>
                   </div>
                 </div>
+              </motion.div>
 
-                <div
-                  className={`hidden lg:block absolute -bottom-6 -right-6 w-72 ${currentFloatingCard.bgColor} backdrop-blur-xl rounded-xl p-4 border border-white/20 shadow-2xl`}
+              {/* Floating info card */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, scale: 0.8, y: 30 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, y: 30 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  className={`hidden lg:block absolute -bottom-8 -right-8 w-80 ${currentFloatingCard.bgColor} backdrop-blur-xl rounded-2xl p-5 border border-white/20 shadow-2xl`}
                 >
-                  <div className="flex items-center mb-2 space-x-2">
+                  <div className="flex items-start gap-3 mb-3">
                     <div
-                      className={`w-7 h-7 ${currentFloatingCard.iconColor} flex items-center justify-center text-sm font-bold rounded-lg`}
+                      className={`w-10 h-10 ${currentFloatingCard.iconColor} flex items-center justify-center text-lg font-bold rounded-xl shadow-lg`}
                     >
                       {currentFloatingCard.icon}
                     </div>
-                    <span
-                      className={`text-sm font-medium ${currentFloatingCard.textColor}`}
-                    >
-                      {currentFloatingCard.title}
-                    </span>
+                    <div className="flex-1">
+                      <h3
+                        className={`text-base font-bold ${currentFloatingCard.textColor} mb-1`}
+                      >
+                        {currentFloatingCard.title}
+                      </h3>
+                      <p className={`text-sm ${currentFloatingCard.contentColor}`}>
+                        {currentFloatingCard.content}
+                      </p>
+                    </div>
                   </div>
-                  <p
-                    className={`text-sm ${currentFloatingCard.contentColor} text-left`}
-                  >
-                    {currentFloatingCard.content}
-                  </p>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Video Modal */}
+      <AnimatePresence>
+        {isVideoOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsVideoOpen(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/90 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.4 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-5xl overflow-hidden border shadow-2xl bg-slate-950 rounded-3xl border-slate-800"
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500/20">
+                    <Play className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-white">
+                      MockMate AI Product Demo
+                    </h2>
+                    <p className="text-sm text-slate-400">
+                      See how it works in action
+                    </p>
+                  </div>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsVideoOpen(false)}
+                  className="flex items-center justify-center w-10 h-10 transition-colors rounded-full text-slate-400 hover:text-white hover:bg-slate-800"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
+              </div>
+
+              {/* Video */}
+              <div className="bg-black">
+                <video
+                  src="/mockmate-demo.mp4"
+                  controls
+                  autoPlay
+                  className="w-full bg-black aspect-video"
+                />
+              </div>
+
+              {/* Modal Footer */}
+              <div className="flex flex-col items-center justify-between gap-4 px-6 py-5 border-t sm:flex-row border-slate-800 bg-slate-900/80">
+                <p className="text-sm text-slate-400">
+                  Ready to start practicing?
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Link
+                      to="/signup"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors shadow-lg shadow-blue-500/30"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      Get Started Free
+                    </Link>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Link
+                      to="/code-demo"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+                    >
+                      <Code2 className="w-4 h-4" />
+                      Try Coding Demo
+                    </Link>
+                  </motion.div>
                 </div>
               </div>
             </motion.div>
-          </div>
-        </div>
-
-        {/* Bottom blurred blob */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
-        >
-          <div
-            className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36rem] -translate-x-1/2 bg-gradient-to-tr from-[#22d3ee] to-[#6366f1] opacity-25 sm:left-[calc(50%+36rem)] sm:w-[72rem]"
-            style={{
-              clipPath:
-                "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5, 60.2% 62.4, 52.4% 68.1, 47.5% 58.3, 45.2% 34.5, 27.5% 76.7, 0.1% 64.9, 17.9% 100, 27.6% 76.8, 76.1% 97.7, 74.1% 44.1)",
-            }}
-          />
-        </div>
-      </motion.section>
-
-      {/* Demo video modal */}
-      {isVideoOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="demo-title"
-        >
-          <div className="w-[90vw] max-w-3xl bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
-              <h2
-                id="demo-title"
-                className="text-sm font-semibold text-slate-100"
-              >
-                MockMateAI — Product Demo
-              </h2>
-              <button
-                onClick={() => setIsVideoOpen(false)}
-                className="text-xl leading-none rounded text-slate-400 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="bg-black">
-              <video
-                src="/mockmate-demo.mp4"
-                controls
-                autoPlay
-                className="w-full h-[260px] sm:h-[420px] object-contain bg-black"
-              />
-            </div>
-
-            <div className="flex items-center justify-end gap-3 px-4 py-3 border-t border-slate-800">
-              <Link
-                to="/code-demo"
-                className="px-4 py-2 text-sm text-white rounded-full bg-slate-800 hover:bg-slate-700"
-              >
-                Try coding demo
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

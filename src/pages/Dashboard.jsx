@@ -12,7 +12,8 @@ import {
   RadialLinearScale,
   Filler,
 } from "chart.js";
-import { Code, Flame, Trophy, TrendingUp, Calendar, CheckCircle } from "lucide-react";
+import { Code, Flame, Trophy, TrendingUp, Calendar, CheckCircle, Award, Target } from "lucide-react";
+import { motion } from "framer-motion";
 
 ChartJS.register(
   LineElement,
@@ -39,9 +40,68 @@ const SKILL_RADAR = {
   data: [70, 65, 55, 72, 68],
 };
 
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
+
+const cardHoverVariants = {
+  rest: { scale: 1 },
+  hover: {
+    scale: 1.02,
+    transition: {
+      duration: 0.2,
+      ease: "easeInOut",
+    },
+  },
+};
+
+const progressBarVariants = {
+  hidden: { width: 0 },
+  visible: (custom) => ({
+    width: `${custom}%`,
+    transition: {
+      duration: 1,
+      ease: "easeOut",
+      delay: 0.2,
+    },
+  }),
+};
+
+const streakVariants = {
+  initial: { scale: 1 },
+  animate: {
+    scale: [1, 1.1, 1],
+    transition: {
+      duration: 2,
+      repeat: Infinity,
+      repeatType: "reverse",
+    },
+  },
+};
+
 export default function Dashboard() {
   const [range, setRange] = useState("7d");
   const [role, setRole] = useState("All roles");
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Mock user data
   const [user, setUser] = useState({
@@ -92,6 +152,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     calculateStreak();
+    setIsLoaded(true);
   }, []);
 
   function calculateStreak() {
@@ -221,22 +282,45 @@ export default function Dashboard() {
 
   return (
     <main className="min-h-screen bg-[#0b1120] text-slate-100 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
+      <motion.div
+        className="mx-auto max-w-7xl"
+        variants={containerVariants}
+        initial="hidden"
+        animate={isLoaded ? "visible" : "hidden"}
+      >
         {/* Header */}
-        <header className="flex flex-col gap-4 mb-8 sm:flex-row sm:items-end sm:justify-between">
+        <motion.header
+          variants={itemVariants}
+          className="flex flex-col gap-4 mb-8 sm:flex-row sm:items-end sm:justify-between"
+        >
           <div>
-            <h1 className="text-3xl font-bold sm:text-4xl text-slate-100">
+            <motion.h1
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-3xl font-bold sm:text-4xl text-slate-100"
+            >
               Dashboard
-            </h1>
-            <p className="mt-2 text-sm sm:text-base text-slate-400">
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="mt-2 text-sm sm:text-base text-slate-400"
+            >
               Track your progress and keep improving your skills
-            </p>
+            </motion.p>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-wrap gap-3"
+          >
             <select
               value={range}
               onChange={(e) => setRange(e.target.value)}
-              className="px-3 py-2 text-sm border rounded-lg bg-slate-900 border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="px-3 py-2 text-sm transition-all border rounded-lg bg-slate-900 border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 hover:border-emerald-500"
             >
               {TIME_RANGES.map((r) => (
                 <option key={r} value={r}>
@@ -247,21 +331,31 @@ export default function Dashboard() {
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="px-3 py-2 text-sm border rounded-lg bg-slate-900 border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="px-3 py-2 text-sm transition-all border rounded-lg bg-slate-900 border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 hover:border-emerald-500"
             >
               {ROLES.map((r) => (
                 <option key={r}>{r}</option>
               ))}
             </select>
-          </div>
-        </header>
+          </motion.div>
+        </motion.header>
 
         {/* Top Row: Profile + Quick Actions */}
-        <div className="grid grid-cols-1 gap-6 mb-8 lg:grid-cols-3">
+        <motion.div
+          variants={itemVariants}
+          className="grid grid-cols-1 gap-6 mb-8 lg:grid-cols-3"
+        >
           {/* Profile Card */}
-          <div className="p-6 border lg:col-span-1 bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700 rounded-xl">
+          <motion.div
+            variants={cardHoverVariants}
+            initial="rest"
+            whileHover="hover"
+            className="p-6 border shadow-lg lg:col-span-1 bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700 rounded-xl"
+          >
             <div className="flex items-center gap-4 mb-4">
-              <img
+              <motion.img
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
                 src={user.avatar}
                 alt={user.name}
                 className="w-16 h-16 border-2 rounded-full border-emerald-500"
@@ -276,9 +370,14 @@ export default function Dashboard() {
             <div className="flex items-center justify-between pt-4 border-t border-slate-700">
               <div>
                 <p className="text-xs text-slate-400">Current Plan</p>
-                <p className="text-sm font-semibold text-emerald-400">
+                <motion.p
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-sm font-semibold text-emerald-400"
+                >
                   {user.plan}
-                </p>
+                </motion.p>
               </div>
               <div>
                 <p className="text-xs text-slate-400">Member Since</p>
@@ -290,57 +389,90 @@ export default function Dashboard() {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 gap-4 lg:col-span-2 sm:grid-cols-2">
-            <Link
-              to="/code-demo"
-              className="p-6 transition-all group bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 rounded-xl"
+            <motion.div
+              variants={cardHoverVariants}
+              initial="rest"
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
             >
-              <Code className="w-8 h-8 mb-3 text-white" />
-              <h3 className="mb-1 text-lg font-semibold text-white">
-                Start Coding
-              </h3>
-              <p className="text-sm text-emerald-100">
-                Solve problems and improve your skills
-              </p>
-            </Link>
+              <Link
+                to="/code-demo"
+                className="block p-6 transition-all shadow-lg group bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 rounded-xl"
+              >
+                {/* REMOVED icon animation wrapper */}
+                <Code className="w-8 h-8 mb-3 text-white" />
+                <h3 className="mb-1 text-lg font-semibold text-white">
+                  Start Coding
+                </h3>
+                <p className="text-sm text-emerald-100">
+                  Solve problems and improve your skills
+                </p>
+              </Link>
+            </motion.div>
 
-            <button className="p-6 text-left transition-all group bg-gradient-to-br from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 rounded-xl">
-              <Trophy className="w-8 h-8 mb-3 text-white" />
-              <h3 className="mb-1 text-lg font-semibold text-white">
-                Mock Interview
-              </h3>
-              <p className="text-sm text-indigo-100">
-                Practice with AI-powered interviews
-              </p>
-            </button>
+            <motion.div
+              variants={cardHoverVariants}
+              initial="rest"
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
+            >
+              <button className="w-full p-6 text-left transition-all shadow-lg group bg-gradient-to-br from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 rounded-xl">
+                {/* REMOVED icon animation wrapper */}
+                <Trophy className="w-8 h-8 mb-3 text-white" />
+                <h3 className="mb-1 text-lg font-semibold text-white">
+                  Mock Interview
+                </h3>
+                <p className="text-sm text-indigo-100">
+                  Practice with AI-powered interviews
+                </p>
+              </button>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Progress Tracker */}
-        <div className="p-6 mb-8 border bg-slate-900 border-slate-800 rounded-xl">
+        <motion.div
+          variants={itemVariants}
+          className="p-6 mb-8 border shadow-lg bg-slate-900 border-slate-800 rounded-xl"
+        >
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-semibold text-slate-100">
                 Practice Progress
               </h2>
-              <p className="mt-1 text-sm text-slate-400">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="mt-1 text-sm text-slate-400"
+              >
                 {totalSolved} / {totalProblems} problems solved
-              </p>
+              </motion.p>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800">
+            <motion.div
+              variants={streakVariants}
+              initial="initial"
+              animate="animate"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg shadow-md bg-slate-800"
+            >
               <Flame className="w-5 h-5 text-orange-400" />
               <span className="text-lg font-bold text-slate-100">{streak}</span>
               <span className="text-sm text-slate-400">day streak</span>
-            </div>
+            </motion.div>
           </div>
 
           {/* Progress Bars */}
           <div className="space-y-6">
             {/* Easy */}
-            <div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+            >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-emerald-400">Easy</span>
@@ -348,22 +480,32 @@ export default function Dashboard() {
                     {progress.easy.solved} / {progress.easy.total}
                   </span>
                 </div>
-                <span className="text-sm font-semibold text-slate-200">
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.2 }}
+                  className="text-sm font-semibold text-slate-200"
+                >
                   {Math.round((progress.easy.solved / progress.easy.total) * 100)}%
-                </span>
+                </motion.span>
               </div>
-              <div className="w-full h-3 rounded-full bg-slate-800">
-                <div
-                  className="h-3 transition-all rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400"
-                  style={{
-                    width: `${(progress.easy.solved / progress.easy.total) * 100}%`,
-                  }}
+              <div className="w-full h-3 overflow-hidden rounded-full bg-slate-800">
+                <motion.div
+                  className="h-3 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400"
+                  variants={progressBarVariants}
+                  initial="hidden"
+                  animate="visible"
+                  custom={(progress.easy.solved / progress.easy.total) * 100}
                 />
               </div>
-            </div>
+            </motion.div>
 
             {/* Medium */}
-            <div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6 }}
+            >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-amber-400">Medium</span>
@@ -371,22 +513,32 @@ export default function Dashboard() {
                     {progress.medium.solved} / {progress.medium.total}
                   </span>
                 </div>
-                <span className="text-sm font-semibold text-slate-200">
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.3 }}
+                  className="text-sm font-semibold text-slate-200"
+                >
                   {Math.round((progress.medium.solved / progress.medium.total) * 100)}%
-                </span>
+                </motion.span>
               </div>
-              <div className="w-full h-3 rounded-full bg-slate-800">
-                <div
-                  className="h-3 transition-all rounded-full bg-gradient-to-r from-amber-500 to-amber-400"
-                  style={{
-                    width: `${(progress.medium.solved / progress.medium.total) * 100}%`,
-                  }}
+              <div className="w-full h-3 overflow-hidden rounded-full bg-slate-800">
+                <motion.div
+                  className="h-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-400"
+                  variants={progressBarVariants}
+                  initial="hidden"
+                  animate="visible"
+                  custom={(progress.medium.solved / progress.medium.total) * 100}
                 />
               </div>
-            </div>
+            </motion.div>
 
             {/* Hard */}
-            <div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.7 }}
+            >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-rose-400">Hard</span>
@@ -394,47 +546,79 @@ export default function Dashboard() {
                     {progress.hard.solved} / {progress.hard.total}
                   </span>
                 </div>
-                <span className="text-sm font-semibold text-slate-200">
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.4 }}
+                  className="text-sm font-semibold text-slate-200"
+                >
                   {Math.round((progress.hard.solved / progress.hard.total) * 100)}%
-                </span>
+                </motion.span>
               </div>
-              <div className="w-full h-3 rounded-full bg-slate-800">
-                <div
-                  className="h-3 transition-all rounded-full bg-gradient-to-r from-rose-500 to-rose-400"
-                  style={{
-                    width: `${(progress.hard.solved / progress.hard.total) * 100}%`,
-                  }}
+              <div className="w-full h-3 overflow-hidden rounded-full bg-slate-800">
+                <motion.div
+                  className="h-3 rounded-full bg-gradient-to-r from-rose-500 to-rose-400"
+                  variants={progressBarVariants}
+                  initial="hidden"
+                  animate="visible"
+                  custom={(progress.hard.solved / progress.hard.total) * 100}
                 />
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Charts Section */}
-        <section className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)] mb-8">
+        <motion.section
+          variants={itemVariants}
+          className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)] mb-8"
+        >
           {/* Sessions over time */}
-          <div className="p-6 border rounded-xl border-slate-800 bg-slate-900">
+          <motion.div
+            variants={cardHoverVariants}
+            initial="rest"
+            whileHover="hover"
+            className="p-6 border shadow-lg rounded-xl border-slate-800 bg-slate-900"
+          >
             <h2 className="mb-4 text-lg font-semibold text-slate-100">
               Sessions over time
             </h2>
-            <div className="h-64">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
+              className="h-64"
+            >
               <Line data={lineData} options={chartOptions} />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Skill radar */}
-          <div className="p-6 border rounded-xl border-slate-800 bg-slate-900">
+          <motion.div
+            variants={cardHoverVariants}
+            initial="rest"
+            whileHover="hover"
+            className="p-6 border shadow-lg rounded-xl border-slate-800 bg-slate-900"
+          >
             <h2 className="mb-4 text-lg font-semibold text-slate-100">
               Skill Analysis
             </h2>
-            <div className="flex items-center justify-center h-64">
+            <motion.div
+              initial={{ opacity: 0, rotate: -10 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              transition={{ delay: 0.9, duration: 0.5 }}
+              className="flex items-center justify-center h-64"
+            >
               <Radar data={radarData} options={radarOptions} />
-            </div>
-          </div>
-        </section>
+            </motion.div>
+          </motion.div>
+        </motion.section>
 
         {/* Recent Submissions */}
-        <div className="p-6 border bg-slate-900 border-slate-800 rounded-xl">
+        <motion.div
+          variants={itemVariants}
+          className="p-6 border shadow-lg bg-slate-900 border-slate-800 rounded-xl"
+        >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-slate-100">
               Recent Submissions
@@ -453,13 +637,25 @@ export default function Dashboard() {
             </p>
           ) : (
             <div className="space-y-3">
-              {recentSubmissions.map((submission) => (
-                <div
+              {recentSubmissions.map((submission, index) => (
+                <motion.div
                   key={submission.id}
-                  className="flex items-center justify-between p-4 transition-colors border rounded-lg bg-slate-800/50 border-slate-700 hover:bg-slate-800"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 1 + index * 0.1 }}
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  className="flex items-center justify-between p-4 transition-colors border rounded-lg cursor-pointer bg-slate-800/50 border-slate-700 hover:bg-slate-800"
                 >
                   <div className="flex items-center gap-4">
-                    <div
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.2, 1],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                      }}
                       className={`w-2 h-2 rounded-full ${
                         submission.status === "Accepted"
                           ? "bg-emerald-400"
@@ -491,7 +687,10 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
-                  <span
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.2 + index * 0.1 }}
                     className={`text-sm font-semibold ${
                       submission.status === "Accepted"
                         ? "text-emerald-400"
@@ -499,13 +698,13 @@ export default function Dashboard() {
                     }`}
                   >
                     {submission.status}
-                  </span>
-                </div>
+                  </motion.span>
+                </motion.div>
               ))}
             </div>
           )}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </main>
   );
 }

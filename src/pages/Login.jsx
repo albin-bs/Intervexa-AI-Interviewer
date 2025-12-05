@@ -44,10 +44,60 @@ export default function Login() {
 
     setLoading(true);
     setSuccess(false);
+    
     try {
+      // ✅ TODO: Replace with your actual backend API call
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+          rememberMe,
+        }),
+      });
+
+      // For now, simulate successful login
       await new Promise((r) => setTimeout(r, 1200));
-      console.log("Login attempt:", { ...form, rememberMe });
+      
+      // Mock response data
+      const data = {
+        accessToken: "mock-token-" + Date.now(),
+        userId: "user-" + Date.now(),
+        email: form.email,
+        profileComplete: true, // ✅ Backend should return this
+        name: "John Doe",
+      };
+
+      // ✅ Store auth tokens
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("userEmail", data.email);
+      localStorage.setItem("userName", data.name);
+
+      // ✅ DON'T set needsOnboarding for existing users
+      // Existing users already completed onboarding
+
+      console.log("Login successful:", { ...form, rememberMe });
       setSuccess(true);
+
+      // ✅ Check if user has completed profile
+      setTimeout(() => {
+        if (data.profileComplete) {
+          // User has completed onboarding, go to dashboard
+          navigate("/dashboard");
+        } else {
+          // User exists but didn't complete onboarding
+          localStorage.setItem("needsOnboarding", "true");
+          navigate("/onboarding");
+        }
+      }, 1000);
+
+    } catch (error) {
+      console.error("Login error:", error);
+      setErrors({ 
+        submit: "Invalid email or password. Please try again." 
+      });
     } finally {
       setLoading(false);
     }
@@ -84,20 +134,27 @@ export default function Login() {
               {/* Updated copy + button to start signup flow */}
               <div className="mt-3">
                 <p className="mb-1 text-sm text-slate-300">
-                  Don’t have an account yet?
+                  Don't have an account yet?
                 </p>
                 <button
                   type="button"
-                  onClick={() => navigate("/signup-flow/overview")}
+                  onClick={() => navigate("/signup")}
                   className="inline-flex items-center justify-center px-4 py-2 text-xs font-medium transition rounded-full bg-slate-800 text-slate-100 hover:bg-slate-700"
                 >
-                  Set up a new account →
+                  Create new account →
                 </button>
               </div>
             </div>
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+              {/* General error message */}
+              {errors.submit && (
+                <div className="px-4 py-3 text-sm border rounded-lg bg-rose-500/10 border-rose-500/20 text-rose-400">
+                  {errors.submit}
+                </div>
+              )}
+
               <div>
                 <label
                   htmlFor="email"
@@ -185,7 +242,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center justify-center w-full gap-2 px-4 py-3 text-sm font-semibold text-white transition-all duration-200 bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 disabled:bg-blue-500/50 shadow-blue-500/30"
+                className="flex items-center justify-center w-full gap-2 px-4 py-3 text-sm font-semibold text-white transition-all duration-200 bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 disabled:bg-blue-500/50 disabled:cursor-not-allowed shadow-blue-500/30"
               >
                 {loading ? (
                   <>
@@ -272,10 +329,13 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Simple success toast */}
+      {/* Success toast */}
       {success && (
-        <div className="fixed z-40 px-4 py-3 text-sm text-white rounded-lg shadow-lg bottom-6 right-6 bg-emerald-600">
-          Signed in successfully.
+        <div className="fixed z-40 flex items-center gap-2 px-4 py-3 text-sm text-white rounded-lg shadow-lg bottom-6 right-6 bg-emerald-600">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          Signed in successfully!
         </div>
       )}
     </>
