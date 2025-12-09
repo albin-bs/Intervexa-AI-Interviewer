@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Shield, Lock, Eye, Database, UserCheck, Mail } from "lucide-react";
 
 const sections = [
@@ -90,7 +90,7 @@ export default function PrivacyPolicy() {
     <main className="min-h-screen px-4 py-20 bg-slate-950 text-slate-100 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -113,7 +113,7 @@ export default function PrivacyPolicy() {
           </div>
 
           {/* Privacy Promise Banner */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -130,11 +130,11 @@ export default function PrivacyPolicy() {
                 </p>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
 
         {/* Quick Summary Cards */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -175,12 +175,12 @@ export default function PrivacyPolicy() {
               Access, correct, or delete your data anytime
             </p>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Content Sections */}
         <div className="space-y-8">
           {sections.map((section, index) => (
-            <motion.section
+            <m.section
               key={section.id}
               id={`section-${section.id}`}
               initial={{ opacity: 0, y: 20 }}
@@ -255,12 +255,12 @@ export default function PrivacyPolicy() {
                   </p>
                 </div>
               )}
-            </motion.section>
+            </m.section>
           ))}
         </div>
 
         {/* Footer CTA */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -289,7 +289,7 @@ export default function PrivacyPolicy() {
               Request Your Data
             </a>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Additional Links */}
         <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-sm text-gray-500">

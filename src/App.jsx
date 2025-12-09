@@ -1,7 +1,7 @@
 import { useEffect, useState, lazy, Suspense } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
-import { AnimatePresence, m } from "framer-motion"; // ✅ Changed m to m
+import { AnimatePresence, m } from "framer-motion";
 import LazyMotionWrapper from "./components/LazyMotionWrapper";
 
 // ✅ Keep critical components loaded immediately
@@ -19,7 +19,7 @@ const Testimonials = lazy(() => import("./components/Testimonials"));
 const FloatingAnnouncement = lazy(() => import("./components/FloatingAnnouncement"));
 const BackToTop = lazy(() => import("./components/BackToTop"));
 
-// ✅ Lazy load pages
+// ✅ Lazy load pages (lowercase 'pages' folder)
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const About = lazy(() => import("./pages/About"));
@@ -56,7 +56,7 @@ const LoadingFallback = () => (
     <div className="flex flex-col items-center gap-4">
       <div className="relative">
         <div className="w-12 h-12 border-4 rounded-full border-slate-800" />
-        <m.div // ✅ Changed from m.div to m.div
+        <m.div
           className="absolute inset-0 w-12 h-12 border-4 border-transparent rounded-full border-t-blue-500"
           animate={{ rotate: 360 }}
           transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
@@ -94,11 +94,27 @@ function OnboardingRoute({ children }) {
   return <Suspense fallback={<LoadingFallback />}>{children}</Suspense>;
 }
 
+// ✅ Home component with lazy loaded sections
+const Home = () => (
+  <>
+    <Hero />
+    <Suspense fallback={<div className="h-96 bg-slate-950" />}>
+      <Stats />
+      <Features />
+      <Pricing />
+      <Testimonials />
+    </Suspense>
+  </>
+);
+
 function App() {
   const [scrolled, setScrolled] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
   const [isRouteChanging, setIsRouteChanging] = useState(false);
   const location = useLocation();
+
+  // ✅ Maintenance mode toggle - set to false to enable site
+  const isMaintenanceMode = false; // Change to true to enable maintenance mode
 
   // Splash screen timer
   useEffect(() => {
@@ -134,25 +150,27 @@ function App() {
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
-  // ✅ Home component with lazy loaded sections
-  const Home = () => (
-    <>
-      <Hero />
-      <Suspense fallback={<div className="h-96 bg-slate-950" />}>
-        <Stats />
-        <Features />
-        <Pricing />
-        <Testimonials />
-      </Suspense>
-    </>
-  );
+  // ✅ Show maintenance page if enabled
+  if (isMaintenanceMode) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-white bg-slate-900">
+        <div className="text-center">
+          <h1 className="mb-4 text-3xl font-bold">We'll be back soon!</h1>
+          <p className="text-slate-400">
+            MockMate is currently under maintenance. Check back in a few hours.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
+  // ✅ Show splash screen
   if (showSplash) {
     return <SplashScreen />;
   }
 
   return (
-    <LazyMotionWrapper> {/* ✅ Wrap everything */}
+    <LazyMotionWrapper>
       <div className="min-h-screen overflow-hidden font-sans text-white bg-slate-950">
         <Navbar scrolled={scrolled} />
         <ScrollToTop />
@@ -160,7 +178,7 @@ function App() {
         {/* ✅ Route transition loading overlay */}
         <AnimatePresence>
           {isRouteChanging && (
-            <m.div // ✅ Changed from m.div to m.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -169,7 +187,7 @@ function App() {
             >
               <div className="relative">
                 <div className="w-12 h-12 border-4 rounded-full border-slate-800" />
-                <m.div // ✅ Changed from m.div to m.div
+                <m.div
                   className="absolute inset-0 w-12 h-12 border-4 border-transparent rounded-full border-t-blue-500"
                   animate={{ rotate: 360 }}
                   transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
@@ -180,7 +198,7 @@ function App() {
         </AnimatePresence>
 
         <AnimatePresence mode="wait">
-          <m.div // ✅ Changed from m.div to m.div
+          <m.div
             key={location.pathname}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
