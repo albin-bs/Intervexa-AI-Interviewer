@@ -102,7 +102,8 @@ export default function PrivacyPolicy() {
           </div>
 
           <h1 className="mb-4 text-4xl font-bold text-transparent sm:text-5xl bg-gradient-to-r from-white via-emerald-100 to-white bg-clip-text">
-            Privacy Policy
+            Privacy Policy <br />
+            <br />
           </h1>
 
           <div className="flex items-center gap-4 text-sm text-gray-400">

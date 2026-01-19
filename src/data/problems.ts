@@ -1,5 +1,3 @@
-// src/data/problems.ts
-
 export type Difficulty = "Easy" | "Medium" | "Hard";
 
 export interface SampleIO {

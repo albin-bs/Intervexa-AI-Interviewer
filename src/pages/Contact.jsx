@@ -6,11 +6,8 @@ import {
   MessageCircle,
   HelpCircle,
   Send,
-  Twitter,
   Linkedin,
   Github,
-  MapPin,
-  Phone,
   Clock,
   CheckCircle,
   ExternalLink,
@@ -104,20 +101,6 @@ export default function Contact() {
 
   const socialLinks = [
     {
-      icon: <Twitter className="w-5 h-5" />,
-      name: "Twitter / X",
-      handle: "@mockmate",
-      link: "https://twitter.com/yourhandle",
-      color: "hover:text-blue-400",
-    },
-    {
-      icon: <Linkedin className="w-5 h-5" />,
-      name: "LinkedIn",
-      handle: "@albin-sebastian",
-      link: "https://www.linkedin.com/in/albin-binu-sebastian/",
-      color: "hover:text-blue-600",
-    },
-    {
       icon: <Github className="w-5 h-5" />,
       name: "GitHub",
       handle: "@mockmate",
@@ -205,7 +188,7 @@ export default function Contact() {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="lg:col-span-2"
           >
-            <div className="p-8 border rounded-2xl border-slate-800 bg-slate-900/50">
+            <div className="h-full p-8 border rounded-2xl border-slate-800 bg-slate-900/50">
               <div className="flex items-center gap-3 mb-6">
                 <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-blue-500/20">
                   <Send className="w-6 h-6 text-blue-400" />
@@ -295,12 +278,12 @@ export default function Contact() {
             </div>
           </m.section>
 
-          {/* Contact Methods - Right sidebar */}
+          {/* Contact Methods - Right sidebar with equal heights */}
           <m.aside
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="space-y-4"
+            className="flex flex-col gap-4"
           >
             {contactMethods.map((method, index) => (
               <m.div
@@ -308,9 +291,9 @@ export default function Contact() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 + index * 0.1 }}
-                className="p-5 transition-all border rounded-2xl border-slate-800 bg-slate-900/50 hover:bg-slate-800/50"
+                className="flex-1 p-5 transition-all border rounded-2xl border-slate-800 bg-slate-900/50 hover:bg-slate-800/50"
               >
-                <div className="flex items-start gap-3 mb-3">
+                <div className="flex items-start gap-3">
                   <div className={`${method.color}`}>{method.icon}</div>
                   <div className="flex-1">
                     <h3 className="mb-1 font-semibold text-slate-100">{method.title}</h3>
@@ -335,71 +318,38 @@ export default function Contact() {
           </m.aside>
         </div>
 
-        {/* Social Links */}
-        <m.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.6 }}
-          className="p-8 border rounded-2xl border-slate-800 bg-slate-900/50"
+      {/* Social Links - Only GitHub */}
+      <m.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7, duration: 0.6 }}
+        className="p-8 border rounded-2xl border-slate-800 bg-slate-900/50"
+      >
+        <h2 className="mb-2 text-2xl font-bold text-slate-100">Follow Us</h2>
+        <p className="mb-6 text-slate-400">
+          Stay updated with product news, tips, and behind-the-scenes content
+        </p>
+
+        <m.a
+          href="https://github.com/albin-bs/MockMate-AI"
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.8 }}
+          whileHover={{ scale: 1.05, y: -2 }}
+          className="flex items-center gap-3 p-4 transition-all border rounded-xl border-slate-800 bg-slate-900/50 hover:bg-slate-800 group hover:text-slate-300"
         >
-          <h2 className="mb-2 text-2xl font-bold text-slate-100">Follow Us</h2>
-          <p className="mb-6 text-slate-400">
-            Stay updated with product news, tips, and behind-the-scenes content
-          </p>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            {socialLinks.map((social, index) => (
-              <m.a
-                key={index}
-                href={social.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.8 + index * 0.1 }}
-                whileHover={{ scale: 1.05, y: -2 }}
-                className={`flex items-center gap-3 p-4 rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-800 transition-all group ${social.color}`}
-              >
-                <div className="flex items-center justify-center w-10 h-10 transition-colors rounded-lg bg-slate-800 group-hover:bg-slate-700">
-                  {social.icon}
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-slate-100">{social.name}</p>
-                  <p className="text-xs text-slate-500">{social.handle}</p>
-                </div>
-                <ExternalLink className="w-4 h-4 transition-colors text-slate-600 group-hover:text-slate-400" />
-              </m.a>
-            ))}
+          <div className="flex items-center justify-center w-10 h-10 transition-colors rounded-lg bg-slate-800 group-hover:bg-slate-700">
+            <Github className="w-5 h-5" />
           </div>
-        </m.section>
-
-        {/* Location/Office Hours (Optional) */}
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9, duration: 0.6 }}
-          className="grid gap-4 mt-8 sm:grid-cols-2"
-        >
-          <div className="p-6 border rounded-2xl border-slate-800 bg-slate-900/50">
-            <div className="flex items-center gap-3 mb-3">
-              <MapPin className="w-5 h-5 text-emerald-400" />
-              <h3 className="font-semibold text-slate-100">Location</h3>
-            </div>
-            <p className="text-sm text-slate-400">
-              123 MockMate St., Suite 456, Tech City, TC 78910]
-            </p>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-slate-100">GitHub</p>
+            <p className="text-xs text-slate-500">@MockMate-AI</p>
           </div>
-
-          <div className="p-6 border rounded-2xl border-slate-800 bg-slate-900/50">
-            <div className="flex items-center gap-3 mb-3">
-              <Clock className="w-5 h-5 text-blue-400" />
-              <h3 className="font-semibold text-slate-100">Support Hours</h3>
-            </div>
-            <p className="text-sm text-slate-400">
-              Monday - Friday: 9:00 AM - 6:00 PM IST
-            </p>
-          </div>
-        </m.div>
+          <ExternalLink className="w-4 h-4 transition-colors text-slate-600 group-hover:text-slate-400" />
+        </m.a>
+      </m.section>
       </div>
     </main>
   );

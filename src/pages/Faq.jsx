@@ -12,7 +12,9 @@ import {
   Users,
   CreditCard,
   Settings,
+  Code,
 } from "lucide-react";
+
 
 const faqCategories = [
   {
@@ -34,6 +36,16 @@ const faqCategories = [
         question: "Do I need to install anything?",
         answer:
           "No installation required! MockMate AI runs entirely in your browser, so you can practice from any modern device with an internet connection. Works on desktop, tablet, and mobile devices.",
+      },
+      {
+        question: "How does MockMate AI differ from other interview prep platforms?",
+        answer:
+          "MockMate AI uses advanced AI models (Google Gemini) to provide real-time, contextual feedback on your answers. Unlike pre-recorded questions or generic feedback, our AI adapts to your responses, asks follow-up questions, and provides personalized improvement suggestions based on your specific career goals and target roles.",
+      },
+      {
+        question: "Can I use MockMate AI to prepare for specific companies?",
+        answer:
+          "Yes! MockMate AI includes company-specific interview question banks for top tech companies like Google, Amazon, Microsoft, Meta, Netflix, and more. You can practice with questions that closely match real interview patterns from your target companies.",
       },
     ],
   },
@@ -57,6 +69,26 @@ const faqCategories = [
         answer:
           "Yes! Our AI provides comprehensive feedback including: answer quality analysis, communication clarity scores, suggested improvements, keyword usage, STAR method evaluation (for behavioral questions), and comparison with ideal answers.",
       },
+      {
+        question: "Can I practice coding interviews on MockMate AI?",
+        answer:
+          "Yes! Our coding module supports multiple programming languages including Python, JavaScript, C++, Java, and more. You can solve problems, run test cases, and get instant feedback on your solutions. The platform uses Judge0 for secure code execution and provides detailed performance metrics.",
+      },
+      {
+        question: "How does the AI feedback work?",
+        answer:
+          "Our AI analyzes multiple aspects of your response: content quality, structure (STAR method for behavioral), keyword presence, clarity, confidence level (if using video), and alignment with job requirements. You receive a detailed score breakdown with specific suggestions for improvement within seconds of completing your answer.",
+      },
+      {
+        question: "Can I track my progress over time?",
+        answer:
+          "Yes! Your dashboard provides comprehensive analytics including: total sessions completed, skill improvement trends, difficulty progress (easy/medium/hard problems solved), practice streaks, and skill radar charts showing your strengths across different interview categories.",
+      },
+      {
+        question: "Does MockMate AI offer video interview practice?",
+        answer:
+          "Yes! Our video practice mode records your responses and analyzes your body language, eye contact, facial expressions, and vocal tone using AI. This helps you improve your non-verbal communication skills, which are crucial for in-person and virtual interviews.",
+      },
     ],
   },
   {
@@ -73,6 +105,16 @@ const faqCategories = [
         question: "Who can see my practice sessions?",
         answer:
           "Only you can see your practice sessions. Your recordings, answers, and feedback are completely private. MockMate AI does not share any personal data or practice content with other users or external companies unless you explicitly choose to share it.",
+      },
+      {
+        question: "How long do you keep my practice data?",
+        answer:
+          "We retain your practice sessions and feedback for as long as your account is active. If you delete your account, all associated data (recordings, transcripts, feedback) is permanently deleted within 30 days. You can also manually delete individual sessions at any time from your dashboard.",
+      },
+      {
+        question: "Is my code submission data safe?",
+        answer:
+          "Absolutely. All code submissions are executed in isolated sandboxed environments using Judge0. Your code is never shared with other users, and we use industry-standard encryption. Code submissions are stored only for your personal review and analytics, and you can delete them anytime.",
       },
     ],
   },
@@ -96,6 +138,21 @@ const faqCategories = [
         answer:
           "We offer a 30-day money-back guarantee for annual plans. If you're not satisfied within the first 30 days, contact our support team for a full refund. Monthly subscriptions are non-refundable but can be canceled anytime.",
       },
+      {
+        question: "What happens if I upgrade or downgrade my plan?",
+        answer:
+          "If you upgrade, you'll be charged the prorated difference immediately and get instant access to new features. If you downgrade, the change takes effect at the end of your current billing cycle, and you'll retain premium features until then. Any unused portion of your current plan is credited to your next billing cycle.",
+      },
+      {
+        question: "Do you offer discounts for students or teams?",
+        answer:
+          "Yes! We offer 50% off for verified students with a valid .edu email address. For teams of 5 or more, we provide custom enterprise pricing with additional features like admin dashboards, team analytics, and priority support. Contact our sales team for more details.",
+      },
+      {
+        question: "Is there a limit to how many sessions I can do?",
+        answer:
+          "Free tier users get 5 practice sessions per month. Pro plan users get unlimited practice sessions, unlimited code submissions, and unlimited AI feedback. You can upgrade anytime to remove limits.",
+      },
     ],
   },
   {
@@ -113,16 +170,76 @@ const faqCategories = [
         answer:
           "Yes! MockMate AI is fully responsive and works on iOS (Safari) and Android (Chrome) devices. However, for the best experience with video recording and detailed feedback, we recommend using a desktop or laptop.",
       },
+      {
+        question: "What programming languages are supported for coding practice?",
+        answer:
+          "We support 50+ programming languages including Python, JavaScript, TypeScript, Java, C++, C#, Go, Rust, Swift, Kotlin, Ruby, PHP, and more. Each language has its own starter templates and language-specific test cases.",
+      },
+      {
+        question: "How is code executed securely?",
+        answer:
+          "We use Judge0, an industry-standard open-source code execution system that runs your code in isolated Docker containers. This ensures your code cannot access our servers or other users' data. Each submission is rate-limited and has time/memory constraints to prevent abuse.",
+      },
+      {
+        question: "Can I import my resume or LinkedIn profile?",
+        answer:
+          "Yes! You can import your LinkedIn profile or upload your resume (PDF, DOCX) to automatically populate your profile. Our AI analyzes your background to recommend personalized interview questions and career-specific practice paths.",
+      },
+      {
+        question: "Does MockMate AI work offline?",
+        answer:
+          "No, MockMate AI requires an active internet connection to function. The AI feedback, code execution, and video analysis all happen in real-time on our servers. However, you can download your session reports and feedback for offline review.",
+      },
+    ],
+  },
+  {
+    id: "coding",
+    name: "Coding Platform",
+    icon: <Code className="w-4 h-4" />,
+    questions: [
+      {
+        question: "How does the coding judge work?",
+        answer:
+          "Our coding platform runs your code against multiple test cases using Judge0 API. Each submission is evaluated for correctness, time complexity, memory usage, and code quality. You receive instant feedback showing which test cases passed, failed, and detailed error messages if applicable.",
+      },
+      {
+        question: "Can I see test cases before submitting?",
+        answer:
+          "Yes! Each problem shows sample test cases with expected inputs and outputs. You can also create custom test cases to validate your solution before submitting. Hidden test cases (used for final evaluation) are revealed after you solve the problem.",
+      },
+      {
+        question: "What happens if my code times out or exceeds memory?",
+        answer:
+          "If your code exceeds the time limit (usually 2-10 seconds per test case) or memory limit (256MB-1GB), you'll receive a 'Time Limit Exceeded' or 'Memory Limit Exceeded' status with details on which test case failed. This helps you optimize your solution for better performance.",
+      },
+      {
+        question: "Can I save my code solutions?",
+        answer:
+          "Yes! All your submissions are automatically saved in your dashboard under 'Recent Submissions'. You can view past solutions, compare different approaches, and track your improvement over time. You can also bookmark favorite problems for quick access.",
+      },
+      {
+        question: "Does MockMate AI help with debugging?",
+        answer:
+          "Yes! If your solution fails, you can click 'Ask MockMate for Help' to get AI-powered debugging hints. The AI analyzes your code, identifies potential issues, and suggests improvements without giving away the complete solution. This helps you learn problem-solving skills.",
+      },
+      {
+        question: "Can I discuss problems with other users?",
+        answer:
+          "Yes! Each coding problem has a dedicated discussion page where you can share solutions, ask questions, and learn from the community. You can also join our Discord server for real-time discussions and peer code reviews.",
+      },
     ],
   },
 ];
+
 
 export default function Faq() {
   const [activeCategory, setActiveCategory] = useState("general");
   const [openIndex, setOpenIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
+
   const toggle = (i) => setOpenIndex((prev) => (prev === i ? -1 : i));
+
 
   const handleKey = (e, i) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -131,7 +248,9 @@ export default function Faq() {
     }
   };
 
+
   const activeFaqs = faqCategories.find((cat) => cat.id === activeCategory);
+
 
   // Filter FAQs based on search
   const filteredQuestions = searchQuery
@@ -141,6 +260,7 @@ export default function Faq() {
           q.answer.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : activeFaqs.questions;
+
 
   return (
     <main className="min-h-screen px-4 pt-20 pb-20 bg-slate-950 text-slate-100 sm:px-6 lg:px-8">
@@ -157,6 +277,7 @@ export default function Faq() {
             <span className="text-sm font-medium text-purple-300">Help Center</span>
           </div>
 
+
           <h1 className="mb-4 text-4xl font-bold text-transparent sm:text-5xl bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text">
             Frequently Asked Questions
           </h1>
@@ -167,6 +288,7 @@ export default function Faq() {
             </a>
           </p>
         </m.div>
+
 
         {/* Search Bar */}
         <m.div
@@ -186,6 +308,7 @@ export default function Faq() {
             />
           </div>
         </m.div>
+
 
         {/* Category Tabs */}
         <m.div
@@ -223,6 +346,7 @@ export default function Faq() {
             ))}
           </div>
         </m.div>
+
 
         {/* FAQ List */}
         <m.div
@@ -270,6 +394,7 @@ export default function Faq() {
                         </m.div>
                       </button>
 
+
                       <AnimatePresence>
                         {isOpen && (
                           <m.div
@@ -307,6 +432,7 @@ export default function Faq() {
             </m.div>
           </AnimatePresence>
         </m.div>
+
 
         {/* Still Have Questions? */}
         <m.div
@@ -348,28 +474,6 @@ export default function Faq() {
               </m.a>
             </div>
           </div>
-        </m.div>
-
-        {/* Quick Stats */}
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.6 }}
-          className="grid grid-cols-3 gap-4 mt-8"
-        >
-          {[
-            { label: "Questions Answered", value: "1,200+" },
-            { label: "Avg Response Time", value: "< 2 hours" },
-            { label: "Satisfaction Rate", value: "98%" },
-          ].map((stat, i) => (
-            <div
-              key={i}
-              className="p-4 text-center border rounded-xl border-slate-800 bg-slate-900/50"
-            >
-              <p className="mb-1 text-2xl font-bold text-purple-400">{stat.value}</p>
-              <p className="text-xs text-slate-400">{stat.label}</p>
-            </div>
-          ))}
         </m.div>
       </div>
     </main>

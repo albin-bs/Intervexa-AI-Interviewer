@@ -45,22 +45,18 @@ const footerLinks = {
 const teamMembers = [
   {
     name: "Albin Binu Sebastian",
-    role: "Full Stack Developer",
     linkedin: "https://www.linkedin.com/in/albin-binu-sebastian/",
   },
   {
     name: "Aswin Asokan",
-    role: "Backend Developer",
     linkedin: "https://www.linkedin.com/in/aswinasokan2004/",
   },
   {
     name: "Abin AC",
-    role: "Frontend Developer",
     linkedin: "https://www.linkedin.com/in/abin-a-c/",
   },
   {
     name: "Aaron Stephen Cherian",
-    role: "UI/UX Designer",
     linkedin: "https://www.linkedin.com/in/aaron-stephen-cherian-69383224a/",
   },
 ];
@@ -222,9 +218,6 @@ export default function Footer() {
                   Start 14‑day free trial
                   <ChevronRight className="w-4 h-4" />
                 </m.button>
-                <p className="mt-3 text-xs text-slate-400">
-                  No credit card required • Cancel anytime
-                </p>
               </div>
             </m.div>
 

@@ -15,6 +15,7 @@ import {
 import { Code, Flame, Trophy, TrendingUp, Calendar, CheckCircle, Award, Target } from "lucide-react";
 import { m } from "framer-motion";
 
+
 ChartJS.register(
   LineElement,
   PointElement,
@@ -26,9 +27,11 @@ ChartJS.register(
   Filler
 );
 
+
 // ✅ Move static data outside component
 const TIME_RANGES = ["7d", "30d", "90d"];
 const ROLES = ["All roles", "Software Engineer", "Product Manager", "Data Analyst"];
+
 
 const SESSIONS_PER_DAY = {
   "7d": [2, 3, 1, 4, 3, 2, 5],
@@ -36,10 +39,12 @@ const SESSIONS_PER_DAY = {
   "90d": Array(90).fill(0).map(() => Math.floor(Math.random() * 6)),
 };
 
+
 const SKILL_RADAR = {
   labels: ["Communication", "Problem solving", "System design", "Behavioral", "Coding"],
   data: [70, 65, 55, 72, 68],
 };
+
 
 // Animation variants
 const containerVariants = {
@@ -51,6 +56,7 @@ const containerVariants = {
     },
   },
 };
+
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -64,6 +70,7 @@ const itemVariants = {
   },
 };
 
+
 const cardHoverVariants = {
   rest: { scale: 1 },
   hover: {
@@ -74,6 +81,7 @@ const cardHoverVariants = {
     },
   },
 };
+
 
 const progressBarVariants = {
   hidden: { width: 0 },
@@ -87,6 +95,7 @@ const progressBarVariants = {
   }),
 };
 
+
 const streakVariants = {
   initial: { scale: 1 },
   animate: {
@@ -99,46 +108,47 @@ const streakVariants = {
   },
 };
 
-// ✅ Memoize ProfileCard
+
+// ✅ Memoize ProfileCard - UPDATED with more padding and better spacing
 const ProfileCard = memo(function ProfileCard({ user }) {
   return (
     <m.div
       variants={cardHoverVariants}
       initial="rest"
       whileHover="hover"
-      className="p-6 border shadow-lg lg:col-span-1 bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700 rounded-xl"
+      className="flex flex-col justify-between h-full p-8 border shadow-lg lg:col-span-1 bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700 rounded-xl"
     >
-      <div className="flex items-center gap-4 mb-4">
+      <div className="flex items-center gap-4 mb-6">
         <m.img
           whileHover={{ scale: 1.1, rotate: 5 }}
           transition={{ type: "spring", stiffness: 300 }}
           src={user.avatar}
           alt={user.name}
-          className="w-16 h-16 border-2 rounded-full border-emerald-500"
+          className="w-20 h-20 border-2 rounded-full border-emerald-500"
           loading="lazy"
         />
         <div>
-          <h2 className="text-lg font-semibold text-slate-100">
+          <h2 className="text-xl font-semibold text-slate-100">
             {user.name}
           </h2>
-          <p className="text-sm text-slate-400">{user.email}</p>
+          <p className="mt-1 text-sm text-slate-400">{user.email}</p>
         </div>
       </div>
-      <div className="flex items-center justify-between pt-4 border-t border-slate-700">
+      <div className="flex items-center justify-between pt-6 mt-auto border-t border-slate-700">
         <div>
           <p className="text-xs text-slate-400">Current Plan</p>
           <m.p
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-sm font-semibold text-emerald-400"
+            className="mt-1 text-base font-semibold text-emerald-400"
           >
             {user.plan}
           </m.p>
         </div>
         <div>
           <p className="text-xs text-slate-400">Member Since</p>
-          <p className="text-sm font-semibold text-slate-200">
+          <p className="mt-1 text-base font-semibold text-slate-200">
             {new Date(user.joinedDate).toLocaleDateString("en-US", {
               month: "short",
               year: "numeric",
@@ -149,6 +159,7 @@ const ProfileCard = memo(function ProfileCard({ user }) {
     </m.div>
   );
 });
+
 
 // ✅ Memoize QuickActionCard
 const QuickActionCard = memo(function QuickActionCard({ 
@@ -171,7 +182,9 @@ const QuickActionCard = memo(function QuickActionCard({
     </>
   );
 
-  const className = `block p-6 transition-all shadow-lg group ${gradient} rounded-xl`;
+
+  const className = `flex flex-col justify-center h-full block p-6 transition-all shadow-lg group ${gradient} rounded-xl`;
+
 
   if (isButton) {
     return (
@@ -188,6 +201,7 @@ const QuickActionCard = memo(function QuickActionCard({
     );
   }
 
+
   return (
     <m.div
       variants={cardHoverVariants}
@@ -202,6 +216,7 @@ const QuickActionCard = memo(function QuickActionCard({
   );
 });
 
+
 // ✅ Memoize ProgressBar
 const ProgressBar = memo(function ProgressBar({ 
   difficulty, 
@@ -211,6 +226,7 @@ const ProgressBar = memo(function ProgressBar({
   delay 
 }) {
   const percentage = Math.round((solved / total) * 100);
+
 
   return (
     <m.div
@@ -247,6 +263,7 @@ const ProgressBar = memo(function ProgressBar({
   );
 });
 
+
 // ✅ Memoize SubmissionCard
 const SubmissionCard = memo(function SubmissionCard({ submission, index }) {
   const difficultyColors = {
@@ -254,6 +271,7 @@ const SubmissionCard = memo(function SubmissionCard({ submission, index }) {
     Medium: "text-amber-400",
     Hard: "text-rose-400",
   };
+
 
   return (
     <m.div
@@ -314,33 +332,38 @@ const SubmissionCard = memo(function SubmissionCard({ submission, index }) {
   );
 });
 
-// ✅ Memoize LineChart component
+
+// ✅ Memoize LineChart component - UPDATED for better responsiveness
 const LineChart = memo(function LineChart({ data, options }) {
   return (
     <m.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 0.8, duration: 0.5 }}
-      className="h-64"
+      className="w-full h-64"
     >
       <Line data={data} options={options} />
     </m.div>
   );
 });
 
-// ✅ Memoize RadarChart component
+
+// ✅ Memoize RadarChart component - UPDATED with larger size and better padding
 const RadarChart = memo(function RadarChart({ data, options }) {
   return (
     <m.div
       initial={{ opacity: 0, rotate: -10 }}
       animate={{ opacity: 1, rotate: 0 }}
       transition={{ delay: 0.9, duration: 0.5 }}
-      className="flex items-center justify-center h-64"
+      className="flex items-center justify-center w-full h-64 p-4"
     >
-      <Radar data={data} options={options} />
+      <div className="w-full max-w-md">
+        <Radar data={data} options={options} />
+      </div>
     </m.div>
   );
 });
+
 
 // ✅ Main Dashboard component
 const Dashboard = memo(function Dashboard() {
@@ -348,14 +371,16 @@ const Dashboard = memo(function Dashboard() {
   const [role, setRole] = useState("All roles");
   const [isLoaded, setIsLoaded] = useState(false);
 
+
   // Mock user data
   const [user] = useState({
-    name: "John Doe",
-    email: "john@example.com",
+    name: "username@123",
+    email: "username@example.com",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
     plan: "Pro",
     joinedDate: "2025-01-15",
   });
+
 
   // Progress data
   const [progress] = useState({
@@ -363,6 +388,7 @@ const Dashboard = memo(function Dashboard() {
     medium: { solved: 8, total: 100 },
     hard: { solved: 3, total: 80 },
   });
+
 
   // Recent submissions
   const [recentSubmissions] = useState([
@@ -392,17 +418,21 @@ const Dashboard = memo(function Dashboard() {
     },
   ]);
 
+
   const [streak, setStreak] = useState(0);
+
 
   useEffect(() => {
     calculateStreak();
     setIsLoaded(true);
   }, []);
 
+
   function calculateStreak() {
     const savedStreak = localStorage.getItem("mockmate-streak");
     const savedLastActive = localStorage.getItem("mockmate-last-active");
     const today = new Date().toDateString();
+
 
     if (!savedLastActive) {
       setStreak(1);
@@ -411,9 +441,11 @@ const Dashboard = memo(function Dashboard() {
       return;
     }
 
+
     const lastDate = new Date(savedLastActive);
     const currentDate = new Date();
     const diffInDays = Math.floor((currentDate - lastDate) / (1000 * 60 * 60 * 24));
+
 
     if (diffInDays === 0) {
       setStreak(Number(savedStreak));
@@ -429,14 +461,17 @@ const Dashboard = memo(function Dashboard() {
     }
   }
 
+
   // ✅ Memoize callbacks
   const handleRangeChange = useCallback((e) => {
     setRange(e.target.value);
   }, []);
 
+
   const handleRoleChange = useCallback((e) => {
     setRole(e.target.value);
   }, []);
+
 
   // ✅ Memoize computed values
   const totalSolved = useMemo(
@@ -444,10 +479,12 @@ const Dashboard = memo(function Dashboard() {
     [progress]
   );
 
+
   const totalProblems = useMemo(
     () => progress.easy.total + progress.medium.total + progress.hard.total,
     [progress]
   );
+
 
   // ✅ Memoize chart data
   const lineData = useMemo(() => ({
@@ -470,27 +507,32 @@ const Dashboard = memo(function Dashboard() {
     ],
   }), [range]);
 
+
   const radarData = useMemo(() => ({
     labels: SKILL_RADAR.labels,
     datasets: [
       {
         label: "Skill Score",
         data: SKILL_RADAR.data,
-        backgroundColor: "rgba(16, 185, 129, 0.2)",
+        backgroundColor: "rgba(16, 185, 129, 0.3)",
         borderColor: "#10b981",
         borderWidth: 2,
         pointBackgroundColor: "#10b981",
         pointBorderColor: "#fff",
         pointHoverBackgroundColor: "#fff",
         pointHoverBorderColor: "#10b981",
+        pointRadius: 4,
+        pointHoverRadius: 6,
       },
     ],
   }), []);
 
-  // ✅ Memoize chart options
+
+  // ✅ Memoize chart options - UPDATED for better responsiveness
   const chartOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: true,
+    aspectRatio: 2.5,
     plugins: {
       legend: { display: false },
       tooltip: {
@@ -513,6 +555,8 @@ const Dashboard = memo(function Dashboard() {
     },
   }), []);
 
+
+  // ✅ UPDATED radar options - larger scale, better label visibility
   const radarOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: true,
@@ -530,18 +574,31 @@ const Dashboard = memo(function Dashboard() {
         max: 100,
         ticks: {
           stepSize: 20,
-          color: "#64748b",
-          backdropColor: "transparent",
-          font: { size: 10 },
-        },
-        grid: { color: "rgba(51, 65, 85, 0.5)" },
-        pointLabels: {
           color: "#94a3b8",
-          font: { size: 12 },
+          backdropColor: "transparent",
+          font: { size: 11, weight: '500' },
+          showLabelBackdrop: false,
+        },
+        grid: { 
+          color: "rgba(51, 65, 85, 0.5)",
+          lineWidth: 1.5,
+        },
+        angleLines: {
+          color: "rgba(51, 65, 85, 0.5)",
+          lineWidth: 1.5,
+        },
+        pointLabels: {
+          color: "#cbd5e1",
+          font: { 
+            size: 13,
+            weight: '600',
+          },
+          padding: 15,
         },
       },
     },
   }), []);
+
 
   return (
     <main className="min-h-screen bg-[#0b1120] text-slate-100 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
@@ -603,31 +660,41 @@ const Dashboard = memo(function Dashboard() {
           </m.div>
         </m.header>
 
+
         {/* Top Row: Profile + Quick Actions */}
         <m.div
           variants={itemVariants}
-          className="grid grid-cols-1 gap-6 mb-8 lg:grid-cols-3"
+          className="grid items-stretch grid-cols-1 gap-6 mb-8 lg:grid-cols-3"
         >
+          {/* Profile */}
           <ProfileCard user={user} />
 
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 gap-4 lg:col-span-2 sm:grid-cols-2">
-            <QuickActionCard
-              to="/code-demo"
-              icon={Code}
-              title="Start Coding"
-              description="Solve problems and improve your skills"
-              gradient="bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600"
-            />
-            <QuickActionCard
-              icon={Trophy}
-              title="Mock Interview"
-              description="Practice with AI-powered interviews"
-              gradient="bg-gradient-to-br from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600"
-              isButton={true}
-            />
+
+          {/* Actions */}
+          <div className="flex flex-col h-full gap-6 lg:col-span-2">
+            <div className="flex-1">
+              <QuickActionCard
+                to="/code-demo"
+                icon={Code}
+                title="Start Coding"
+                description="Solve problems and improve your skills"
+                gradient="bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600"
+              />
+            </div>
+
+
+            <div className="flex-1">
+              <QuickActionCard
+                to="/interview"
+                icon={Trophy}
+                title="Mock Interview"
+                description="Practice with AI-powered interviews"
+                gradient="bg-gradient-to-br from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600"
+              />
+            </div>
           </div>
         </m.div>
+
 
         {/* Progress Tracker */}
         <m.div
@@ -660,6 +727,7 @@ const Dashboard = memo(function Dashboard() {
             </m.div>
           </div>
 
+
           {/* Progress Bars */}
           <div className="space-y-6">
             <ProgressBar
@@ -686,10 +754,11 @@ const Dashboard = memo(function Dashboard() {
           </div>
         </m.div>
 
-        {/* Charts Section */}
+
+        {/* Charts Section - UPDATED grid layout */}
         <m.section
           variants={itemVariants}
-          className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)] mb-8"
+          className="grid gap-6 lg:grid-cols-[1.6fr_1fr] mb-8"
         >
           {/* Sessions over time */}
           <m.div
@@ -704,19 +773,23 @@ const Dashboard = memo(function Dashboard() {
             <LineChart data={lineData} options={chartOptions} />
           </m.div>
 
-          {/* Skill radar */}
+
+          {/* Skill radar - UPDATED with centered content */}
           <m.div
             variants={cardHoverVariants}
             initial="rest"
             whileHover="hover"
-            className="p-6 border shadow-lg rounded-xl border-slate-800 bg-slate-900"
+            className="flex flex-col p-6 border shadow-lg rounded-xl border-slate-800 bg-slate-900"
           >
             <h2 className="mb-4 text-lg font-semibold text-slate-100">
               Skill Analysis
             </h2>
-            <RadarChart data={radarData} options={radarOptions} />
+            <div className="flex items-center justify-center flex-1">
+              <RadarChart data={radarData} options={radarOptions} />
+            </div>
           </m.div>
         </m.section>
+
 
         {/* Recent Submissions */}
         <m.div
@@ -734,6 +807,7 @@ const Dashboard = memo(function Dashboard() {
               View all →
             </Link>
           </div>
+
 
           {recentSubmissions.length === 0 ? (
             <p className="py-8 text-center text-slate-500">
@@ -755,5 +829,6 @@ const Dashboard = memo(function Dashboard() {
     </main>
   );
 });
+
 
 export default Dashboard;

@@ -4,7 +4,9 @@ import { Search, CheckCircle, Circle, Lock, Filter } from "lucide-react";
 import { problems, allTags, type Difficulty } from "../data/problems";
 import { m, AnimatePresence, type Variants } from "framer-motion";
 
+
 type StatusFilter = "All" | "Solved" | "Attempted" | "Todo";
+
 
 // Animation variants
 const containerVariants: Variants = {
@@ -16,6 +18,7 @@ const containerVariants: Variants = {
     },
   },
 };
+
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -29,6 +32,7 @@ const itemVariants: Variants = {
   },
 };
 
+
 const statsVariants: Variants = {
   hidden: { scale: 0.8, opacity: 0 },
   visible: {
@@ -41,6 +45,7 @@ const statsVariants: Variants = {
     },
   },
 };
+
 
 const rowVariants: Variants = {
   hidden: { opacity: 0, x: -20 },
@@ -60,6 +65,7 @@ const rowVariants: Variants = {
     },
   },
 };
+
 
 const filterChipVariants: Variants = {
   hidden: { scale: 0, opacity: 0 },
@@ -81,6 +87,7 @@ const filterChipVariants: Variants = {
   },
 };
 
+
 export default function Problems() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | "All">("All");
@@ -90,14 +97,17 @@ export default function Problems() {
   const [attemptedProblems, setAttemptedProblems] = useState<Set<string>>(new Set());
   const [isLoaded, setIsLoaded] = useState(false);
 
+
   // Load user progress from localStorage
   useEffect(() => {
     loadProgress();
   }, []);
 
+
   function loadProgress() {
     const solved = new Set<string>();
     const attempted = new Set<string>();
+
 
     problems.forEach((problem) => {
       const history = localStorage.getItem(`mockmate-history-${problem.id}`);
@@ -105,6 +115,7 @@ export default function Problems() {
         try {
           const runs = JSON.parse(history);
           attempted.add(problem.id);
+
 
           const hasAccepted = runs.some((run: any) =>
             run.status?.toLowerCase().includes("accepted")
@@ -118,9 +129,11 @@ export default function Problems() {
       }
     });
 
+
     setSolvedProblems(solved);
     setAttemptedProblems(attempted);
   }
+
 
   // Filter problems
   const filteredProblems = problems.filter((problem) => {
@@ -128,11 +141,14 @@ export default function Problems() {
       problem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       problem.number.toString().includes(searchQuery);
 
+
     const matchesDifficulty =
       selectedDifficulty === "All" || problem.difficulty === selectedDifficulty;
 
+
     const matchesTag =
       selectedTag === "All" || problem.tags.includes(selectedTag);
+
 
     let matchesStatus = true;
     if (selectedStatus === "Solved") {
@@ -144,8 +160,10 @@ export default function Problems() {
       matchesStatus = !attemptedProblems.has(problem.id);
     }
 
+
     return matchesSearch && matchesDifficulty && matchesTag && matchesStatus;
   });
+
 
   // Stats
   const stats = {
@@ -155,6 +173,7 @@ export default function Problems() {
     medium: problems.filter((p) => p.difficulty === "Medium" && solvedProblems.has(p.id)).length,
     hard: problems.filter((p) => p.difficulty === "Hard" && solvedProblems.has(p.id)).length,
   };
+
 
   function getStatusIcon(problemId: string, locked: boolean) {
     if (locked)
@@ -181,6 +200,7 @@ export default function Problems() {
     return <Circle className="w-4 h-4 text-slate-600" />;
   }
 
+
   function getDifficultyColor(difficulty: Difficulty) {
     switch (difficulty) {
       case "Easy":
@@ -192,8 +212,10 @@ export default function Problems() {
     }
   }
 
+
   const hasActiveFilters =
     searchQuery || selectedDifficulty !== "All" || selectedTag !== "All" || selectedStatus !== "All";
+
 
   return (
     <main className="min-h-screen bg-[#0b1120] text-slate-100 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
@@ -222,6 +244,7 @@ export default function Problems() {
             Solve problems and track your progress
           </m.p>
         </m.div>
+
 
         {/* Stats Cards */}
         <m.div
@@ -296,6 +319,7 @@ export default function Problems() {
           ))}
         </m.div>
 
+
         {/* Filters */}
         <m.div
           variants={itemVariants}
@@ -318,6 +342,7 @@ export default function Problems() {
               />
             </m.div>
 
+
             {/* Difficulty filter */}
             <m.select
               whileHover={{ scale: 1.02 }}
@@ -331,6 +356,7 @@ export default function Problems() {
               <option value="Medium">Medium</option>
               <option value="Hard">Hard</option>
             </m.select>
+
 
             {/* Tag filter */}
             <m.select
@@ -348,6 +374,7 @@ export default function Problems() {
               ))}
             </m.select>
 
+
             {/* Status filter */}
             <m.select
               whileHover={{ scale: 1.02 }}
@@ -362,6 +389,7 @@ export default function Problems() {
               <option value="Todo">Todo</option>
             </m.select>
           </div>
+
 
           {/* Active filters display */}
           <AnimatePresence>
@@ -444,7 +472,8 @@ export default function Problems() {
           </AnimatePresence>
         </m.div>
 
-        {/* Problems Table */}
+
+        {/* Problems Table - UPDATED */}
         <m.div
           variants={itemVariants}
           className="overflow-hidden border shadow-lg bg-slate-900 border-slate-800 rounded-xl"
@@ -458,9 +487,10 @@ export default function Problems() {
             <div className="col-span-2">Acceptance</div>
           </div>
 
+
           {/* Table Body */}
           <div className="divide-y divide-slate-800">
-            <AnimatePresence mode="popLayout">
+            <AnimatePresence>
               {filteredProblems.length === 0 ? (
                 <m.div
                   initial={{ opacity: 0 }}
@@ -479,54 +509,34 @@ export default function Problems() {
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                    layout
                     whileHover={{ backgroundColor: "rgba(15, 23, 42, 0.5)", x: 5 }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   >
                     <Link
                       to={problem.locked ? "#" : `/code-demo?problem=${problem.id}`}
-                      className={`grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-6 py-4 ${
+                      className={`grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-4 ${
                         problem.locked ? "opacity-60 cursor-not-allowed" : ""
                       }`}
                       onClick={(e) => problem.locked && e.preventDefault()}
                     >
                       {/* Status + Title */}
                       <div className="flex items-start gap-3 md:col-span-5">
-                        <div className="flex-shrink-0 mt-1">
-                          {getStatusIcon(problem.id, problem.locked)}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs text-slate-500">
-                              #{problem.number}
-                            </span>
-                            {problem.locked && (
-                              <m.span
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ delay: 0.2 }}
-                                className="px-2 py-0.5 bg-amber-500/10 text-amber-400 text-[10px] rounded-full"
-                              >
-                                Premium
-                              </m.span>
-                            )}
-                          </div>
-                          <m.h3
-                            whileHover={{ color: "#10b981" }}
-                            className="text-sm font-medium transition-colors text-slate-100"
-                          >
+                        {getStatusIcon(problem.id, problem.locked)}
+                        <div>
+                          <span className="text-xs text-slate-500">
+                            #{problem.number}
+                          </span>
+                          <h3 className="text-sm font-medium text-slate-100">
                             {problem.title}
-                          </m.h3>
-                          <p className="mt-1 text-xs text-slate-500 line-clamp-1 md:hidden">
-                            {problem.description}
-                          </p>
+                          </h3>
                         </div>
                       </div>
 
+
                       {/* Difficulty */}
-                      <div className="flex items-center md:col-span-2">
+                      <div className="md:col-span-2">
                         <span
-                          className={`text-xs md:text-sm font-medium ${getDifficultyColor(
+                          className={`text-sm font-medium ${getDifficultyColor(
                             problem.difficulty
                           )}`}
                         >
@@ -534,32 +544,37 @@ export default function Problems() {
                         </span>
                       </div>
 
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-1 md:col-span-3">
+
+                      {/* Tags - UPDATED */}
+                      <div className="flex flex-wrap items-center gap-2 md:col-span-3">
                         {problem.tags.slice(0, 2).map((tag, i) => (
                           <m.span
                             key={tag}
-                            initial={{ opacity: 0, scale: 0.8 }}
+                            initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: index * 0.03 + i * 0.05 }}
-                            whileHover={{ scale: 1.1 }}
-                            className="px-2 py-0.5 bg-slate-800 text-slate-400 text-[10px] md:text-xs rounded-md"
+                            whileHover={{ scale: 1.05 }}
+                            className="inline-flex items-center justify-center
+                                       h-6 px-2
+                                       rounded-md
+                                       bg-slate-800
+                                       text-[11px] text-slate-300
+                                       leading-none"
                           >
                             {tag}
                           </m.span>
                         ))}
                         {problem.tags.length > 2 && (
-                          <span className="px-2 py-0.5 text-slate-500 text-[10px] md:text-xs">
+                          <span className="h-6 px-2 inline-flex items-center text-[11px] text-slate-500">
                             +{problem.tags.length - 2}
                           </span>
                         )}
                       </div>
 
+
                       {/* Acceptance */}
-                      <div className="flex items-center md:col-span-2">
-                        <span className="text-xs md:text-sm text-slate-400">
-                          {problem.acceptance}
-                        </span>
+                      <div className="text-sm md:col-span-2 text-slate-400">
+                        {problem.acceptance}
                       </div>
                     </Link>
                   </m.div>
@@ -568,6 +583,7 @@ export default function Problems() {
             </AnimatePresence>
           </div>
         </m.div>
+
 
         {/* Results count */}
         <m.div

@@ -3,6 +3,11 @@ import { m } from "framer-motion";
 import { TrendingUp, Award, Users, Zap, CheckCircle, Star } from "lucide-react";
 import SectionHeader from "./common/SectionHeader";
 
+/* =========================
+   CONFIG FLAGS
+========================= */
+const SHOW_TRUST_INDICATORS = false; // 🔁 toggle later if needed
+
 // ✅ Memoize the count-up hook
 function useCountUpWhenVisible(end, duration = 1200) {
   const ref = useRef(null);
@@ -35,8 +40,7 @@ function useCountUpWhenVisible(end, duration = 1200) {
     function tick(now) {
       const progress = Math.min((now - startTime) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.floor(end * eased);
-      setValue(current);
+      setValue(Math.floor(end * eased));
       if (progress < 1) requestAnimationFrame(tick);
     }
 
@@ -46,7 +50,7 @@ function useCountUpWhenVisible(end, duration = 1200) {
   return { ref, value };
 }
 
-// ✅ Memoize StatCard component
+// ✅ StatCard
 const StatCard = memo(function StatCard({ item, index }) {
   const { ref, value } = useCountUpWhenVisible(item.value, 1200 + index * 100);
 
@@ -61,43 +65,29 @@ const StatCard = memo(function StatCard({ item, index }) {
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.3 }}
-      transition={{
-        duration: 0.5,
-        delay: index * 0.1,
-        ease: [0.22, 1, 0.36, 1],
-      }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
       whileHover={{ y: -4 }}
       className="relative px-6 py-8 text-center group"
     >
-      {/* Icon */}
-      <m.div
-        initial={{ scale: 0 }}
-        whileInView={{ scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: index * 0.1 + 0.2, type: "spring", stiffness: 200 }}
-        className="inline-flex items-center justify-center w-12 h-12 mx-auto mb-4 text-blue-400 border rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border-blue-500/30"
-      >
+      <div className="inline-flex items-center justify-center w-12 h-12 mx-auto mb-4 border rounded-xl bg-blue-500/20 border-blue-500/30">
         {item.icon}
-      </m.div>
+      </div>
 
-      {/* Value */}
       <dd className="mb-2 text-4xl font-bold text-transparent bg-gradient-to-r from-white via-blue-50 to-white bg-clip-text sm:text-5xl">
         {display}
         <span className="text-blue-400">{item.suffix}</span>
       </dd>
 
-      {/* Label */}
-      <dt className="text-sm font-medium text-slate-400 max-w-[200px] mx-auto leading-relaxed">
+      <dt className="text-sm font-medium text-slate-400 max-w-[200px] mx-auto">
         {item.label}
       </dt>
 
-      {/* Hover effect line */}
-      <div className="absolute bottom-0 w-0 h-1 transition-all duration-300 -translate-x-1/2 rounded-full left-1/2 bg-gradient-to-r from-blue-500 to-indigo-500 group-hover:w-20" />
+      <div className="absolute bottom-0 left-1/2 h-1 w-0 -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-300 group-hover:w-20" />
     </m.div>
   );
 });
 
-// ✅ Memoize TrustIndicator component
+// ✅ TrustIndicator
 const TrustIndicator = memo(function TrustIndicator({ icon: Icon, text }) {
   return (
     <div className="flex items-center gap-2">
@@ -107,35 +97,14 @@ const TrustIndicator = memo(function TrustIndicator({ icon: Icon, text }) {
   );
 });
 
-// ✅ Memoize main Stats component
+// ✅ Main Stats component
 const Stats = memo(function Stats() {
-  // ✅ Move stats array outside component or memoize it
+  return null; // Temporarily disable the Stats section
   const stats = [
-    { 
-      value: 10000, 
-      suffix: "+", 
-      label: "Mock interviews completed", 
-      icon: <CheckCircle className="w-6 h-6" />
-    },
-    { 
-      value: 4.8, 
-      suffix: "/5", 
-      label: "Average session rating", 
-      decimals: 1,
-      icon: <Star className="w-6 h-6" />
-    },
-    { 
-      value: 95, 
-      suffix: "%", 
-      label: "Users feel more confident", 
-      icon: <TrendingUp className="w-6 h-6" />
-    },
-    { 
-      value: 70, 
-      suffix: "%", 
-      label: "See improvement within 2 weeks", 
-      icon: <Zap className="w-6 h-6" />
-    },
+    { value: 10000, suffix: "+", label: "Mock interviews completed", icon: <CheckCircle className="w-6 h-6" /> },
+    { value: 4.8, suffix: "/5", label: "Average session rating", decimals: 1, icon: <Star className="w-6 h-6" /> },
+    { value: 95, suffix: "%", label: "Users feel more confident", icon: <TrendingUp className="w-6 h-6" /> },
+    { value: 70, suffix: "%", label: "See improvement within 2 weeks", icon: <Zap className="w-6 h-6" /> },
   ];
 
   const trustIndicators = [
@@ -145,27 +114,9 @@ const Stats = memo(function Stats() {
   ];
 
   return (
-    <section
-      id="stats"
-      className="relative px-4 py-16 overflow-hidden sm:py-20 sm:px-6 lg:px-8"
-    >
-      {/* Background decoration */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute rounded-full top-1/2 left-1/4 w-96 h-96 bg-blue-500/10 blur-3xl" />
-        <div className="absolute rounded-full top-1/2 right-1/4 w-96 h-96 bg-indigo-500/10 blur-3xl" />
-      </div>
-
+    <section id="stats" className="relative px-4 py-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="relative overflow-hidden border shadow-2xl bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-slate-800/90 border-slate-800 rounded-3xl backdrop-blur-sm"
-        >
-          {/* Subtle gradient overlay */}
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-blue-500/5 via-transparent to-indigo-500/5" />
-
+        <div className="relative overflow-hidden border rounded-3xl bg-slate-900/90 border-slate-800">
           <div className="relative px-6 py-12 sm:px-10 sm:py-16">
             <SectionHeader
               eyebrow="Proven Results"
@@ -175,32 +126,30 @@ const Stats = memo(function Stats() {
             />
 
             {/* Stats Grid */}
-            <div className="mt-12 overflow-hidden border bg-slate-950/50 rounded-2xl border-slate-800/50 backdrop-blur-sm">
-              <dl className="grid grid-cols-1 divide-y sm:grid-cols-2 lg:grid-cols-4 sm:divide-y-0 sm:divide-x divide-slate-800/50">
+            <div className="mt-12 overflow-hidden border rounded-2xl bg-slate-950/50 border-slate-800/50">
+              <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-800/50">
                 {stats.map((item, i) => (
                   <StatCard key={item.label} item={item} index={i} />
                 ))}
               </dl>
             </div>
 
-            {/* Additional trust indicators */}
-            <m.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-wrap items-center justify-center gap-8 mt-12 text-sm text-slate-400"
-            >
-              {trustIndicators.map((indicator, i) => (
-                <TrustIndicator 
-                  key={i} 
-                  icon={indicator.icon} 
-                  text={indicator.text} 
-                />
-              ))}
-            </m.div>
+            {/* Trusted indicators (HIDDEN) */}
+            {SHOW_TRUST_INDICATORS && (
+              <m.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="flex flex-wrap items-center justify-center gap-8 mt-12 text-sm text-slate-400"
+              >
+                {trustIndicators.map((indicator, i) => (
+                  <TrustIndicator key={i} {...indicator} />
+                ))}
+              </m.div>
+            )}
           </div>
-        </m.div>
+        </div>
       </div>
     </section>
   );

@@ -495,7 +495,7 @@ export default function CodeDemo() {
             disabled={isRunning}
             className="rounded bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 px-4 py-1.5 text-sm font-medium text-white"
           >
-            {isRunning ? "Running..." : "Run All Tests"}
+            {isRunning ? "Running..." : "Run"}
           </button>
         </div>
       </header>
@@ -528,7 +528,7 @@ export default function CodeDemo() {
         {/* Left: problem section */}
         <section className="flex flex-col bg-[#020617]">
           <div className="flex items-center gap-4 px-6 py-2 text-xs border-b border-slate-800 text-slate-400">
-            {["description", "editorial", "submissions"].map((tab) => (
+            {["description", /*"editorial"*/, "submissions"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveProblemTab(tab)}
@@ -545,7 +545,7 @@ export default function CodeDemo() {
               to={`/problems/${problemId}/discuss`}
               className="flex items-center gap-1 pb-1 transition-colors text-slate-400 hover:text-emerald-400"
             >
-              💬 Discuss
+              
             </Link>
           </div>
 

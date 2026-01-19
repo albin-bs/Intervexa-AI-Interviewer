@@ -296,6 +296,7 @@ const TrustIndicator = memo(function TrustIndicator({ text }) {
 
 // ✅ Main Pricing component
 const Pricing = memo(function Pricing() {
+  return null; //Disable this when needed
   const [billingPeriod, setBillingPeriod] = useState("monthly");
 
   // ✅ Memoize toggle handler

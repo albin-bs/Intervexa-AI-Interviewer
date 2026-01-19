@@ -223,6 +223,7 @@ const TrustBadge = memo(function TrustBadge({ icon: Icon, text, color }) {
 
 // ✅ Main Testimonials component
 const Testimonials = memo(function Testimonials() {
+  return null; //Disable this when needed
   // ✅ Memoize featured and secondary testimonials
   const { featured, secondary } = useMemo(() => {
     const featured = TESTIMONIALS_DATA[1]; // Marcus Rodriguez

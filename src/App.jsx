@@ -26,7 +26,6 @@ const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Faq = lazy(() => import("./pages/Faq"));
 const Changelog = lazy(() => import("./pages/Changelog"));
-const DemoApp = lazy(() => import("./pages/DemoApp"));
 const CodeDemo = lazy(() => import("./pages/CodeDemo"));
 
 // Auth pages
@@ -215,8 +214,8 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/faq" element={<Faq />} />
                 <Route path="/changelog" element={<Changelog />} />
-                <Route path="/demo" element={<DemoApp />} />
                 <Route path="/code-demo" element={<CodeDemo />} />
+                <Route path="/problems" element={<Problems />} />
                 
                 {/* ========== Auth Routes ========== */}
                 <Route path="/login" element={<Login />} />

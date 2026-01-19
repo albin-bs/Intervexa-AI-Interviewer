@@ -1,40 +1,33 @@
 import { m } from "framer-motion";
-import { MapPin, Linkedin, Github, Mail, Sparkles, Zap, Shield, TrendingUp } from "lucide-react";
+import { Linkedin, Github, Mail, Sparkles, Zap, Shield, TrendingUp } from "lucide-react";
+
 
 const people = [
   {
     name: "Albin Binu Sebastian",
-    role: "Co‑Founder / Product Lead",
     imageUrl: "/albin.png",
-    linkedin: "https://linkedin.com/in/albin",
-    github: "https://github.com/albin",
-    bio: "Drives product vision and user experience strategy",
+    linkedin: "https://www.linkedin.com/in/albin-binu-sebastian/",
+    github: "https://github.com/albin-bs",
   },
   {
     name: "Aswin Asokan",
-    role: "Co‑Founder / Front‑end Engineer",
     imageUrl: "/aswin.png",
-    linkedin: "https://linkedin.com/in/aswin",
-    github: "https://github.com/aswin",
-    bio: "Crafts beautiful, responsive interfaces with React",
+    linkedin: "https://www.linkedin.com/in/aswinasokan2004/",
+    github: "https://github.com/AswinAsokan2004/AswinAsokan2004",
   },
   {
     name: "Abin AC",
-    role: "AI & Backend Engineer",
     imageUrl: "/abin.png",
-    linkedin: "https://linkedin.com/in/abin",
-    github: "https://github.com/abin",
-    bio: "Builds intelligent systems and scalable APIs",
+    linkedin: "https://www.linkedin.com/in/abin-a-c/",
+    github: "https://github.com/Actinker/Actinker",
   },
   {
     name: "Aaron Stephan Cherian",
-    role: "Developer Experience & Integrations",
     imageUrl: "/aaron.png",
-    linkedin: "https://linkedin.com/in/aaron",
-    github: "https://github.com/aaron",
-    bio: "Ensures seamless integrations and developer tools",
+    linkedin: "https://www.linkedin.com/in/aaron-stephen-cherian-69383224a/",
   },
 ];
+
 
 const stats = [
   { icon: <Sparkles className="w-5 h-5" />, value: "10K+", label: "Practice Sessions" },
@@ -43,12 +36,6 @@ const stats = [
   { icon: <Shield className="w-5 h-5" />, value: "100%", label: "Secure & Private" },
 ];
 
-const techStack = [
-  { category: "Frontend", tech: "React + Vite + Tailwind CSS", color: "from-blue-500 to-cyan-500" },
-  { category: "Backend", tech: "Node.js + Express + Supabase", color: "from-green-500 to-emerald-500" },
-  { category: "AI/ML", tech: "Google Gemini + OpenAI", color: "from-purple-500 to-pink-500" },
-  { category: "Cloud", tech: "Vercel + GitHub Actions", color: "from-orange-500 to-red-500" },
-];
 
 function About() {
   return (
@@ -59,7 +46,7 @@ function About() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-4xl mb-16"
+          className="mb-16"
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 border rounded-full bg-blue-500/10 border-blue-500/20">
             <Sparkles className="w-4 h-4 text-blue-400" />
@@ -78,6 +65,7 @@ function About() {
             Our mission is simple: give candidates a safe, realistic space to practice, receive structured feedback, and track progress over time—so you can walk into your next interview prepared and confident.
           </p>
         </m.div>
+
 
         {/* Stats Grid */}
         <m.div
@@ -105,6 +93,7 @@ function About() {
             </m.div>
           ))}
         </m.div>
+
 
         {/* Team Section */}
         <m.div
@@ -135,6 +124,7 @@ function About() {
               </p>
             </div>
 
+
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
               {people.map((person, i) => (
                 <m.div
@@ -159,19 +149,15 @@ function About() {
                       </div>
                     </div>
 
-                    {/* Name & Role */}
+
+                    {/* Name */}
                     <h3 className="mb-1 text-lg font-bold text-white">
                       {person.name}
                     </h3>
-                    <p className="mb-3 text-sm font-semibold text-blue-400">
-                      {person.role}
-                    </p>
-                    <p className="mb-4 text-xs text-gray-400">
-                      {person.bio}
-                    </p>
+
 
                     {/* Social Links */}
-                    <div className="flex items-center justify-center gap-3">
+                    <div className="flex items-center justify-center gap-3 mt-4">
                       <a
                         href={person.linkedin}
                         target="_blank"
@@ -180,14 +166,16 @@ function About() {
                       >
                         <Linkedin className="w-4 h-4" />
                       </a>
-                      <a
-                        href={person.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center w-8 h-8 text-gray-400 transition-all rounded-lg bg-slate-800 hover:bg-purple-500 hover:text-white"
-                      >
-                        <Github className="w-4 h-4" />
-                      </a>
+                      {person.github && (
+                        <a
+                          href={person.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center w-8 h-8 text-gray-400 transition-all rounded-lg bg-slate-800 hover:bg-purple-500 hover:text-white"
+                        >
+                          <Github className="w-4 h-4" />
+                        </a>
+                      )}
                     </div>
                   </div>
                 </m.div>
@@ -196,80 +184,33 @@ function About() {
           </div>
         </m.div>
 
-        {/* Tech Stack Section */}
-        <m.section
+
+        {/* Contact CTA */}
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-4xl"
+          className="max-w-4xl p-8 mx-auto text-center border rounded-2xl border-slate-800 bg-gradient-to-r from-blue-600/10 via-indigo-600/10 to-purple-600/10"
         >
-          <div className="mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 border rounded-full bg-emerald-500/10 border-emerald-500/20">
-              <Zap className="w-4 h-4 text-emerald-400" />
-              <span className="text-sm font-medium text-emerald-300">Our Stack</span>
-            </div>
-            
-            <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
-              Built with modern technology
-            </h2>
-            
-            <p className="mb-8 leading-relaxed text-gray-300">
-              MockMate is built on a cutting-edge developer stack, leveraging the best tools and platforms to deliver fast, reliable, and secure interview practice.
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            {techStack.map((item, i) => (
-              <m.div
-                key={item.category}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                whileHover={{ scale: 1.02 }}
-                className="relative p-6 transition-all border rounded-2xl border-slate-800 bg-slate-900/60 hover:border-slate-700 group"
-              >
-                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${item.color} opacity-10 blur-2xl group-hover:opacity-20 transition-opacity rounded-full`} />
-                
-                <div className="relative">
-                  <span className="text-xs font-bold tracking-wider text-gray-400 uppercase">
-                    {item.category}
-                  </span>
-                  <p className="mt-2 text-base font-semibold text-white">
-                    {item.tech}
-                  </p>
-                </div>
-              </m.div>
-            ))}
-          </div>
-
-          {/* Contact CTA */}
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="p-8 mt-12 text-center border rounded-2xl border-slate-800 bg-gradient-to-r from-blue-600/10 via-indigo-600/10 to-purple-600/10"
+          <h3 className="mb-3 text-2xl font-bold text-white">
+            Want to learn more or collaborate?
+          </h3>
+          <p className="mb-6 text-gray-400">
+            We're always open to feedback, partnerships, and connecting with fellow developers.
+          </p>
+          <a
+            href="mailto:team@mockmate.ai"
+            className="inline-flex items-center gap-2 px-6 py-3 font-semibold text-white transition-all rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 hover:shadow-lg hover:scale-105"
           >
-            <h3 className="mb-3 text-2xl font-bold text-white">
-              Want to learn more or collaborate?
-            </h3>
-            <p className="mb-6 text-gray-400">
-              We're always open to feedback, partnerships, and connecting with fellow developers.
-            </p>
-            <a
-              href="mailto:team@mockmate.ai"
-              className="inline-flex items-center gap-2 px-6 py-3 font-semibold text-white transition-all rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 hover:shadow-lg"
-            >
-              <Mail className="w-5 h-5" />
-              Get in Touch
-            </a>
-          </m.div>
-        </m.section>
+            <Mail className="w-5 h-5" />
+            Get in Touch
+          </a>
+        </m.div>
       </div>
     </main>
   );
 }
+
 
 export default About;

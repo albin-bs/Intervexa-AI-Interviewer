@@ -15,9 +15,9 @@ export default function Navbar({ scrolled }) {
 
   // Navigation links based on auth state
   const publicLinks = [
-    { to: "/#features", label: "Features" },
-    { to: "/#pricing", label: "Pricing" },
-    { to: "/#testimonials", label: "Testimonials" },
+    /*{ to: "/#features", label: "Features" },*/
+    /*{ to: "/#pricing", label: "Pricing" },*/
+    /*{ to: "/#testimonials", label: "Testimonials" },*/
     { to: "/about", label: "About" },
   ];
 
@@ -25,7 +25,7 @@ export default function Navbar({ scrolled }) {
     { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
     { to: "/interview", label: "Practice", icon: <Sparkles className="w-4 h-4" /> },
     { to: "/problems", label: "Problems" },
-    { to: "/community", label: "Community" },
+    /*{ to: "/community", label: "Community" },*/
   ];
 
   const navLinks = isAuthenticated ? authenticatedLinks : publicLinks;
