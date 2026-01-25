@@ -6,6 +6,8 @@ import { m, AnimatePresence } from "framer-motion";
 export default function Navbar({ scrolled }) {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -15,9 +17,6 @@ export default function Navbar({ scrolled }) {
 
   // Navigation links based on auth state
   const publicLinks = [
-    /*{ to: "/#features", label: "Features" },*/
-    /*{ to: "/#pricing", label: "Pricing" },*/
-    /*{ to: "/#testimonials", label: "Testimonials" },*/
     { to: "/about", label: "About" },
   ];
 
@@ -25,10 +24,29 @@ export default function Navbar({ scrolled }) {
     { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
     { to: "/interview", label: "Practice", icon: <Sparkles className="w-4 h-4" /> },
     { to: "/problems", label: "Problems" },
-    /*{ to: "/community", label: "Community" },*/
   ];
 
   const navLinks = isAuthenticated ? authenticatedLinks : publicLinks;
+
+  // Handle scroll to show/hide navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY < 50) {
+        setVisible(true);
+      } else if (currentScrollY > lastScrollY) {
+        setVisible(false);
+      } else {
+        setVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   // Scroll to hash target
   useEffect(() => {
@@ -84,290 +102,311 @@ export default function Navbar({ scrolled }) {
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        visible ? "translate-y-0" : "-translate-y-full"
+      } ${
         scrolled
           ? "bg-slate-950/95 backdrop-blur-xl border-b border-slate-800 shadow-lg shadow-slate-900/50"
           : "bg-slate-950/30 backdrop-blur-sm"
       }`}
     >
-      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <Link
-            to="/"
-            className="flex items-center gap-2 cursor-pointer group"
+      <div className="relative flex items-center justify-between h-16 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 md:h-20">
+        {/* Logo */}
+        <Link
+          to="/"
+          className="flex items-center gap-2 cursor-pointer group"
+        >
+          <m.div
+            whileHover={{ rotate: 360, scale: 1.1 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className="relative"
           >
-            <m.div
-              whileHover={{ rotate: 360, scale: 1.1 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
-              className="relative"
-            >
-              <img
-                src="/logo.png"
-                alt="MockMateAI"
-                className="w-8 h-8 rounded-lg md:w-10 md:h-10"
-              />
-              <div className="absolute inset-0 transition-opacity rounded-lg opacity-0 bg-blue-500/20 blur-sm group-hover:opacity-100" />
-            </m.div>
-            <span className="text-xl font-bold md:text-2xl">
-              <span className="text-white">Mock</span>
-              <span className="text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text">
-                Mate
-              </span>
-              <span className="text-white">AI</span>
+            <img
+              src="/logo.png"
+              alt="MockMateAI"
+              className="w-8 h-8 rounded-lg md:w-10 md:h-10"
+            />
+            <div className="absolute inset-0 transition-opacity rounded-lg opacity-0 bg-blue-500/20 blur-sm group-hover:opacity-100" />
+          </m.div>
+          <span className="text-xl font-bold md:text-2xl">
+            <span className="text-white">Mock</span>
+            <span className="text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text">
+              Mate
             </span>
-          </Link>
+            <span className="text-white">AI</span>
+          </span>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <div className="items-center hidden gap-1 md:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`relative inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-all group ${
-                  isActive(link.to)
-                    ? "text-white bg-blue-500/20 border border-blue-500/30"
-                    : "text-gray-300 hover:text-white hover:bg-white/5"
-                }`}
+        {/* Centered Desktop Navigation */}
+        <div className="absolute hidden transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 lg:flex lg:items-center lg:space-x-3">
+          {navLinks.map((link, index) => (
+            <div key={link.to} className="flex items-center">
+              <m.div
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.2 }}
               >
-                {link.icon && <span className="text-blue-400">{link.icon}</span>}
-                <span className="text-sm font-medium">{link.label}</span>
-                {!isActive(link.to) && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-400 to-indigo-400 max-w-0 group-hover:max-w-full transition-all duration-300" />
-                )}
-              </Link>
-            ))}
-
-            {/* Auth Buttons */}
-            <div className="flex items-center gap-2 ml-4">
-              {isAuthenticated ? (
-                // User Menu
-                <div className="relative user-menu-container">
-                  <m.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-2 px-4 py-2 transition-all rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/30"
-                  >
-                    <div className="flex items-center justify-center text-sm font-semibold text-white rounded-full w-7 h-7 bg-white/20">
-                      {userName.charAt(0).toUpperCase()}
-                    </div>
-                    <span className="hidden text-sm font-medium text-white lg:block">
-                      {userName}
-                    </span>
-                  </m.button>
-
-                  {/* User Dropdown */}
-                  <AnimatePresence>
-                    {userMenuOpen && (
-                      <m.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute right-0 w-56 mt-2 overflow-hidden border shadow-2xl bg-slate-900/95 backdrop-blur-xl border-slate-800 rounded-xl"
-                      >
-                        <div className="p-3 border-b border-slate-800">
-                          <p className="text-sm font-medium text-white">{userName}</p>
-                          <p className="text-xs truncate text-slate-400">
-                            {localStorage.getItem("userEmail") || "user@example.com"}
-                          </p>
-                        </div>
-                        <div className="py-2">
-                          <Link
-                            to="/dashboard"
-                            onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 transition-colors hover:text-white hover:bg-white/5"
-                          >
-                            <LayoutDashboard className="w-4 h-4" />
-                            Dashboard
-                          </Link>
-                          <Link
-                            to="/settings"
-                            onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 transition-colors hover:text-white hover:bg-white/5"
-                          >
-                            <Settings className="w-4 h-4" />
-                            Settings
-                          </Link>
-                        </div>
-                        <div className="p-2 border-t border-slate-800">
-                          <button
-                            onClick={handleLogout}
-                            className="flex items-center w-full gap-3 px-4 py-2 text-sm transition-colors rounded-lg text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
-                          >
-                            <LogOut className="w-4 h-4" />
-                            Logout
-                          </button>
-                        </div>
-                      </m.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              ) : (
-                // Login/Signup Buttons
-                <>
-                  <Link
-                    to="/login"
-                    className="px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:text-white"
-                  >
-                    Login
-                  </Link>
-                  <m.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Link
-                      to="/signup"
-                      className="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white transition-all rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/30"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      Get Started
-                    </Link>
-                  </m.div>
-                </>
+                <Link
+                  to={link.to}
+                  className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all rounded-lg ${
+                    isActive(link.to)
+                      ? "text-blue-500 font-bold"
+                      : "text-gray-400 hover:text-gray-300"
+                  }`}
+                >
+                  {link.icon && <span className="text-blue-400">{link.icon}</span>}
+                  {link.label}
+                </Link>
+              </m.div>
+              
+              {/* Dot Separator */}
+              {index < navLinks.length - 1 && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  stroke="currentColor"
+                  className="w-4 h-4 text-gray-600"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                  />
+                </svg>
               )}
             </div>
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <m.button
-            whileTap={{ scale: 0.9 }}
-            className="flex items-center p-2 text-gray-300 rounded-lg md:hidden hover:text-white hover:bg-white/5"
-            onClick={() => setMobileMenuIsOpen(!mobileMenuIsOpen)}
-            aria-label="Toggle menu"
-          >
-            <AnimatePresence mode="wait">
-              {mobileMenuIsOpen ? (
-                <m.div
-                  key="close"
-                  initial={{ rotate: -90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <X className="w-6 h-6" />
-                </m.div>
-              ) : (
-                <m.div
-                  key="menu"
-                  initial={{ rotate: 90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: -90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Menu className="w-6 h-6" />
-                </m.div>
-              )}
-            </AnimatePresence>
-          </m.button>
+          ))}
         </div>
+
+        {/* Right Side: Auth Only */}
+        <div className="items-center hidden gap-3 md:flex">
+          {isAuthenticated ? (
+            // User Menu
+            <div className="relative user-menu-container">
+              <m.button
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white transition-all rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/30"
+              >
+                <div className="flex items-center justify-center text-sm font-semibold text-white rounded-full w-7 h-7 bg-white/20">
+                  {userName.charAt(0).toUpperCase()}
+                </div>
+                <span className="hidden lg:block">
+                  {userName}
+                </span>
+              </m.button>
+
+              {/* User Dropdown */}
+              <AnimatePresence>
+                {userMenuOpen && (
+                  <m.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 w-56 mt-2 overflow-hidden border shadow-2xl bg-slate-900/95 backdrop-blur-xl border-slate-800 rounded-xl"
+                  >
+                    <div className="p-3 border-b border-slate-800">
+                      <p className="text-sm font-medium text-white">{userName}</p>
+                      <p className="text-xs truncate text-slate-400">
+                        {localStorage.getItem("userEmail") || "user@example.com"}
+                      </p>
+                    </div>
+                    <div className="py-2">
+                      <m.div whileHover={{ x: 4 }}>
+                        <Link
+                          to="/dashboard"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 transition-colors hover:text-white hover:bg-white/5"
+                        >
+                          <LayoutDashboard className="w-4 h-4" />
+                          Dashboard
+                        </Link>
+                      </m.div>
+                      <m.div whileHover={{ x: 4 }}>
+                        <Link
+                          to="/settings"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 transition-colors hover:text-white hover:bg-white/5"
+                        >
+                          <Settings className="w-4 h-4" />
+                          Settings
+                        </Link>
+                      </m.div>
+                    </div>
+                    <div className="p-2 border-t border-slate-800">
+                      <m.div whileHover={{ x: 4 }}>
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center w-full gap-3 px-4 py-2 text-sm transition-colors rounded-lg text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Logout
+                        </button>
+                      </m.div>
+                    </div>
+                  </m.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            // Get Started Button
+            <m.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                to="/signup"
+                className="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white transition-all rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/30"
+              >
+                <Sparkles className="w-4 h-4" />
+                Get Started
+              </Link>
+            </m.div>
+          )}
+        </div>
+
+        {/* Mobile Menu Toggle */}
+        <m.button
+          whileTap={{ scale: 0.9 }}
+          className="flex items-center p-2 text-gray-300 rounded-lg md:hidden hover:text-white hover:bg-white/5"
+          onClick={() => setMobileMenuIsOpen(!mobileMenuIsOpen)}
+          aria-label="Toggle menu"
+        >
+          <AnimatePresence mode="wait">
+            {mobileMenuIsOpen ? (
+              <m.div
+                key="close"
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <X className="w-6 h-6" />
+              </m.div>
+            ) : (
+              <m.div
+                key="menu"
+                initial={{ rotate: 90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: -90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Menu className="w-6 h-6" />
+              </m.div>
+            )}
+          </AnimatePresence>
+        </m.button>
       </div>
 
       {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuIsOpen && (
-          <m.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="overflow-hidden border-t md:hidden bg-slate-900/98 backdrop-blur-xl border-slate-800"
-          >
+          <>
+            {/* Backdrop */}
             <m.div
-              initial={{ y: -20 }}
-              animate={{ y: 0 }}
-              exit={{ y: -20 }}
-              className="px-4 py-6 space-y-2 max-h-[calc(100vh-4rem)] overflow-y-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 bg-gray-800/50 md:hidden"
+              onClick={() => setMobileMenuIsOpen(false)}
+            />
+            
+            {/* Sidebar */}
+            <m.nav
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "tween", duration: 0.3 }}
+              className="fixed top-0 bottom-0 left-0 z-50 flex flex-col w-5/6 max-w-sm px-6 py-6 overflow-y-auto bg-white border-r md:hidden"
             >
-              {/* User Info (if authenticated) */}
-              {isAuthenticated && (
-                <m.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex items-center gap-3 p-4 mb-4 border rounded-lg bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border-blue-500/30"
+              {/* Header */}
+              <div className="flex items-center mb-8">
+                <Link to="/" className="flex items-center gap-2 mr-auto" onClick={() => setMobileMenuIsOpen(false)}>
+                  <img src="/logo.png" alt="MockMateAI" className="w-10 h-10 rounded-lg" />
+                  <span className="text-2xl font-bold">
+                    <span className="text-gray-900">Mock</span>
+                    <span className="text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text">Mate</span>
+                    <span className="text-gray-900">AI</span>
+                  </span>
+                </Link>
+                <button
+                  onClick={() => setMobileMenuIsOpen(false)}
+                  className="text-gray-400 transition-colors hover:text-gray-500"
                 >
-                  <div className="flex items-center justify-center w-10 h-10 font-bold text-white rounded-full bg-gradient-to-r from-blue-600 to-indigo-600">
-                    {userName.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-white truncate">{userName}</p>
-                    <p className="text-xs truncate text-slate-400">
-                      {localStorage.getItem("userEmail") || "user@example.com"}
-                    </p>
-                  </div>
-                </m.div>
-              )}
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
 
               {/* Navigation Links */}
-              {navLinks.map((link, index) => (
-                <m.div
-                  key={link.to}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Link
-                    to={link.to}
-                    onClick={() => setMobileMenuIsOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                      isActive(link.to)
-                        ? "text-white bg-blue-500/20 border-l-4 border-blue-500"
-                        : "text-gray-300 hover:text-white hover:bg-white/5"
-                    }`}
-                  >
-                    {link.icon && <span className="text-blue-400">{link.icon}</span>}
-                    <span className="text-sm font-medium">{link.label}</span>
-                  </Link>
-                </m.div>
-              ))}
+              <div>
+                <ul>
+                  {navLinks.map((link) => (
+                    <li key={link.to} className="mb-1">
+                      <m.div whileHover={{ x: 4 }}>
+                        <Link
+                          to={link.to}
+                          onClick={() => setMobileMenuIsOpen(false)}
+                          className={`flex items-center gap-3 p-4 text-sm font-semibold transition-colors rounded ${
+                            isActive(link.to)
+                              ? "text-blue-600 bg-blue-50"
+                              : "text-gray-400 hover:bg-blue-50 hover:text-blue-600"
+                          }`}
+                        >
+                          {link.icon}
+                          {link.label}
+                        </Link>
+                      </m.div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-              {/* Auth Actions */}
-              <m.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: navLinks.length * 0.05 }}
-                className="pt-4 mt-4 space-y-2 border-t border-slate-800"
-              >
-                {isAuthenticated ? (
-                  <>
-                    <Link
-                      to="/settings"
-                      onClick={() => setMobileMenuIsOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-300 transition-colors rounded-lg hover:text-white hover:bg-white/5"
-                    >
-                      <Settings className="w-5 h-5" />
-                      Settings
-                    </Link>
-                    <button
-                      onClick={() => {
-                        handleLogout();
-                        setMobileMenuIsOpen(false);
-                      }}
-                      className="flex items-center justify-center w-full gap-2 px-4 py-3 text-sm font-semibold transition-all rounded-lg text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20"
-                    >
-                      <LogOut className="w-5 h-5" />
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      to="/login"
-                      onClick={() => setMobileMenuIsOpen(false)}
-                      className="block px-4 py-3 text-sm font-medium text-center text-gray-300 transition-colors rounded-lg hover:text-white hover:bg-white/5"
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      to="/signup"
-                      onClick={() => setMobileMenuIsOpen(false)}
-                      className="flex items-center justify-center w-full gap-2 px-4 py-3 text-sm font-semibold text-white transition-all rounded-lg shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/30"
-                    >
-                      <Sparkles className="w-5 h-5" />
-                      Get Started Free
-                    </Link>
-                  </>
-                )}
-              </m.div>
-            </m.div>
-          </m.div>
+              {/* Auth Buttons */}
+              <div className="mt-auto">
+                <div className="pt-6">
+                  {isAuthenticated ? (
+                    <>
+                      <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                        <Link
+                          to="/settings"
+                          onClick={() => setMobileMenuIsOpen(false)}
+                          className="flex items-center justify-center gap-2 px-4 py-3 mb-3 text-xs font-semibold leading-none text-center bg-gray-50 hover:bg-gray-100 rounded-xl"
+                        >
+                          <Settings className="w-4 h-4" />
+                          Settings
+                        </Link>
+                      </m.div>
+                      <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                        <button
+                          onClick={() => {
+                            handleLogout();
+                            setMobileMenuIsOpen(false);
+                          }}
+                          className="flex items-center justify-center w-full gap-2 px-4 py-3 mb-2 text-xs font-semibold leading-none text-center text-white bg-red-600 hover:bg-red-700 rounded-xl"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Logout
+                        </button>
+                      </m.div>
+                    </>
+                  ) : (
+                    <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <Link
+                        to="/signup"
+                        onClick={() => setMobileMenuIsOpen(false)}
+                        className="flex items-center justify-center w-full gap-2 px-4 py-3 mb-2 text-xs font-semibold leading-none text-center text-white bg-blue-600 rounded-full hover:bg-blue-700"
+                      >
+                        <Sparkles className="w-5 h-5" />
+                        Get Started Free
+                      </Link>
+                    </m.div>
+                  )}
+                </div>
+                <p className="my-4 text-xs text-center text-gray-400">
+                  <span>© 2026 MockMateAI</span>
+                </p>
+              </div>
+            </m.nav>
+          </>
         )}
       </AnimatePresence>
     </nav>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { 
   Briefcase, 
   Code, 
@@ -91,7 +92,8 @@ const DIFFICULTY_LEVELS = [
   { level: "hard", label: "Hard", color: "rose", description: "FAANG-level challenges" },
 ];
 
-export default function InterviewSetup({ onStart }: { onStart: (config: any) => void }) {
+export default function InterviewSetup() {
+  const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState("swe");
   const [hoveredRole, setHoveredRole] = useState<string | null>(null);
   const [interviewType, setInterviewType] = useState("mixed");
@@ -101,14 +103,24 @@ export default function InterviewSetup({ onStart }: { onStart: (config: any) => 
 
   const handleStart = () => {
     const selectedTypeData = INTERVIEW_TYPES.find((t) => t.id === interviewType)!;
-    onStart({
+    
+    // Create interview config
+    const config = {
       role: selectedRole,
       difficulty,
       duration: selectedTypeData.duration,
       interviewType,
       useVideo,
       useAudio,
-    });
+    };
+    
+    // ✅ Store config in localStorage
+    localStorage.setItem("interviewConfig", JSON.stringify(config));
+    
+    console.log("🎯 Interview Config:", config);
+    
+    // ✅ Navigate to interview page
+    navigate("/interview");
   };
 
   const selectedRoleData = ROLES.find(r => r.id === selectedRole);
@@ -173,27 +185,22 @@ export default function InterviewSetup({ onStart }: { onStart: (config: any) => 
                         : "border-slate-800 bg-slate-900 hover:border-slate-700"
                     }`}
                   >
-                    {/* Gradient overlay when selected */}
                     {isSelected && (
                       <div className={`absolute inset-0 bg-gradient-to-br ${role.gradient} opacity-10`} />
                     )}
 
-                    {/* Icon */}
                     <div className={`relative w-14 h-14 mb-4 rounded-xl flex items-center justify-center bg-gradient-to-br ${role.gradient}`}>
                       <Icon className="text-white w-7 h-7" />
                     </div>
 
-                    {/* Role name */}
                     <h3 className="relative mb-2 text-lg font-semibold text-left text-white">
                       {role.name}
                     </h3>
 
-                    {/* Short description */}
                     <p className="relative text-sm text-left text-slate-400 line-clamp-2">
                       {role.description}
                     </p>
 
-                    {/* Selected indicator */}
                     {isSelected && (
                       <m.div
                         initial={{ scale: 0 }}
@@ -205,7 +212,6 @@ export default function InterviewSetup({ onStart }: { onStart: (config: any) => 
                     )}
                   </m.button>
 
-                  {/* Hover Card - Detailed Info */}
                   <AnimatePresence>
                     {isHovered && (
                       <m.div
@@ -215,7 +221,6 @@ export default function InterviewSetup({ onStart }: { onStart: (config: any) => 
                         transition={{ duration: 0.2 }}
                         className="absolute left-0 right-0 z-10 p-6 mt-2 border shadow-2xl top-full bg-slate-900 border-slate-700 rounded-xl backdrop-blur-xl"
                       >
-                        {/* Skills */}
                         <div className="mb-4">
                           <p className="mb-2 text-xs font-semibold uppercase text-slate-400">Key Skills</p>
                           <div className="flex flex-wrap gap-2">
@@ -230,13 +235,11 @@ export default function InterviewSetup({ onStart }: { onStart: (config: any) => 
                           </div>
                         </div>
 
-                        {/* Duration */}
                         <div className="flex items-center gap-2 mb-3 text-sm text-slate-300">
                           <Clock className="w-4 h-4 text-slate-500" />
                           <span>Avg Duration: {role.avgDuration}</span>
                         </div>
 
-                        {/* Question Types */}
                         <div>
                           <p className="mb-2 text-xs font-semibold uppercase text-slate-400">Question Types</p>
                           <div className="flex flex-wrap gap-2">

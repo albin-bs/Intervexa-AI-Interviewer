@@ -1,153 +1,102 @@
 import { memo, useMemo } from "react";
-import { m, useMotionValue, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   Sparkles,
   BarChart3,
   Code2,
-  ArrowRight,
-  CheckCircle2,
 } from "lucide-react";
 
+
 /* ---------------- FEATURES DATA ---------------- */
+
 
 const FEATURES_DATA = [
   {
     id: "demo",
-    icon: <Sparkles className="w-5 h-5" />,
-    title: "AI Interview Simulation",
+    icon: <Sparkles className="w-6 h-6" />,
+    title: "AI INTERVIEW SIMULATION",
     heading: "Mobile friendly AI practice",
-    description:
-      "Practice with realistic, adaptive interview questions tailored by Mockmate's AI.",
-    ctaLabel: "Try interactive demo",
+    description: "Practice with realistic, adaptive interview questions tailored by Mockmate's AI.",
     ctaTo: "/interview",
-    gradient: "from-blue-600/20 via-cyan-600/20 to-teal-600/20",
-    highlights: ["Adaptive AI", "Real-time feedback", "24/7 access"],
-    color: "blue",
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&h=300&fit=crop",
+    accentColor: "#5b8cf6",
   },
   {
     id: "dashboard",
-    icon: <BarChart3 className="w-5 h-5" />,
-    title: "Instant AI Feedback",
+    icon: <BarChart3 className="w-6 h-6" />,
+    title: "INSTANT AI FEEDBACK",
     heading: "Performance you can measure",
-    description:
-      "Get actionable feedback on clarity, structure, and communication.",
-    ctaLabel: "View demo dashboard",
+    description: "Get actionable feedback on clarity, structure, and communication.",
     ctaTo: "/dashboard",
-    gradient: "from-indigo-600/20 via-purple-600/20 to-pink-600/20",
-    highlights: ["Instant analysis", "Actionable tips", "Score tracking"],
-    color: "indigo",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=300&fit=crop",
+    accentColor: "#9b7cf6",
   },
   {
     id: "code",
-    icon: <Code2 className="w-5 h-5" />,
-    title: "Live Code Practice",
+    icon: <Code2 className="w-6 h-6" />,
+    title: "LIVE CODE PRACTICE",
     heading: "Practice coding in your browser",
-    description:
-      "Write and test solutions instantly using MockMate’s built-in editor.",
-    ctaLabel: "Try the coding demo",
+    description: "Write and test solutions instantly using MockMate's built-in editor.",
     ctaTo: "/code-demo",
-    gradient: "from-orange-600/20 via-red-600/20 to-rose-600/20",
-    highlights: ["Multi-language", "Instant execution", "Real-time output"],
-    color: "orange",
+    image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=500&h=300&fit=crop",
+    accentColor: "#ff8844",
   },
 ];
 
-/* ---------------- SMALL COMPONENTS ---------------- */
 
-const Highlights = memo(({ highlights, color }) => {
-  const colors = {
-    blue: "text-blue-300 bg-blue-500/10 border-blue-500/20",
-    indigo: "text-indigo-300 bg-indigo-500/10 border-indigo-500/20",
-    orange: "text-orange-300 bg-orange-500/10 border-orange-500/20",
-  };
+/* ---------------- NFT CARD ---------------- */
 
+
+const NFTCard = memo(({ feature }) => {
   return (
-    <div className="flex flex-wrap gap-2 mt-4">
-      {highlights.map((h, i) => (
-        <span
-          key={i}
-          className={`inline-flex items-center gap-1 px-3 py-1 text-xs border rounded-full ${colors[color]}`}
-        >
-          <CheckCircle2 className="w-3 h-3" />
-          {h}
-        </span>
-      ))}
-    </div>
-  );
-});
-
-const FeatureCTA = memo(({ to, label, color }) => {
-  const colors = {
-    blue: "text-blue-400 hover:text-blue-300",
-    indigo: "text-indigo-400 hover:text-indigo-300",
-    orange: "text-orange-400 hover:text-orange-300",
-  };
-
-  return (
-    <m.div className="mt-6" whileHover={{ x: 4 }}>
-      <Link className={`inline-flex gap-2 text-sm font-semibold ${colors[color]}`} to={to}>
-        {label}
-        <ArrowRight className="w-4 h-4" />
-      </Link>
-    </m.div>
-  );
-});
-
-/* ---------------- CARD ---------------- */
-
-const FeatureCard = memo(({ feature, index }) => {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useTransform(mouseY, [-100, 100], [5, -5]);
-  const rotateY = useTransform(mouseX, [-100, 100], [-5, 5]);
-
-  return (
-    <m.div
-      onMouseMove={(e) => {
-        const r = e.currentTarget.getBoundingClientRect();
-        mouseX.set(e.clientX - r.left - r.width / 2);
-        mouseY.set(e.clientY - r.top - r.height / 2);
-      }}
-      onMouseLeave={() => {
-        mouseX.set(0);
-        mouseY.set(0);
-      }}
-      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-      className="relative"
-    >
-      <div className={`absolute inset-0 ${feature.gradient} blur-xl rounded-2xl opacity-50`} />
-      <div className="relative flex flex-col h-full p-8 border rounded-2xl bg-gray-800/90 border-white/10 backdrop-blur-sm">
-        <div className="mb-4">{feature.icon}</div>
-        <p className="text-xs tracking-widest text-indigo-300 uppercase">{feature.title}</p>
-        <h3 className="mt-2 text-xl font-bold text-white">{feature.heading}</h3>
-        <p className="mt-2 text-sm text-gray-400">{feature.description}</p>
-
-        <Highlights highlights={feature.highlights} color={feature.color} />
-        <FeatureCTA to={feature.ctaTo} label={feature.ctaLabel} color={feature.color} />
-
-        <div className="flex-1" />
+    <Link to={feature.ctaTo} className="nft-card">
+      <div className="card-main">
+        <img 
+          className="token-image" 
+          src={feature.image} 
+          alt={feature.heading}
+        />
+        <h2 className="card-title">{feature.heading}</h2>
+        <p className="card-description">{feature.description}</p>
+        
+        <div className="token-info">
+          <div className="price" style={{ color: feature.accentColor }}>
+            {feature.icon}
+            <p>{feature.title}</p>
+          </div>
+        </div>
       </div>
-    </m.div>
+    </Link>
   );
 });
+
 
 /* ---------------- MAIN ---------------- */
 
+
 const Features = memo(function Features() {
   const cards = useMemo(
-    () => FEATURES_DATA.map((f, i) => <FeatureCard key={f.id} feature={f} index={i} />),
+    () =>
+      FEATURES_DATA.map((f) => (
+        <NFTCard key={f.id} feature={f} />
+      )),
     []
   );
 
+
   return (
-    <section className="relative py-24 bg-slate-950">
+    <section className="relative py-24 overflow-hidden">
+      {/* Background Watermark */}
+      <div className="bg-mockmate">
+        <h1>MockMate</h1>
+      </div>
+
+
       <div className="px-6 mx-auto max-w-7xl">
-        <div className="mb-16 text-center">
+        <div className="relative z-10 mb-20 text-center">
           <h2 className="text-3xl font-bold text-white sm:text-5xl">
             Everything you need to{" "}
-            <span className="text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text">
+            <span className="text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-orange-400 bg-clip-text">
               prep smarter
             </span>
           </h2>
@@ -156,10 +105,177 @@ const Features = memo(function Features() {
           </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">{cards}</div>
+
+        <div className="nft-cards-container">
+          {cards}
+        </div>
       </div>
+
+
+      {/* NFT Card Glassmorphic Styles with Softer Gradients */}
+      <style jsx>{`
+        .bg-mockmate {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 0;
+          pointer-events: none;
+        }
+
+
+        .bg-mockmate h1 {
+          font-size: clamp(8rem, 20vw, 20rem);
+          filter: opacity(0.03);
+          font-weight: 900;
+          color: #eee;
+          white-space: nowrap;
+        }
+
+
+        .nft-cards-container {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 3rem;
+          max-width: 1200px;
+          margin: 0 auto;
+          position: relative;
+          z-index: 10;
+        }
+
+
+        .nft-card {
+          user-select: none;
+          max-width: 350px;
+          margin: 0 auto;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: linear-gradient(
+            180deg,
+            rgba(30, 35, 45, 0.6) 0%,
+            rgba(20, 25, 35, 0.8) 100%
+          );
+          box-shadow: 0 4px 16px 2px rgba(0, 0, 0, 0.3);
+          border-radius: 1rem;
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          overflow: hidden;
+          transition: 0.5s all;
+          position: relative;
+          text-decoration: none;
+          display: block;
+          cursor: pointer;
+        }
+
+
+        .nft-card::before {
+          position: absolute;
+          content: "";
+          box-shadow: 0 0 150px 60px rgba(255, 255, 255, 0.08);
+          top: -10%;
+          left: -100%;
+          transform: rotate(-45deg);
+          height: 60rem;
+          width: 60rem;
+          transition: 0.7s all;
+          z-index: 1;
+        }
+
+
+        .nft-card:hover {
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          box-shadow: 0 8px 32px 4px rgba(0, 0, 0, 0.4);
+          transform: translateY(-4px) scale(1.01);
+          filter: brightness(1.15);
+        }
+
+
+        .nft-card:hover::before {
+          filter: brightness(0.6);
+          top: -100%;
+          left: 200%;
+        }
+
+
+        .card-main {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          padding: 1rem;
+          position: relative;
+          z-index: 2;
+        }
+
+
+        .token-image {
+          border-radius: 0.75rem;
+          max-width: 100%;
+          width: 100%;
+          height: 250px;
+          object-fit: cover;
+          border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+
+        .card-title {
+          margin: 1rem 0 0.5rem 0;
+          color: #fff;
+          font-size: 1.5rem;
+          font-weight: 700;
+          line-height: 1.3;
+        }
+
+
+        .card-description {
+          margin: 0.5rem 0 1rem 0;
+          color: rgba(168, 158, 201, 0.9);
+          font-size: 0.9rem;
+          line-height: 1.6;
+        }
+
+
+        .token-info {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.5rem;
+        }
+
+
+        .price {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-weight: 700;
+          font-size: 0.75rem;
+        }
+
+
+        .price p {
+          margin: 0;
+        }
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+          .nft-cards-container {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+          }
+
+
+          .nft-card {
+            max-width: 100%;
+          }
+
+
+          .bg-mockmate h1 {
+            font-size: clamp(4rem, 15vw, 10rem);
+          }
+        }
+      `}</style>
     </section>
   );
 });
+
 
 export default Features;
