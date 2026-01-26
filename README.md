@@ -86,7 +86,6 @@
         <b>Aswin Asokan</b>
       </a>
       <br />
-      <sub>Full Stack Developer</sub>
     </td>
     <td align="center">
       <a href="https://github.com/albin-bs">
@@ -95,7 +94,6 @@
         <b>Albin B S</b>
       </a>
       <br />
-      <sub>Lead Developer & AI Integration</sub>
     </td>
     <td align="center">
       <a href="https://github.com/Actinker">
@@ -104,21 +102,9 @@
         <b>Actinker</b>
       </a>
       <br />
-      <sub>Backend & DevOps</sub>
     </td>
   </tr>
 </table>
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for:
-
-- 🐛 Reporting bugs
-- ✨ Suggesting features
-- 🔧 Submitting pull requests
-- 📝 Improving documentation
 
 ---
 
@@ -127,19 +113,6 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for:
 - **Judge0** for code execution infrastructure
 - **Tailwind UI** for design inspiration
 - **Open Source Community** for amazing tools and libraries
-
----
-
-## 📞 Community & Contact
-
-<div align="center">
-
-[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/your-invite-link)
-[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/mockmate)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/company/mockmate)
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:team@mockmate.tech)
-
-</div>
 
 ---
 
