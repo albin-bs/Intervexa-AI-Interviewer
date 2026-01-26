@@ -31,18 +31,10 @@
 - 📝 **Monaco Editor** — Full-featured code editor with syntax highlighting, themes, and shortcuts
 - 💾 **Auto-Save & History** — Never lose your work; restore previous submissions
 
-#### **3. Community & Discussions**
-- 💬 **Problem-Specific Forums** — Ask questions, share solutions, discuss approaches
-- 🏆 **Leaderboard System** — Track your progress against 12.5K+ active users
-- 🔥 **Streak Tracking** — Maintain daily coding habits with visual streak badges
-- 📊 **User Statistics** — View solve counts by difficulty, language preferences
-- 🎮 **Discord Integration** — Join developers in live chat
-
 #### **4. Progress Analytics Dashboard**
 - 📈 **Performance Metrics** — Visualize acceptance rates, average runtimes, memory usage
 - 🎯 **Skill Gap Analysis** — Identify weak areas with targeted recommendations
 - 📊 **Session History** — Review all past interviews and coding sessions
-- 🏅 **Achievement System** — Earn badges for milestones (100-day streak, top-10 solver, etc.)
 - 📥 **Export & Sharing** — Download reports or share highlights with mentors
 
 ---
