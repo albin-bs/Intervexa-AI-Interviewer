@@ -3,6 +3,19 @@ import { useSearchParams, Link } from "react-router-dom";
 import { problems } from "../data/problems";
 import axios from "axios";
 import Editor from "@monaco-editor/react";
+import { 
+  Play, 
+  Upload, 
+  History, 
+  Settings, 
+  RotateCcw, 
+  ChevronDown,
+  Lightbulb,
+  CheckCircle,
+  Sparkles,
+  Terminal
+} from "lucide-react";
+import { m } from "framer-motion";
 
 // Move constants outside component
 const LANGUAGES = [
@@ -21,44 +34,14 @@ const LANGUAGES = [
 const DEFAULT_CODE = {
   python3: "# write your solution here\n",
   nodejs: "// write your solution here\n",
-  cpp: `#include <bits/stdc++.h>
-using namespace std;
-int main() {
-    // write your solution here
-    return 0;
-}
-`,
-  c: `#include <stdio.h>
-int main() {
-    // write your solution here
-    return 0;
-}
-`,
-  java: `public class Main {
-    public static void main(String[] args) {
-        // write your solution here
-    }
-}
-`,
-  csharp: `using System;
-public class Program {
-    public static void Main() {
-        // write your solution here
-    }
-}
-`,
-  go: `package main
-import "fmt"
-func main() {
-    // write your solution here
-}
-`,
+  cpp: `#include <bits/stdc++.h>\nusing namespace std;\nint main() {\n    // write your solution here\n    return 0;\n}\n`,
+  c: `#include <stdio.h>\nint main() {\n    // write your solution here\n    return 0;\n}\n`,
+  java: `public class Main {\n    public static void main(String[] args) {\n        // write your solution here\n    }\n}\n`,
+  csharp: `using System;\npublic class Program {\n    public static void Main() {\n        // write your solution here\n    }\n}\n`,
+  go: `package main\nimport "fmt"\nfunc main() {\n    // write your solution here\n}\n`,
   ruby: "# write your solution here\n",
-  php: `<?php
-// write your solution here
-`,
-  ts: `// write your solution here (TypeScript)
-`,
+  php: `<?php\n// write your solution here\n`,
+  ts: `// write your solution here (TypeScript)\n`,
 };
 
 const MONACO_LANGUAGE_MAP = {
@@ -88,13 +71,13 @@ function getStatusClasses(status) {
 function getDifficultyColor(difficulty) {
   switch (difficulty) {
     case "Easy":
-      return "bg-emerald-500/10 text-emerald-400";
+      return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
     case "Medium":
-      return "bg-amber-500/10 text-amber-400";
+      return "bg-amber-500/10 text-amber-400 border-amber-500/20";
     case "Hard":
-      return "bg-rose-500/10 text-rose-400";
+      return "bg-rose-500/10 text-rose-400 border-rose-500/20";
     default:
-      return "bg-slate-500/10 text-slate-400";
+      return "bg-slate-500/10 text-slate-400 border-slate-500/20";
   }
 }
 
@@ -123,7 +106,7 @@ export default function CodeDemo() {
   const [aiFeedback, setAiFeedback] = useState(null);
 
   const [editorFontSize, setEditorFontSize] = useState(
-    Number(localStorage.getItem("mockmate-editor-font-size") || 13)
+    Number(localStorage.getItem("mockmate-editor-font-size") || 14)
   );
   const [editorTheme, setEditorTheme] = useState(
     localStorage.getItem("mockmate-editor-theme") || "vs-dark"
@@ -427,27 +410,42 @@ export default function CodeDemo() {
   const lastRun = history[0];
 
   return (
-    <main className="min-h-screen bg-[#0b1120] text-slate-100 pt-16">
-      {/* Top bar */}
-      <header className="flex items-center justify-between border-b border-slate-800 bg-[#020617] px-6 py-3">
-        <div className="flex items-center gap-3">
-          <span className={`rounded px-2 py-0.5 text-xs font-medium ${getDifficultyColor(currentProblem.difficulty)}`}>
-            {currentProblem.difficulty}
-          </span>
-          <h1 className="text-sm font-semibold text-slate-100">
-            {currentProblem.number}. {currentProblem.title}
-          </h1>
+    <div className="h-screen flex flex-col overflow-hidden bg-[#020617] text-slate-100">
+      {/* Top Navigation Bar - This IS your navbar */}
+      <header className="flex items-center justify-between h-14 border-b border-slate-800 px-4 bg-[#020617] z-50 relative shrink-0">
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2 text-emerald-500">
+            <Terminal className="w-7 h-7" />
+            <h2 className="text-lg font-bold leading-tight tracking-tight text-white">
+              MockMate-AI
+            </h2>
+          </div>
+          <div className="h-6 w-[1px] bg-slate-800"></div>
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-semibold text-slate-300">Problem Set</span>
+            <ChevronDown className="w-4 h-4 text-slate-500 rotate-[-90deg]" />
+            <h3 className="text-sm font-medium text-white">
+              {currentProblem.number}. {currentProblem.title}
+            </h3>
+            <div className={`flex h-6 items-center justify-center rounded border px-2 text-[10px] font-bold uppercase tracking-wider ${getDifficultyColor(currentProblem.difficulty)}`}>
+              {currentProblem.difficulty}
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <div className="relative">
-            <button
+            <m.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => setIsHistoryOpen((p) => !p)}
-              className="rounded border border-slate-600 bg-slate-900 hover:bg-slate-800 disabled:opacity-60 px-3 py-1.5 text-[11px] font-medium text-slate-100"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium transition-colors rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700"
             >
-              Run History
-            </button>
+              <History className="w-4 h-4" />
+              <span>Run History</span>
+              <ChevronDown className="w-4 h-4" />
+            </m.button>
             {isHistoryOpen && (
-              <div className="absolute top-full right-0 mt-2 w-72 max-h-96 overflow-auto rounded-lg border border-slate-700 bg-[#020617] shadow-lg z-20">
+              <div className="absolute right-0 z-50 w-72 max-h-96 overflow-auto mt-2 border rounded-lg shadow-lg top-full border-slate-700 bg-[#020617]">
                 <div className="px-3 py-2 text-xs font-semibold border-b border-slate-800 text-slate-300">
                   Run History
                 </div>
@@ -459,7 +457,7 @@ export default function CodeDemo() {
                       <button
                         key={run.id}
                         onClick={() => restoreRun(run)}
-                        className="w-full text-left rounded border border-slate-700 bg-slate-900/60 px-2 py-1.5 hover:bg-slate-800 transition"
+                        className="w-full text-left rounded border border-slate-700 bg-slate-900/60 px-2 py-1.5 transition hover:bg-slate-800"
                       >
                         <div className="flex justify-between">
                           <span
@@ -490,136 +488,126 @@ export default function CodeDemo() {
               </div>
             )}
           </div>
-          <button
-            onClick={() => handleRun("all-tests")}
-            disabled={isRunning}
-            className="rounded bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 px-4 py-1.5 text-sm font-medium text-white"
-          >
-            {isRunning ? "Running..." : "Run"}
-          </button>
+          <div className="flex items-center gap-1">
+            <m.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-2 transition-colors text-slate-400 hover:text-white"
+            >
+              <Settings className="w-5 h-5" />
+            </m.button>
+          </div>
         </div>
       </header>
 
-      {/* Status bar */}
-      <div className="flex items-center justify-between px-6 py-2 text-[11px] border-b border-slate-800 bg-[#020617] text-slate-400">
-        <span>
-          {lastRun ? (
-            <>
-              <span
-                className={`font-semibold mr-1 ${getStatusClasses(
-                  lastRun.status
-                )}`}
-              >
-                {lastRun.status}
-              </span>
-              {statusText.replace(lastRun.status, "").trim() || ""}
-            </>
-          ) : (
-            statusText || "Ready. Write code on the right and run."
-          )}
-        </span>
-        <span className="hidden sm:inline">
-          Changes, history, and AI insights are stored per problem.
-        </span>
-      </div>
-
-      {/* Main layout */}
-      <div className="grid h-[calc(100vh-88px)] grid-cols-[minmax(0,2.2fr)_minmax(0,2.8fr)_minmax(0,1.8fr)] divide-x divide-slate-800">
-        {/* Left: problem section */}
-        <section className="flex flex-col bg-[#020617]">
-          <div className="flex items-center gap-4 px-6 py-2 text-xs border-b border-slate-800 text-slate-400">
-            {["description", /*"editorial"*/, "submissions"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveProblemTab(tab)}
-                className={`pb-1 capitalize ${
-                  activeProblemTab === tab
-                    ? "border-b-2 border-emerald-500 text-emerald-400"
-                    : "hover:text-slate-200"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-            <Link
-              to={`/problems/${problemId}/discuss`}
-              className="flex items-center gap-1 pb-1 transition-colors text-slate-400 hover:text-emerald-400"
-            >
-              
-            </Link>
+      {/* Main IDE Layout - This will fill remaining space */}
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        {/* Left Pane: Problem Details */}
+        <section className="w-[400px] border-r border-slate-800 flex flex-col bg-slate-900/30 overflow-y-auto custom-scrollbar">
+          <div className="sticky top-0 bg-[#020617] z-30 border-b border-slate-800">
+            <div className="flex px-4">
+              {["description", "editorial", "submissions"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveProblemTab(tab)}
+                  className={`py-3 px-4 text-sm font-medium capitalize transition-colors ${
+                    activeProblemTab === tab
+                      ? "border-b-2 border-emerald-500 text-white font-bold"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="flex-1 px-6 py-4 overflow-auto text-sm leading-relaxed text-slate-200">
+          <div className="p-6 space-y-6">
             {activeProblemTab === "description" && (
               <>
-                <h2 className="mb-3 text-base font-semibold text-slate-100">
-                  {currentProblem.title}
-                </h2>
-                <p className="mb-4">{currentProblem.description}</p>
-
-                <h3 className="mt-4 mb-2 text-xs font-semibold tracking-wide uppercase text-slate-400">
-                  Sample I/O
-                </h3>
-                <div className="mb-4 overflow-hidden text-xs border rounded border-slate-800 bg-slate-950/60">
-                  <div className="grid grid-cols-3 border-b border-slate-800 bg-slate-900/70">
-                    <div className="px-3 py-2 font-semibold">Input</div>
-                    <div className="px-3 py-2 font-semibold">Output</div>
-                    <div className="px-3 py-2 font-semibold">Explanation</div>
+                <div>
+                  <h1 className="mb-4 text-2xl font-bold text-white">
+                    {currentProblem.number}. {currentProblem.title}
+                  </h1>
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {currentProblem.tags?.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-1 text-xs font-medium rounded bg-slate-800 text-slate-300"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </div>
-                  {currentProblem.samples.map((sample, idx) => (
-                    <div key={idx} className="grid grid-cols-3 text-[11px]">
-                      <div className="px-3 py-2 border-r border-slate-800">
-                        {sample.input}
+                  <p className="text-sm leading-relaxed text-slate-300">
+                    {currentProblem.description}
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-sm font-bold tracking-wider text-white uppercase">
+                    Example:
+                  </h4>
+                  {currentProblem.samples?.map((sample, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 border rounded-lg bg-black/40 border-slate-800"
+                    >
+                      <div className="space-y-2 font-mono text-xs">
+                        <p>
+                          <span className="text-slate-500">Input:</span>{" "}
+                          <span className="text-slate-200">{sample.input}</span>
+                        </p>
+                        <p>
+                          <span className="text-slate-500">Output:</span>{" "}
+                          <span className="text-slate-200">{sample.output}</span>
+                        </p>
+                        {sample.explanation && (
+                          <p>
+                            <span className="text-slate-500">Explanation:</span>{" "}
+                            <span className="text-slate-400">
+                              {sample.explanation}
+                            </span>
+                          </p>
+                        )}
                       </div>
-                      <div className="px-3 py-2 border-r border-slate-800">
-                        {sample.output}
-                      </div>
-                      <div className="px-3 py-2">{sample.explanation}</div>
                     </div>
                   ))}
                 </div>
 
-                <h3 className="mt-4 mb-2 text-xs font-semibold tracking-wide uppercase text-slate-400">
-                  Constraints
-                </h3>
-                <ul className="pl-5 mb-4 space-y-1 text-xs list-disc">
-                  {currentProblem.constraints.map((constraint, idx) => (
-                    <li key={idx}>{constraint}</li>
-                  ))}
-                </ul>
+                <div className="space-y-3">
+                  <h4 className="text-sm font-bold tracking-wider text-white uppercase">
+                    Constraints:
+                  </h4>
+                  <ul className="ml-1 space-y-1 text-sm list-disc list-inside text-slate-400">
+                    {currentProblem.constraints?.map((constraint, idx) => (
+                      <li key={idx}>
+                        <code className="text-emerald-400/80">{constraint}</code>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-                <h3 className="mt-4 mb-2 text-xs font-semibold tracking-wide uppercase text-slate-400">
-                  Edge cases to consider
-                </h3>
-                <ul className="pl-5 mb-4 space-y-1 text-xs list-disc">
-                  {currentProblem.edgeCases.map((edge, idx) => (
-                    <li key={idx}>{edge}</li>
-                  ))}
-                </ul>
-
-                <h3 className="mt-4 mb-2 text-xs font-semibold tracking-wide uppercase text-slate-400">
-                  Hints
-                </h3>
-                <p className="mb-2 text-[11px] text-slate-400">
-                  Hints unlock automatically after a few failed runs.
-                </p>
-                <ul className="pl-5 space-y-2 text-xs list-disc">
-                  {showHint1 ? (
-                    <li>Try breaking down the problem into smaller steps.</li>
-                  ) : (
-                    <li className="text-slate-600">
-                      Run your code a couple of times to unlock Hint 1.
-                    </li>
-                  )}
-                  {showHint2 && (
-                    <li>Consider using a hash map or dictionary for O(1) lookups.</li>
-                  )}
-                  {showHint3 && (
-                    <li>Think about edge cases like empty inputs or duplicates.</li>
-                  )}
-                </ul>
+                {showHint1 && (
+                  <div className="pt-4">
+                    <m.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex items-center justify-between p-3 transition-all border rounded-lg cursor-pointer group bg-indigo-500/5 border-indigo-500/20 hover:bg-indigo-500/10"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Lightbulb className="w-5 h-5 text-indigo-400" />
+                        <span className="text-sm font-medium text-indigo-200">
+                          Show Hint 1
+                        </span>
+                      </div>
+                      <ChevronDown className="w-4 h-4 transition-transform text-indigo-400 group-hover:translate-x-1 rotate-[-90deg]" />
+                    </m.div>
+                  </div>
+                )}
               </>
             )}
+
             {activeProblemTab === "editorial" && (
               <div className="space-y-3 text-sm text-slate-300">
                 <p className="mb-2 text-xs text-slate-400">
@@ -628,6 +616,7 @@ export default function CodeDemo() {
                 <p>Editorial content for {currentProblem.title} will be available here.</p>
               </div>
             )}
+
             {activeProblemTab === "submissions" && (
               <div className="text-xs text-slate-300">
                 <p>
@@ -638,73 +627,59 @@ export default function CodeDemo() {
           </div>
         </section>
 
-        {/* Middle: editor */}
-        <section className="flex flex-col bg-[#020617]">
-          <div className="flex items-center justify-between px-4 py-2 text-xs border-b border-slate-800 text-slate-300">
-            <div className="flex items-center gap-2">
-              <span className="rounded bg-slate-900 px-2 py-1 text-[10px] uppercase tracking-wide">
-                Code
-              </span>
+        {/* Middle Pane: Code Editor */}
+        <section className="flex flex-col flex-1 min-w-0 border-r border-slate-800">
+          <div className="relative z-20 flex items-center justify-between h-10 px-3 border-b border-slate-800 bg-slate-900/20 shrink-0">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded bg-slate-800 text-slate-300">
               <select
                 value={languageId}
                 onChange={handleLanguageChange}
-                className="px-2 py-1 text-xs border rounded border-slate-700 bg-slate-900"
+                className="pr-5 text-xs bg-transparent border-none outline-none appearance-none cursor-pointer"
               >
                 {LANGUAGES.map((lang) => (
-                  <option key={lang.id} value={lang.id}>
+                  <option key={lang.id} value={lang.id} className="bg-slate-800">
                     {lang.label}
                   </option>
                 ))}
               </select>
+              <ChevronDown className="w-3 h-3 pointer-events-none" />
             </div>
+            <m.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleReset}
+              className="p-1 rounded hover:bg-slate-800 text-slate-400"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </m.button>
+          </div>
 
-            <div className="flex items-center gap-2">
-              <select
-                value={editorFontSize}
-                onChange={(e) => setEditorFontSize(Number(e.target.value))}
-                className="px-1.5 py-1 text-[11px] border rounded border-slate-700 bg-slate-900"
+            <div className="flex items-center gap-3">
+              <m.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleRun("all-tests")}
+                disabled={isRunning}
+                className="flex items-center gap-2 px-3 py-1 text-sm font-medium transition-all rounded-md text-slate-300 hover:bg-slate-800 disabled:opacity-60"
               >
-                {[12, 13, 14, 16, 18].map((size) => (
-                  <option key={size} value={size}>
-                    {size}px
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={() =>
-                  setEditorTheme((prev) =>
-                    prev === "vs-dark" ? "vs" : "vs-dark"
-                  )
-                }
-                className="px-2 py-1 text-[11px] border rounded border-slate-700 bg-slate-900"
+                <Play className="w-4 h-4" />
+                <span>{isRunning ? "Running..." : "Run"}</span>
+              </m.button>
+              <m.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleRun("all-tests")}
+                disabled={isRunning}
+                className="flex items-center gap-2 px-4 py-1 text-sm font-bold text-white transition-all rounded-md bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60"
               >
-                {editorTheme === "vs-dark" ? "Dark" : "Light"}
-              </button>
-              <button
-                type="button"
-                onClick={async () => {
-                  try {
-                    await navigator.clipboard.writeText(code);
-                    setStatusText("Code copied to clipboard.");
-                  } catch {
-                    setStatusText("Could not copy code.");
-                  }
-                }}
-                className="px-2 py-1 text-[11px] border rounded border-slate-700 bg-slate-900"
-              >
-                Copy
-              </button>
-              <button
-                onClick={handleReset}
-                className="rounded border border-slate-700 bg-slate-900 px-2 py-1 text-[11px]"
-              >
-                Reset
-              </button>
+                <Upload className="w-4 h-4" />
+                <span>Submit</span>
+              </m.button>
             </div>
           </div>
 
-          <div className="flex-1 border-b border-slate-800">
+          <div className="flex-1 min-h-0 bg-[#010409]">
             <Editor
               height="100%"
               language={MONACO_LANGUAGE_MAP[languageKey] || "javascript"}
@@ -717,11 +692,15 @@ export default function CodeDemo() {
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
                 wordWrap: "on",
+                fontFamily: "'Fira Code', 'Courier New', monospace",
+                lineNumbers: "on",
+                renderLineHighlight: "all",
+                padding: { top: 8, bottom: 8 },
               }}
               loading={
-                <div className="flex items-center justify-center h-full bg-[#020617]">
+                <div className="flex items-center justify-center h-full bg-[#010409]">
                   <div className="text-center">
-                    <div className="w-10 h-10 mx-auto mb-3 border-4 border-purple-500 rounded-full border-t-transparent animate-spin"></div>
+                    <div className="w-10 h-10 mx-auto mb-3 border-4 rounded-full border-emerald-500 border-t-transparent animate-spin"></div>
                     <p className="text-sm text-slate-400">Loading editor...</p>
                   </div>
                 </div>
@@ -730,230 +709,157 @@ export default function CodeDemo() {
           </div>
         </section>
 
-        {/* Right: IO and analysis */}
-        <section className="flex flex-col bg-[#020617] divide-y divide-slate-800">
-          {/* Input Panel */}
-          <div className="flex flex-col h-1/3">
-            <div className="flex items-center justify-between px-4 py-2 text-xs font-semibold border-b border-slate-800 text-slate-300">
-              <span>Input</span>
-              <label className="flex items-center gap-1 text-[11px] font-normal text-slate-400">
-                <input
-                  type="checkbox"
-                  checked={useCustomInput}
-                  onChange={(e) => setUseCustomInput(e.target.checked)}
-                  className="w-3 h-3 rounded border-slate-600 bg-slate-900"
-                />
-                Custom input
-              </label>
+        {/* Right Pane: Input/Output/Analysis */}
+        <section className="w-[420px] flex flex-col bg-slate-900/10 min-h-0">
+          <div className="flex flex-col min-h-0 border-b h-1/3 border-slate-800">
+            <div className="relative z-20 flex items-center justify-between h-10 px-4 border-b bg-slate-800/30 border-slate-800/50 shrink-0">
+              <span className="text-xs font-bold tracking-widest uppercase text-slate-400">
+                Testcase Input
+              </span>
+              <div className="flex gap-2">
+                <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-bold">
+                  CASE 1
+                </span>
+                <span className="text-[10px] bg-slate-700 text-slate-400 px-1.5 py-0.5 rounded font-bold">
+                  CASE 2
+                </span>
+              </div>
             </div>
-            <textarea
-              value={stdin}
-              onChange={(e) => setStdin(e.target.value)}
-              spellCheck={false}
-              disabled={!useCustomInput}
-              placeholder={
-                useCustomInput
-                  ? "Enter custom stdin here..."
-                  : "Using default test input from the problem."
-              }
-              className="flex-1 resize-none bg-[#020617] px-4 py-2 font-mono text-xs text-slate-100 focus:outline-none disabled:text-slate-500 disabled:bg-slate-900/40"
-            />
+            <div className="flex-1 min-h-0 p-4">
+              <textarea
+                value={stdin}
+                onChange={(e) => setStdin(e.target.value)}
+                spellCheck={false}
+                placeholder="Enter custom input..."
+                className="w-full h-full bg-[#0d1117] border border-slate-800 rounded-lg p-3 font-mono text-sm text-slate-300 focus:ring-1 focus:ring-emerald-500/50 outline-none resize-none"
+              />
+            </div>
           </div>
 
-          {/* Output & Analysis Panel */}
-          <div className="flex flex-col flex-1 overflow-y-auto h-2/3">
-            <div className="px-4 py-2 text-xs font-semibold border-b border-slate-800 text-slate-300">
-              Output
+          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+            <div className="relative z-20 flex items-center h-10 px-4 border-b bg-slate-800/30 border-slate-800/50 shrink-0">
+              <span className="text-xs font-bold tracking-widest uppercase text-slate-400">
+                Output & AI Analysis
+              </span>
             </div>
-            <pre className="flex-1 overflow-auto bg-[#020617] px-4 py-2 font-mono text-xs text-slate-100">
-              {output || "Run code to see output here."}
-            </pre>
-
-            {lastRun?.truncated && (
-              <div className="px-4 py-1 text-[11px] text-amber-300 border-t border-slate-800">
-                Output truncated. Showing first part only.
-              </div>
-            )}
-
-            {lastRun &&
-              Array.isArray(lastRun.failing_tests) &&
-              lastRun.failing_tests.length > 0 && (
-                <details className="px-4 pb-2 text-[11px] text-slate-300 border-t border-slate-800">
-                  <summary className="py-1 cursor-pointer text-slate-200">
-                    View failing testcases ({lastRun.failing_tests.length})
-                  </summary>
-                  <div className="mt-2 space-y-2">
-                    {lastRun.failing_tests.map((t, i) => (
-                      <div
-                        key={i}
-                        className="rounded border border-slate-700 bg-slate-900/60 px-2 py-1.5"
-                      >
-                        <p className="mb-1 text-[10px] text-rose-400 font-semibold">
-                          {t.status || "Failed"}
-                        </p>
-                        <p className="text-[10px]">
-                          <span className="font-semibold text-slate-200">
-                            Input:
-                          </span>{" "}
-                          <span className="text-slate-300">{t.input}</span>
-                        </p>
-                        <p className="text-[10px]">
-                          <span className="font-semibold text-slate-200">
-                            Expected:
-                          </span>{" "}
-                          <span className="text-emerald-300">{t.expected}</span>
-                        </p>
-                        <p className="text-[10px]">
-                          <span className="font-semibold text-slate-200">
-                            Your output:
-                          </span>{" "}
-                          <span className="text-amber-300">{t.output}</span>
-                        </p>
-                      </div>
-                    ))}
+            <div className="flex-1 min-h-0 p-4 space-y-4 overflow-y-auto custom-scrollbar">
+              {lastRun && lastRun.status.toLowerCase().includes("accepted") && (
+                <m.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex items-center gap-3 p-3 border rounded-lg bg-emerald-500/10 border-emerald-500/20"
+                >
+                  <CheckCircle className="w-5 h-5 text-emerald-500" />
+                  <div>
+                    <p className="text-sm font-bold leading-none text-white">
+                      Accepted
+                    </p>
+                    <p className="mt-1 text-xs text-emerald-500/70">
+                      Runtime: 68 ms | Memory: 44.2 MB
+                    </p>
                   </div>
-                </details>
+                </m.div>
               )}
 
-            {/* AI panels */}
-            {lastRun && !lastRun.status.toLowerCase().includes("accepted") && (
-              <div className="px-4 py-2 border-t border-slate-800 text-[11px]">
-                <button
-                  type="button"
-                  onClick={() => handleAskMockMate(lastRun)}
-                  disabled={aiExplainLoading}
-                  className="px-3 py-1 text-xs font-medium text-white bg-indigo-600 rounded hover:bg-indigo-500 disabled:opacity-60"
-                >
-                  {aiExplainLoading
-                    ? "Asking MockMate..."
-                    : "Ask MockMate for help"}
-                </button>
+              <pre className="p-3 font-mono text-xs whitespace-pre-wrap rounded bg-slate-950/60 text-slate-100">
+                {output || "Run code to see output here."}
+              </pre>
 
-                {aiExplain && !aiExplain.error && (
-                  <div className="mt-2 rounded border border-indigo-500/40 bg-indigo-500/10 px-3 py-2 text-left text-[11px] text-slate-100">
-                    <p className="mb-1 font-semibold text-indigo-200">
-                      Why this might be failing
-                    </p>
-                    <p className="mb-1">{aiExplain.explanation}</p>
-                    {aiExplain.hints?.length > 0 && (
-                      <ul className="pl-4 mt-1 space-y-1 list-disc">
-                        {aiExplain.hints.map((h, i) => (
-                          <li key={i}>{h}</li>
-                        ))}
-                      </ul>
-                    )}
+              {aiFeedback && !aiFeedback.error && (
+                <m.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="relative p-4 overflow-hidden border rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border-slate-800 group"
+                >
+                  <div className="absolute top-0 right-0 p-4 transition-opacity opacity-10 group-hover:opacity-20">
+                    <Sparkles className="w-12 h-12 text-emerald-500" />
                   </div>
-                )}
-
-                {aiExplain?.error && (
-                  <p className="mt-2 text-[11px] text-rose-300">
-                    {aiExplain.error}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {aiFeedback && !aiFeedback.error && (
-              <div className="px-4 py-2 border-t border-slate-800 text-[11px] bg-slate-900/40">
-                <p className="mb-1 font-semibold text-emerald-300">
-                  MockMate insights (after Accepted)
-                </p>
-                {aiFeedbackLoading && (
-                  <p className="mb-1 text-slate-400">
-                    Analysing your solution...
-                  </p>
-                )}
-                {aiFeedback.complexity && (
-                  <p className="mb-1 text-slate-200">
-                    Estimated complexity:{" "}
-                    <span className="font-semibold">
-                      Time {aiFeedback.complexity.time}, Space{" "}
-                      {aiFeedback.complexity.space}
-                    </span>
-                  </p>
-                )}
-                {aiFeedback.suggestions?.length > 0 && (
-                  <ul className="pl-4 mt-1 space-y-1 list-disc text-slate-200">
-                    {aiFeedback.suggestions.map((s, i) => (
-                      <li key={i}>{s}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )}
-
-            {aiFeedback?.error && (
-              <div className="px-4 py-2 border-t border-slate-800 text-[11px] text-rose-300">
-                {aiFeedback.error}
-              </div>
-            )}
-
-            {lastRun && lastRun.status.toLowerCase().includes("accepted") && (
-              <div className="px-4 py-2 border-t border-slate-800 text-[11px] flex flex-wrap gap-2 bg-slate-900/40">
-                <button
-                  type="button"
-                  onClick={handleRefactor}
-                  disabled={refactorLoading}
-                  className="px-3 py-1 text-xs font-medium text-white bg-purple-600 rounded hover:bg-purple-500 disabled:opacity-60"
-                >
-                  {refactorLoading
-                    ? "Refactoring..."
-                    : "Refactor my solution"}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleGenerateTests}
-                  disabled={generatedTestsLoading}
-                  className="px-3 py-1 text-xs font-medium text-white rounded bg-sky-600 hover:bg-sky-500 disabled:opacity-60"
-                >
-                  {generatedTestsLoading
-                    ? "Generating tests..."
-                    : "Generate edge testcases"}
-                </button>
-              </div>
-            )}
-
-            {generatedTests.length > 0 && (
-              <div className="px-4 py-2 border-t border-slate-800 text-[11px] bg-slate-900/40">
-                <p className="mb-1 font-semibold text-sky-300">
-                  AI‑generated edge testcases
-                </p>
-                <div className="space-y-1">
-                  {generatedTests.map((t) => (
-                    <div
-                      key={t.id}
-                      className="flex items-start justify-between gap-2 rounded border border-slate-700 bg-slate-900/60 px-2 py-1.5"
-                    >
-                      <div className="text-[11px] text-slate-200">
-                        {t.description && (
-                          <p className="font-semibold text-slate-100">
-                            {t.description}
-                          </p>
-                        )}
-                        <p className="font-mono text-xs whitespace-pre-wrap text-slate-300">
-                          {t.input}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => runOnSuggestedInput(t.input)}
-                        className="shrink-0 px-2 py-1 text-[11px] rounded bg-sky-600 text-white hover:bg-sky-500"
-                      >
-                        Run on this input
-                      </button>
+                  <h5 className="flex items-center gap-2 mb-3 text-xs font-bold text-emerald-500">
+                    <Sparkles className="w-4 h-4" />
+                    COMPLEXITY ANALYSIS
+                  </h5>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="p-2 border rounded bg-black/40 border-slate-700">
+                      <p className="text-[10px] text-slate-500 font-bold uppercase">
+                        Time
+                      </p>
+                      <p className="font-mono text-lg text-white">
+                        {aiFeedback.complexity?.time || "O(n)"}
+                      </p>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                    <div className="p-2 border rounded bg-black/40 border-slate-700">
+                      <p className="text-[10px] text-slate-500 font-bold uppercase">
+                        Space
+                      </p>
+                      <p className="font-mono text-lg text-white">
+                        {aiFeedback.complexity?.space || "O(1)"}
+                      </p>
+                    </div>
+                  </div>
+                  {aiFeedback.suggestions?.length > 0 && (
+                    <p className="text-xs italic leading-relaxed text-slate-400">
+                      "{aiFeedback.suggestions[0]}"
+                    </p>
+                  )}
+                </m.div>
+              )}
+
+              {lastRun && lastRun.status.toLowerCase().includes("accepted") && (
+                <m.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 border rounded-xl bg-gradient-to-br from-indigo-950/30 to-slate-900 border-indigo-500/20"
+                >
+                  <h5 className="flex items-center gap-2 mb-3 text-xs font-bold text-indigo-400">
+                    <Sparkles className="w-4 h-4" />
+                    REFACTOR SUGGESTION
+                  </h5>
+                  <div className="p-3 mb-3 border rounded bg-black/40 border-indigo-500/10">
+                    <p className="text-xs text-indigo-200/80">
+                      Click below to get AI-powered refactoring suggestions
+                    </p>
+                  </div>
+                  <m.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleRefactor}
+                    disabled={refactorLoading}
+                    className="w-full py-2 text-[11px] font-bold tracking-wider uppercase transition-colors rounded bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 disabled:opacity-60"
+                  >
+                    {refactorLoading ? "Analyzing..." : "Get Suggestions"}
+                  </m.button>
+                </m.div>
+              )}
+            </div>
           </div>
         </section>
       </div>
 
-      {/* Refactor modal */}
+      {/* Footer */}
+      <footer className="relative z-10 h-6 bg-slate-900 border-t border-slate-800 px-4 flex items-center justify-between text-[10px] font-medium text-slate-500 shrink-0">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Connected to AI Engine</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span>Latency: 12ms</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <span>UTF-8</span>
+          <span>{LANGUAGES.find((l) => l.id === languageId)?.label}</span>
+        </div>
+      </footer>
+
+      {/* Refactor Modal */}
       {refactorModalOpen && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/70">
-          <div className="w-full max-w-3xl border rounded-lg shadow-xl border-slate-700 bg-slate-900">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70">
+          <m.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-3xl border rounded-lg shadow-xl border-slate-700 bg-slate-900"
+          >
             <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800">
               <h2 className="text-sm font-semibold text-slate-100">
                 Refactored solution
@@ -996,9 +902,23 @@ export default function CodeDemo() {
                 Replace my code
               </button>
             </div>
-          </div>
+          </m.div>
         </div>
       )}
-    </main>
+
+      {/* Custom Scrollbar Styles */}
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #334155;
+          border-radius: 10px;
+        }
+      `}</style>
+    </div>
   );
 }

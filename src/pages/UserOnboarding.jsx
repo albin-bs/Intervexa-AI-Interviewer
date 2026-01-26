@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { User, Briefcase, MapPin, Upload, ArrowRight, Check, Sparkles } from "lucide-react";
+import { User, Briefcase, MapPin, Upload, ArrowRight, ArrowLeft, Check, Sparkles, GraduationCap } from "lucide-react";
 
 export default function UserOnboarding() {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ export default function UserOnboarding() {
     currentRole: "",
     company: "",
     yearsOfExperience: "",
-    skillLevel: "beginner",
+    skillLevel: "intermediate",
     country: "",
     city: "",
     bio: "",
@@ -47,7 +47,7 @@ export default function UserOnboarding() {
 
   const handleNext = (e) => {
     e.preventDefault();
-    if (validateStep()) setStep(2);
+    if (validateStep()) setStep(step + 1);
   };
 
   const handleSubmit = async (e) => {
@@ -58,7 +58,7 @@ export default function UserOnboarding() {
       
       localStorage.removeItem("needsOnboarding");
       localStorage.setItem("profileComplete", "true");
-      navigate("/verify/method", { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       console.error("Profile save error:", error);
       alert("Failed to save profile. Please try again.");
@@ -68,240 +68,340 @@ export default function UserOnboarding() {
   const steps = [
     { number: 1, title: "Professional", icon: Briefcase },
     { number: 2, title: "Additional", icon: MapPin },
+    { number: 3, title: "Review", icon: Check },
   ];
 
-  const Input = ({ label, name, required, ...props }) => (
-    <div>
-      <label className="block mb-2 text-sm font-medium text-slate-300">
-        {label} {required && "*"}
-      </label>
-      <input
-        name={name}
-        value={formData[name]}
-        onChange={handleChange}
-        className={`w-full px-4 py-3 bg-slate-900 border ${
-          errors[name] ? "border-rose-500" : "border-slate-700"
-        } rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-        {...props}
-      />
-      {errors[name] && <p className="mt-1 text-xs text-rose-400">{errors[name]}</p>}
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-[#0a0e1a] pt-24 px-4 py-12">
-      <div className="w-full max-w-2xl mx-auto">
-        {/* Header */}
-        <m.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 border rounded-full bg-blue-500/10 border-blue-500/20">
-            <Sparkles className="w-4 h-4 text-blue-400" />
-            <span className="text-sm text-blue-300">Welcome to MockMate AI</span>
-          </div>
-          <h1 className="mb-2 text-3xl font-bold text-white">Complete Your Profile</h1>
-          <p className="text-slate-400">Help us personalize your interview experience</p>
-        </m.div>
+    <div className="relative min-h-screen bg-[#0a0e1a] flex flex-col overflow-x-hidden">
+      <main className="flex flex-col items-center justify-start flex-1 px-4 py-12">
+        {/* Headline */}
+        <div className="mb-10 text-center">
+          <br/>
+          <br/>
+          <h1 className="mb-3 text-4xl font-bold text-white">Welcome to MockMate-AI</h1>
+          <p className="text-lg text-slate-400">Let's personalize your interview preparation experience.</p>
+        </div>
 
-        {/* Progress Steps */}
-        <div className="flex items-center justify-center max-w-md mx-auto mb-8">
-          {steps.map((s, index) => {
+        {/* Onboarding Container */}
+        <div className="w-full max-w-3xl backdrop-blur-md bg-white/[0.03] border border-white/10 rounded-xl p-8 shadow-2xl">
+        {/* Progress Tracker */}
+        <div className="relative flex items-center justify-between px-12 mb-12">
+          {/* Active Progress Line - stays behind */}
+          <div 
+            className="absolute top-6 left-12 h-[2px] bg-[#13ec80] z-0 transition-all duration-500"
+            style={{ 
+              width: step === 1 ? '0%' : step === 2 ? 'calc(50% - 48px)' : 'calc(100% - 96px)'
+            }}
+          ></div>
+
+          {steps.map((s) => {
             const Icon = s.icon;
             const isActive = step === s.number;
             const isCompleted = step > s.number;
 
             return (
-              <div key={s.number} className="flex items-center">
-                <div className="flex flex-col items-center">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
-                    isCompleted ? "bg-emerald-600 text-white" : isActive ? "bg-blue-600 text-white" : "bg-slate-800 text-slate-500"
-                  }`}>
-                    {isCompleted ? <Check className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
-                  </div>
-                  <span className={`text-xs mt-2 text-center ${
-                    isActive ? "text-blue-400 font-medium" : "text-slate-500"
-                  }`}>
-                    {s.title}
-                  </span>
+              <div key={s.number} className="relative z-10 flex flex-col items-center gap-2">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
+                  isCompleted 
+                    ? "bg-[#13ec80] text-[#0a0e1a] shadow-[0_0_15px_rgba(19,236,128,0.4)]" 
+                    : isActive 
+                    ? "bg-[#13ec80] text-[#0a0e1a] shadow-[0_0_15px_rgba(19,236,128,0.4)]" 
+                    : "bg-white/10 border-2 border-white/20 text-white/40"
+                }`}>
+                  <Icon className="w-5 h-5" />
                 </div>
-                {index < steps.length - 1 && (
-                  <div className={`w-24 h-1 mx-4 rounded-full ${
-                    step > s.number ? "bg-emerald-600" : "bg-slate-800"
-                  }`} />
-                )}
+                <span className={`text-xs font-bold uppercase tracking-widest ${
+                  isActive ? "text-[#13ec80]" : "text-white/40"
+                }`}>
+                  {s.title}
+                </span>
               </div>
             );
           })}
         </div>
 
-        {/* Form Card */}
-        <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-[#0f1424] rounded-3xl border border-slate-800/80 shadow-2xl p-8">
-          <form onSubmit={handleSubmit}>
+          {/* Step Title */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-white">
+              {step === 1 && "Step 1: Professional Background"}
+              {step === 2 && "Step 2: Additional Details"}
+              {step === 3 && "Step 3: Review & Confirm"}
+            </h2>
+            <p className="text-sm text-slate-400">
+              {step === 1 && "Tell us about your career so far to help our AI tailor questions for you."}
+              {step === 2 && "Add location and personal information (optional)."}
+              {step === 3 && "Review your information before completing setup."}
+            </p>
+          </div>
+
+          {/* Form Content */}
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Step 1: Professional */}
             {step === 1 && (
-              <div className="space-y-5">
-                <h2 className="mb-6 text-xl font-semibold text-white">Professional Background</h2>
-
-                {/* Profile Picture */}
-                <div className="flex items-center gap-6 p-4 border bg-slate-900/50 rounded-xl border-slate-800">
-                  <div className="flex items-center justify-center w-20 h-20 overflow-hidden rounded-full bg-slate-800">
-                    {formData.profilePicture ? (
-                      <img src={URL.createObjectURL(formData.profilePicture)} alt="Profile" className="object-cover w-full h-full" />
-                    ) : (
-                      <User className="w-8 h-8 text-slate-600" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <label className="block mb-2 text-sm font-medium text-slate-300">Profile Picture (Optional)</label>
-                    <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id="profile-upload" />
-                    <label htmlFor="profile-upload" className="inline-flex items-center gap-2 px-4 py-2 text-white transition-colors rounded-lg cursor-pointer bg-slate-800 hover:bg-slate-700">
-                      <Upload className="w-4 h-4" />
-                      Upload Photo
+              <m.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+                {/* Profile Photo Upload */}
+                <div className="flex flex-col items-center justify-center gap-4 py-4">
+                  <div className="relative cursor-pointer group">
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleFileChange} 
+                      className="hidden" 
+                      id="profile-upload" 
+                    />
+                    <label htmlFor="profile-upload" className="cursor-pointer">
+                      <div className="w-24 h-24 rounded-full border-2 border-dashed border-white/30 group-hover:border-[#13ec80] transition-colors overflow-hidden flex items-center justify-center bg-white/5">
+                        {formData.profilePicture ? (
+                          <img 
+                            src={URL.createObjectURL(formData.profilePicture)} 
+                            alt="Profile" 
+                            className="object-cover w-full h-full" 
+                          />
+                        ) : (
+                          <User className="w-10 h-10 text-white/20 group-hover:text-[#13ec80]/50" />
+                        )}
+                      </div>
+                      <div className="absolute bottom-0 right-0 bg-[#13ec80] text-[#0a0e1a] rounded-full p-1 border-4 border-[#0a0e1a]">
+                        <Upload className="w-3 h-3 font-bold" />
+                      </div>
                     </label>
-                    <p className="mt-1 text-xs text-slate-500">Max size: 5MB</p>
                   </div>
+                  <span className="text-sm font-medium text-slate-400">Upload profile photo</span>
                 </div>
 
-                {/* Current Role */}
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-slate-300">
-                    Current Role *
-                  </label>
-                  <input
-                    type="text"
-                    name="currentRole"
-                    value={formData.currentRole}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-3 bg-slate-900 border ${
-                      errors.currentRole ? "border-rose-500" : "border-slate-700"
-                    } rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    placeholder="Software Engineer"
-                  />
-                  {errors.currentRole && <p className="mt-1 text-xs text-rose-400">{errors.currentRole}</p>}
-                </div>
-
-                {/* Company */}
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-slate-300">
-                    Company (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 text-white border bg-slate-900 border-slate-700 rounded-xl placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Acme Corp"
-                  />
+                {/* Role and Company */}
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="ml-1 text-sm font-semibold text-slate-300">Current Role *</label>
+                    <input
+                      type="text"
+                      name="currentRole"
+                      value={formData.currentRole}
+                      onChange={handleChange}
+                      className={`w-full bg-white/5 border ${
+                        errors.currentRole ? "border-rose-500" : "border-white/10"
+                      } rounded-lg px-4 py-3 focus:border-[#13ec80] focus:ring-1 focus:ring-[#13ec80] outline-none transition-all placeholder:text-white/20 text-white`}
+                      placeholder="e.g. Senior Software Engineer"
+                    />
+                    {errors.currentRole && <p className="ml-1 text-xs text-rose-400">{errors.currentRole}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="ml-1 text-sm font-semibold text-slate-300">Company</label>
+                    <input
+                      type="text"
+                      name="company"
+                      value={formData.company}
+                      onChange={handleChange}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-[#13ec80] focus:ring-1 focus:ring-[#13ec80] outline-none transition-all placeholder:text-white/20 text-white"
+                      placeholder="e.g. Google, Startup Inc."
+                    />
+                  </div>
                 </div>
 
                 {/* Years of Experience */}
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-slate-300">Years of Experience *</label>
-                  <select name="yearsOfExperience" value={formData.yearsOfExperience} onChange={handleChange}
-                    className={`w-full px-4 py-3 bg-slate-900 border ${errors.yearsOfExperience ? "border-rose-500" : "border-slate-700"} rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500`}>
-                    <option value="">Select experience</option>
-                    <option value="0-1">Less than 1 year</option>
-                    <option value="1-3">1-3 years</option>
-                    <option value="3-5">3-5 years</option>
-                    <option value="5-10">5-10 years</option>
-                    <option value="10+">10+ years</option>
+                <div className="space-y-2">
+                  <label className="ml-1 text-sm font-semibold text-slate-300">Years of Experience *</label>
+                  <select
+                    name="yearsOfExperience"
+                    value={formData.yearsOfExperience}
+                    onChange={handleChange}
+                    className={`w-full bg-white/5 border ${
+                      errors.yearsOfExperience ? "border-rose-500" : "border-white/10"
+                    } rounded-lg px-4 py-3 focus:border-[#13ec80] focus:ring-1 focus:ring-[#13ec80] outline-none transition-all appearance-none text-white`}
+                  >
+                    <option value="" className="bg-[#0a0e1a]">Select experience level</option>
+                    <option value="0-1" className="bg-[#0a0e1a]">Entry Level (0-1 years)</option>
+                    <option value="1-3" className="bg-[#0a0e1a]">Junior (1-3 years)</option>
+                    <option value="3-5" className="bg-[#0a0e1a]">Mid-Level (3-5 years)</option>
+                    <option value="5-8" className="bg-[#0a0e1a]">Senior (5-8 years)</option>
+                    <option value="8+" className="bg-[#0a0e1a]">Lead / Expert (8+ years)</option>
                   </select>
-                  {errors.yearsOfExperience && <p className="mt-1 text-xs text-rose-400">{errors.yearsOfExperience}</p>}
+                  {errors.yearsOfExperience && <p className="ml-1 text-xs text-rose-400">{errors.yearsOfExperience}</p>}
                 </div>
 
-                {/* Skill Level */}
-                <div>
-                  <label className="block mb-3 text-sm font-medium text-slate-300">Skill Level</label>
+                {/* Skill Level Selection */}
+                <div className="space-y-3">
+                  <label className="ml-1 text-sm font-semibold text-slate-300">Technical Skill Level</label>
                   <div className="grid grid-cols-3 gap-3">
                     {["beginner", "intermediate", "advanced"].map((level) => (
-                      <button key={level} type="button" onClick={() => setFormData((prev) => ({ ...prev, skillLevel: level }))}
-                        className={`px-4 py-3 rounded-xl border transition-all ${
-                          formData.skillLevel === level ? "bg-blue-600 border-blue-500 text-white" : "bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-600"
-                        }`}>
+                      <button
+                        key={level}
+                        type="button"
+                        onClick={() => setFormData((prev) => ({ ...prev, skillLevel: level }))}
+                        className={`py-3 px-4 rounded-lg border font-medium transition-all ${
+                          formData.skillLevel === level
+                            ? "border-[#13ec80]/50 bg-[#13ec80]/10 text-[#13ec80] ring-1 ring-[#13ec80]"
+                            : "border-white/10 bg-white/5 hover:bg-white/10 text-white"
+                        }`}
+                      >
                         {level.charAt(0).toUpperCase() + level.slice(1)}
                       </button>
                     ))}
                   </div>
                 </div>
-              </div>
+              </m.div>
             )}
 
             {/* Step 2: Additional */}
             {step === 2 && (
-              <div className="space-y-5">
-                <h2 className="mb-6 text-xl font-semibold text-white">Additional Details</h2>
+              <m.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="ml-1 text-sm font-semibold text-slate-300">Country (Optional)</label>
+                    <input
+                      type="text"
+                      name="country"
+                      value={formData.country}
+                      onChange={handleChange}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-[#13ec80] focus:ring-1 focus:ring-[#13ec80] outline-none transition-all placeholder:text-white/20 text-white"
+                      placeholder="United States"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="ml-1 text-sm font-semibold text-slate-300">City (Optional)</label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleChange}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-[#13ec80] focus:ring-1 focus:ring-[#13ec80] outline-none transition-all placeholder:text-white/20 text-white"
+                      placeholder="San Francisco"
+                    />
+                  </div>
+                </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-slate-300">
-                    Country (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    name="country"
-                    value={formData.country}
+                <div className="space-y-2">
+                  <label className="ml-1 text-sm font-semibold text-slate-300">Bio (Optional)</label>
+                  <textarea
+                    name="bio"
+                    value={formData.bio}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 text-white border bg-slate-900 border-slate-700 rounded-xl placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="United States"
+                    rows="4"
+                    maxLength="500"
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-[#13ec80] focus:ring-1 focus:ring-[#13ec80] outline-none transition-all placeholder:text-white/20 text-white resize-none"
+                    placeholder="Tell us about yourself..."
                   />
+                  <p className="ml-1 text-xs text-slate-500">{formData.bio.length} / 500 characters</p>
                 </div>
 
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-slate-300">
-                    City (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 text-white border bg-slate-900 border-slate-700 rounded-xl placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="San Francisco"
-                  />
-                </div>
-              </div>
-
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-slate-300">Bio (Optional)</label>
-                  <textarea name="bio" value={formData.bio} onChange={handleChange} rows="4" maxLength="500"
-                    className="w-full px-4 py-3 text-white border resize-none bg-slate-900 border-slate-700 rounded-xl placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Tell us about yourself..." />
-                  <p className="mt-1 text-xs text-slate-500">{formData.bio.length} / 500 characters</p>
-                </div>
-
-                <div className="p-4 border bg-blue-500/10 border-blue-500/20 rounded-xl">
+                <div className="p-4 border rounded-lg bg-blue-500/10 border-blue-500/20">
                   <p className="text-sm text-blue-300">💡 These details help us personalize your experience.</p>
                 </div>
-              </div>
+              </m.div>
             )}
 
-            {/* Navigation */}
-            <div className="flex gap-3 mt-8">
-              {step > 1 && (
-                <button type="button" onClick={() => setStep(1)} className="flex-1 px-6 py-3 font-medium text-white transition bg-slate-800 hover:bg-slate-700 rounded-xl">
-                  Back
-                </button>
-              )}
-              {step < 2 ? (
-                <button type="button" onClick={handleNext} className="flex items-center justify-center flex-1 gap-2 px-6 py-3 font-medium text-white transition bg-blue-600 hover:bg-blue-500 rounded-xl">
-                  Continue <ArrowRight className="w-5 h-5" />
+            {/* Step 3: Review */}
+            {step === 3 && (
+              <m.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+                <div className="p-6 space-y-4 border rounded-lg bg-white/5 border-white/10">
+                  <h3 className="mb-4 text-lg font-bold text-white">Your Profile Summary</h3>
+                  
+                  {formData.profilePicture && (
+                    <div className="flex items-center gap-4 pb-4 border-b border-white/10">
+                      <img 
+                        src={URL.createObjectURL(formData.profilePicture)} 
+                        alt="Profile" 
+                        className="w-16 h-16 rounded-full object-cover border-2 border-[#13ec80]" 
+                      />
+                      <div>
+                        <p className="text-sm text-slate-400">Profile Picture</p>
+                        <p className="font-medium text-white">Uploaded</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-slate-400">Current Role</p>
+                      <p className="font-medium text-white">{formData.currentRole || "—"}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-400">Company</p>
+                      <p className="font-medium text-white">{formData.company || "—"}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-400">Experience</p>
+                      <p className="font-medium text-white">{formData.yearsOfExperience || "—"}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-400">Skill Level</p>
+                      <p className="font-medium text-white capitalize">{formData.skillLevel}</p>
+                    </div>
+                    {formData.country && (
+                      <div>
+                        <p className="text-sm text-slate-400">Country</p>
+                        <p className="font-medium text-white">{formData.country}</p>
+                      </div>
+                    )}
+                    {formData.city && (
+                      <div>
+                        <p className="text-sm text-slate-400">City</p>
+                        <p className="font-medium text-white">{formData.city}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {formData.bio && (
+                    <div className="pt-4 border-t border-white/10">
+                      <p className="mb-2 text-sm text-slate-400">Bio</p>
+                      <p className="text-white">{formData.bio}</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-4 border rounded-lg bg-emerald-500/10 border-emerald-500/20">
+                  <p className="text-sm text-emerald-300">✓ Your profile is ready! Click "Complete Setup" to continue.</p>
+                </div>
+              </m.div>
+            )}
+
+            {/* Navigation Footer */}
+            <div className="flex items-center justify-between pt-10 mt-6 border-t border-white/10">
+              <button
+                type="button"
+                onClick={() => setStep(Math.max(1, step - 1))}
+                disabled={step === 1}
+                className="flex items-center gap-2 font-semibold transition-colors text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                Back
+              </button>
+
+              {step < 3 ? (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="bg-[#13ec80] hover:bg-[#13ec80]/90 text-[#0a0e1a] px-10 py-3 rounded-lg font-bold flex items-center gap-2 shadow-lg shadow-[#13ec80]/20 transition-all active:scale-95"
+                >
+                  Continue
+                  <ArrowRight className="w-5 h-5" />
                 </button>
               ) : (
-                <button type="submit" className="flex items-center justify-center flex-1 gap-2 px-6 py-3 font-medium text-white transition bg-emerald-600 hover:bg-emerald-500 rounded-xl">
-                  Complete Setup <Check className="w-5 h-5" />
+                <button
+                  type="submit"
+                  className="bg-[#13ec80] hover:bg-[#13ec80]/90 text-[#0a0e1a] px-10 py-3 rounded-lg font-bold flex items-center gap-2 shadow-lg shadow-[#13ec80]/20 transition-all active:scale-95"
+                >
+                  Complete Setup
+                  <Check className="w-5 h-5" />
                 </button>
               )}
             </div>
           </form>
-        </m.div>
+        </div>
 
-        <p className="mt-6 text-sm text-center text-slate-500">
-          Already have an account?{" "}
-          <button onClick={() => navigate("/login")} className="text-blue-400 transition hover:text-blue-300">
-            Sign in
-          </button>
-        </p>
-      </div>
+        {/* Optional Step Preview */}
+        <div className="mt-8 text-sm text-center text-slate-500">
+          {step < 3 && (
+            <span>
+              Next: <span className="text-slate-400">{steps[step]?.title}</span>
+            </span>
+          )}
+        </div>
+      </main>
+
+      {/* Decorative elements */}
+      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#13ec80]/5 blur-[120px] rounded-full -z-10"></div>
+      <div className="fixed bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-blue-500/5 blur-[120px] rounded-full -z-10"></div>
     </div>
   );
 }

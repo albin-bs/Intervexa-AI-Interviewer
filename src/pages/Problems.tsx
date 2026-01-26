@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, CheckCircle, Circle, Lock, Filter } from "lucide-react";
+import { Search, CheckCircle, Circle, Lock, Filter, ChevronLeft, ChevronRight, Award } from "lucide-react";
 import { problems, allTags, type Difficulty } from "../data/problems";
 import { m, AnimatePresence, type Variants } from "framer-motion";
 
-
 type StatusFilter = "All" | "Solved" | "Attempted" | "Todo";
-
 
 // Animation variants
 const containerVariants: Variants = {
@@ -18,7 +16,6 @@ const containerVariants: Variants = {
     },
   },
 };
-
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -32,7 +29,6 @@ const itemVariants: Variants = {
   },
 };
 
-
 const statsVariants: Variants = {
   hidden: { scale: 0.8, opacity: 0 },
   visible: {
@@ -45,7 +41,6 @@ const statsVariants: Variants = {
     },
   },
 };
-
 
 const rowVariants: Variants = {
   hidden: { opacity: 0, x: -20 },
@@ -65,7 +60,6 @@ const rowVariants: Variants = {
     },
   },
 };
-
 
 const filterChipVariants: Variants = {
   hidden: { scale: 0, opacity: 0 },
@@ -87,7 +81,6 @@ const filterChipVariants: Variants = {
   },
 };
 
-
 export default function Problems() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | "All">("All");
@@ -95,19 +88,17 @@ export default function Problems() {
   const [selectedStatus, setSelectedStatus] = useState<StatusFilter>("All");
   const [solvedProblems, setSolvedProblems] = useState<Set<string>>(new Set());
   const [attemptedProblems, setAttemptedProblems] = useState<Set<string>>(new Set());
-  const [isLoaded, setIsLoaded] = useState(false);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Load user progress from localStorage
   useEffect(() => {
     loadProgress();
   }, []);
 
-
   function loadProgress() {
     const solved = new Set<string>();
     const attempted = new Set<string>();
-
 
     problems.forEach((problem) => {
       const history = localStorage.getItem(`mockmate-history-${problem.id}`);
@@ -115,7 +106,6 @@ export default function Problems() {
         try {
           const runs = JSON.parse(history);
           attempted.add(problem.id);
-
 
           const hasAccepted = runs.some((run: any) =>
             run.status?.toLowerCase().includes("accepted")
@@ -129,11 +119,9 @@ export default function Problems() {
       }
     });
 
-
     setSolvedProblems(solved);
     setAttemptedProblems(attempted);
   }
-
 
   // Filter problems
   const filteredProblems = problems.filter((problem) => {
@@ -141,14 +129,11 @@ export default function Problems() {
       problem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       problem.number.toString().includes(searchQuery);
 
-
     const matchesDifficulty =
       selectedDifficulty === "All" || problem.difficulty === selectedDifficulty;
 
-
     const matchesTag =
       selectedTag === "All" || problem.tags.includes(selectedTag);
-
 
     let matchesStatus = true;
     if (selectedStatus === "Solved") {
@@ -160,10 +145,13 @@ export default function Problems() {
       matchesStatus = !attemptedProblems.has(problem.id);
     }
 
-
     return matchesSearch && matchesDifficulty && matchesTag && matchesStatus;
   });
 
+  // Pagination
+  const totalPages = Math.ceil(filteredProblems.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProblems = filteredProblems.slice(startIndex, startIndex + itemsPerPage);
 
   // Stats
   const stats = {
@@ -174,6 +162,7 @@ export default function Problems() {
     hard: problems.filter((p) => p.difficulty === "Hard" && solvedProblems.has(p.id)).length,
   };
 
+  const completionPercentage = stats.total > 0 ? Math.round((stats.solved / stats.total) * 100) : 0;
 
   function getStatusIcon(problemId: string, locked: boolean) {
     if (locked)
@@ -182,7 +171,7 @@ export default function Problems() {
           animate={{ rotate: [0, -10, 10, -10, 0] }}
           transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 3 }}
         >
-          <Lock className="w-4 h-4 text-amber-500" />
+          <Lock className="w-5 h-5 text-amber-500" />
         </m.div>
       );
     if (solvedProblems.has(problemId))
@@ -192,407 +181,483 @@ export default function Problems() {
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 200 }}
         >
-          <CheckCircle className="w-4 h-4 text-emerald-400" />
+          <CheckCircle className="w-5 h-5 text-emerald-500 fill-emerald-500" />
         </m.div>
       );
     if (attemptedProblems.has(problemId))
-      return <Circle className="w-4 h-4 text-amber-400" />;
-    return <Circle className="w-4 h-4 text-slate-600" />;
+      return <Circle className="w-5 h-5 text-slate-400" />;
+    return <Circle className="w-5 h-5 text-slate-700" />;
   }
 
-
-  function getDifficultyColor(difficulty: Difficulty) {
+  function getDifficultyStyles(difficulty: Difficulty) {
     switch (difficulty) {
       case "Easy":
-        return "text-emerald-400";
+        return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
       case "Medium":
-        return "text-amber-400";
+        return "bg-amber-500/10 text-amber-500 border-amber-500/20";
       case "Hard":
-        return "text-rose-400";
+        return "bg-rose-500/10 text-rose-500 border-rose-500/20";
     }
   }
-
 
   const hasActiveFilters =
     searchQuery || selectedDifficulty !== "All" || selectedTag !== "All" || selectedStatus !== "All";
 
+  const clearAllFilters = () => {
+    setSearchQuery("");
+    setSelectedDifficulty("All");
+    setSelectedTag("All");
+    setSelectedStatus("All");
+    setCurrentPage(1);
+  };
 
   return (
     <main className="min-h-screen bg-[#0b1120] text-slate-100 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
       <m.div
         className="mx-auto max-w-7xl"
         variants={containerVariants}
-        initial={{ opacity: 1 }}
-        animate={{ opacity: 1 }}
+        initial="hidden"
+        animate="visible"
       >
         {/* Header */}
-        <m.div variants={itemVariants} className="mb-8">
-          <m.h1
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-2 text-3xl font-bold sm:text-4xl text-slate-100"
-          >
-            Problem Set
-          </m.h1>
-          <m.p
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-slate-400"
-          >
-            Solve problems and track your progress
-          </m.p>
-        </m.div>
-
-
-        {/* Stats Cards */}
-        <m.div
-          variants={itemVariants}
-          className="grid grid-cols-2 gap-4 mb-8 md:grid-cols-5"
-        >
-          {[
-            {
-              label: "Solved",
-              value: `${stats.solved}`,
-              subValue: `/${stats.total}`,
-              color: "text-slate-100",
-              bgClass: "bg-slate-900",
-            },
-            {
-              label: "Easy",
-              value: stats.easy,
-              color: "text-emerald-400",
-              bgClass: "bg-slate-900",
-            },
-            {
-              label: "Medium",
-              value: stats.medium,
-              color: "text-amber-400",
-              bgClass: "bg-slate-900",
-            },
-            {
-              label: "Hard",
-              value: stats.hard,
-              color: "text-rose-400",
-              bgClass: "bg-slate-900",
-            },
-            {
-              label: "Completion",
-              value: `${stats.total > 0 ? Math.round((stats.solved / stats.total) * 100) : 0}%`,
-              color: "text-white",
-              bgClass: "bg-gradient-to-br from-blue-600 to-indigo-600",
-            },
-          ].map((stat, index) => (
-            <m.div
-              key={stat.label}
-              variants={statsVariants}
-              custom={index}
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.98 }}
-              className={`p-4 border border-slate-800 rounded-xl cursor-default shadow-lg ${stat.bgClass}`}
+        <div className="flex flex-col justify-between gap-4 mb-8 md:flex-row md:items-end">
+          <div className="flex flex-col gap-1">
+            <m.h1
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-3xl font-black tracking-tight md:text-4xl text-slate-100"
             >
-              <m.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 + index * 0.1 }}
-                className={`mb-1 text-xs ${
-                  stat.bgClass.includes("gradient") ? "text-blue-100" : stat.color
-                }`}
-              >
-                {stat.label}
-              </m.p>
-              <m.p
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.4 + index * 0.1, type: "spring" }}
-                className={`text-2xl font-bold ${stat.color}`}
-              >
-                {stat.value}
-                {stat.subValue && (
-                  <span className="text-sm font-normal text-slate-400">
-                    {stat.subValue}
-                  </span>
-                )}
-              </m.p>
-            </m.div>
-          ))}
-        </m.div>
+              Problem Set
+            </m.h1>
+            <m.p
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-lg text-slate-400"
+            >
+              Sharpen your skills with our curated coding challenges.
+            </m.p>
+          </div>
+          <m.button
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-bold transition-colors rounded-lg bg-slate-800 hover:bg-slate-700"
+          >
+            <Award className="w-4 h-4 text-amber-500" />
+            Premium Access
+          </m.button>
+        </div>
 
-
-        {/* Filters */}
+        {/* Stats Grid */}
         <m.div
           variants={itemVariants}
-          className="p-4 mb-6 border shadow-lg bg-slate-900 border-slate-800 rounded-xl"
+          className="grid grid-cols-2 gap-4 mb-10 md:grid-cols-3 lg:grid-cols-5"
         >
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {/* Solved Card */}
+          <m.div
+            variants={statsVariants}
+            whileHover={{ scale: 1.05, y: -5 }}
+            className="p-5 border shadow-sm bg-slate-800/50 border-slate-800 rounded-xl"
+          >
+            <p className="mb-1 text-sm font-medium text-slate-400">Solved</p>
+            <div className="flex items-end gap-2">
+              <p className="text-2xl font-bold">
+                {stats.solved}
+                <span className="text-sm font-normal text-slate-400">/{stats.total}</span>
+              </p>
+              <span className="mb-1 text-xs font-bold text-emerald-500">+12%</span>
+            </div>
+          </m.div>
+
+          {/* Easy Card */}
+          <m.div
+            variants={statsVariants}
+            whileHover={{ scale: 1.05, y: -5 }}
+            className="p-5 border shadow-sm bg-slate-800/50 border-slate-800 rounded-xl"
+          >
+            <p className="mb-1 text-sm font-medium text-slate-400">Easy</p>
+            <div className="flex items-end gap-2">
+              <p className="text-2xl font-bold">
+                {stats.easy}
+                <span className="text-sm font-normal text-slate-400">/150</span>
+              </p>
+              <span className="mb-1 text-xs font-bold text-emerald-500">+5%</span>
+            </div>
+          </m.div>
+
+          {/* Medium Card */}
+          <m.div
+            variants={statsVariants}
+            whileHover={{ scale: 1.05, y: -5 }}
+            className="p-5 border shadow-sm bg-slate-800/50 border-slate-800 rounded-xl"
+          >
+            <p className="mb-1 text-sm font-medium text-slate-400">Medium</p>
+            <div className="flex items-end gap-2">
+              <p className="text-2xl font-bold">
+                {stats.medium}
+                <span className="text-sm font-normal text-slate-400">/250</span>
+              </p>
+              <span className="mb-1 text-xs font-bold text-emerald-500">+8%</span>
+            </div>
+          </m.div>
+
+          {/* Hard Card */}
+          <m.div
+            variants={statsVariants}
+            whileHover={{ scale: 1.05, y: -5 }}
+            className="p-5 border shadow-sm bg-slate-800/50 border-slate-800 rounded-xl"
+          >
+            <p className="mb-1 text-sm font-medium text-slate-400">Hard</p>
+            <div className="flex items-end gap-2">
+              <p className="text-2xl font-bold">
+                {stats.hard}
+                <span className="text-sm font-normal text-slate-400">/100</span>
+              </p>
+              <span className="mb-1 text-xs font-bold text-emerald-500">+2%</span>
+            </div>
+          </m.div>
+
+          {/* Completion Card */}
+          <m.div
+            variants={statsVariants}
+            whileHover={{ scale: 1.05, y: -5 }}
+            className="p-5 text-white shadow-lg rounded-xl bg-gradient-to-br from-blue-600 to-purple-700"
+          >
+            <p className="mb-1 text-sm font-medium text-white/80">Completion %</p>
+            <div className="flex items-end gap-2">
+              <p className="text-2xl font-bold">{completionPercentage}%</p>
+              <span className="mb-1 text-xs font-bold text-white/90">+4%</span>
+            </div>
+            <div className="w-full h-1.5 rounded-full bg-white/20 mt-3">
+              <m.div
+                initial={{ width: 0 }}
+                animate={{ width: `${completionPercentage}%` }}
+                transition={{ duration: 1, delay: 0.5 }}
+                className="h-full bg-white rounded-full"
+              />
+            </div>
+          </m.div>
+        </m.div>
+
+        {/* Filtering Section */}
+        <m.div variants={itemVariants} className="mb-6 space-y-4">
+          <div className="flex flex-col gap-4 lg:flex-row">
             {/* Search */}
-            <m.div
-              className="relative"
-              whileHover={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              <Search className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-slate-400" />
+            <div className="relative flex-1">
+              <Search className="absolute w-5 h-5 -translate-y-1/2 text-slate-400 left-4 top-1/2" />
               <input
                 type="text"
-                placeholder="Search problems..."
+                placeholder="Search problems by title, ID, or description..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full py-2 pl-10 pr-4 text-sm transition-all border rounded-lg bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full py-3 pl-12 pr-4 transition-all border outline-none bg-slate-800 border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 text-slate-100 placeholder-slate-500"
               />
-            </m.div>
+            </div>
 
+            {/* Filters */}
+            <div className="flex flex-wrap gap-3">
+              <select
+                value={selectedDifficulty}
+                onChange={(e) => setSelectedDifficulty(e.target.value as Difficulty | "All")}
+                className="px-4 py-3 text-sm font-medium transition-all border outline-none bg-slate-800 border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 text-slate-100"
+              >
+                <option value="All">Difficulty</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
 
-            {/* Difficulty filter */}
-            <m.select
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              value={selectedDifficulty}
-              onChange={(e) => setSelectedDifficulty(e.target.value as Difficulty | "All")}
-              className="px-4 py-2 text-sm transition-all border rounded-lg bg-slate-800 border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 hover:border-emerald-500"
-            >
-              <option value="All">All Difficulties</option>
-              <option value="Easy">Easy</option>
-              <option value="Medium">Medium</option>
-              <option value="Hard">Hard</option>
-            </m.select>
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value as StatusFilter)}
+                className="px-4 py-3 text-sm font-medium transition-all border outline-none bg-slate-800 border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 text-slate-100"
+              >
+                <option value="All">Status</option>
+                <option value="Solved">Solved</option>
+                <option value="Attempted">Attempted</option>
+                <option value="Todo">Todo</option>
+              </select>
 
+              <select
+                value={selectedTag}
+                onChange={(e) => setSelectedTag(e.target.value)}
+                className="px-4 py-3 text-sm font-medium transition-all border outline-none bg-slate-800 border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 text-slate-100"
+              >
+                <option value="All">Tags</option>
+                {allTags.map((tag) => (
+                  <option key={tag} value={tag}>
+                    {tag}
+                  </option>
+                ))}
+              </select>
 
-            {/* Tag filter */}
-            <m.select
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              value={selectedTag}
-              onChange={(e) => setSelectedTag(e.target.value)}
-              className="px-4 py-2 text-sm transition-all border rounded-lg bg-slate-800 border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 hover:border-emerald-500"
-            >
-              <option value="All">All Tags</option>
-              {allTags.map((tag) => (
-                <option key={tag} value={tag}>
-                  {tag}
-                </option>
-              ))}
-            </m.select>
-
-
-            {/* Status filter */}
-            <m.select
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value as StatusFilter)}
-              className="px-4 py-2 text-sm transition-all border rounded-lg bg-slate-800 border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 hover:border-emerald-500"
-            >
-              <option value="All">All Status</option>
-              <option value="Solved">Solved</option>
-              <option value="Attempted">Attempted</option>
-              <option value="Todo">Todo</option>
-            </m.select>
+              <m.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-3 transition-colors rounded-xl bg-slate-800 hover:bg-slate-700"
+              >
+                <Filter className="w-5 h-5 text-slate-500" />
+              </m.button>
+            </div>
           </div>
 
-
-          {/* Active filters display */}
+          {/* Active Filters */}
           <AnimatePresence>
             {hasActiveFilters && (
               <m.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-                className="overflow-hidden"
+                className="flex flex-wrap items-center gap-2"
               >
-                <div className="flex flex-wrap gap-2 pt-4 mt-4 border-t border-slate-800">
-                  <span className="text-xs text-slate-400">Active filters:</span>
-                  <AnimatePresence mode="popLayout">
-                    {searchQuery && (
-                      <m.span
-                        variants={filterChipVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        layout
-                        className="px-2 py-1 text-xs rounded-md bg-slate-800 text-slate-300"
+                <span className="mr-2 text-xs font-bold tracking-wider uppercase text-slate-400">
+                  Active filters:
+                </span>
+                <AnimatePresence mode="popLayout">
+                  {searchQuery && (
+                    <m.div
+                      variants={filterChipVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold border rounded-full bg-blue-500/10 border-blue-500/20 text-blue-400"
+                    >
+                      Search: "{searchQuery}"
+                      <button onClick={() => setSearchQuery("")} className="hover:text-blue-300">
+                        ×
+                      </button>
+                    </m.div>
+                  )}
+                  {selectedDifficulty !== "All" && (
+                    <m.div
+                      variants={filterChipVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold border rounded-full bg-blue-500/10 border-blue-500/20 text-blue-400"
+                    >
+                      {selectedDifficulty}
+                      <button
+                        onClick={() => setSelectedDifficulty("All")}
+                        className="hover:text-blue-300"
                       >
-                        Search: "{searchQuery}"
-                      </m.span>
-                    )}
-                    {selectedDifficulty !== "All" && (
-                      <m.span
-                        variants={filterChipVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        layout
-                        className="px-2 py-1 text-xs rounded-md bg-slate-800 text-slate-300"
+                        ×
+                      </button>
+                    </m.div>
+                  )}
+                  {selectedTag !== "All" && (
+                    <m.div
+                      variants={filterChipVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold border rounded-full bg-blue-500/10 border-blue-500/20 text-blue-400"
+                    >
+                      {selectedTag}
+                      <button onClick={() => setSelectedTag("All")} className="hover:text-blue-300">
+                        ×
+                      </button>
+                    </m.div>
+                  )}
+                  {selectedStatus !== "All" && (
+                    <m.div
+                      variants={filterChipVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold border rounded-full bg-blue-500/10 border-blue-500/20 text-blue-400"
+                    >
+                      {selectedStatus}
+                      <button
+                        onClick={() => setSelectedStatus("All")}
+                        className="hover:text-blue-300"
                       >
-                        {selectedDifficulty}
-                      </m.span>
-                    )}
-                    {selectedTag !== "All" && (
-                      <m.span
-                        variants={filterChipVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        layout
-                        className="px-2 py-1 text-xs rounded-md bg-slate-800 text-slate-300"
-                      >
-                        {selectedTag}
-                      </m.span>
-                    )}
-                    {selectedStatus !== "All" && (
-                      <m.span
-                        variants={filterChipVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        layout
-                        className="px-2 py-1 text-xs rounded-md bg-slate-800 text-slate-300"
-                      >
-                        {selectedStatus}
-                      </m.span>
-                    )}
-                  </AnimatePresence>
-                  <m.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => {
-                      setSearchQuery("");
-                      setSelectedDifficulty("All");
-                      setSelectedTag("All");
-                      setSelectedStatus("All");
-                    }}
-                    className="px-2 py-1 text-xs transition-colors text-emerald-400 hover:text-emerald-300"
-                  >
-                    Clear all
-                  </m.button>
-                </div>
+                        ×
+                      </button>
+                    </m.div>
+                  )}
+                </AnimatePresence>
+                <button
+                  onClick={clearAllFilters}
+                  className="ml-2 text-xs font-bold transition-colors text-slate-500 hover:text-blue-500"
+                >
+                  Clear all
+                </button>
               </m.div>
             )}
           </AnimatePresence>
         </m.div>
 
-
-        {/* Problems Table - UPDATED */}
+        {/* Problem Table */}
         <m.div
           variants={itemVariants}
-          className="overflow-hidden border shadow-lg bg-slate-900 border-slate-800 rounded-xl"
+          className="overflow-hidden border shadow-sm bg-slate-900/50 border-slate-800 rounded-xl"
         >
-          {/* Table Header */}
-          <div className="hidden gap-4 px-6 py-3 text-xs font-semibold border-b md:grid md:grid-cols-12 bg-slate-800/50 border-slate-800 text-slate-400">
-            <div className="col-span-1">Status</div>
-            <div className="col-span-4">Title</div>
-            <div className="col-span-2">Difficulty</div>
-            <div className="col-span-3">Tags</div>
-            <div className="col-span-2">Acceptance</div>
-          </div>
-
-
-          {/* Table Body */}
-          <div className="divide-y divide-slate-800">
-            <AnimatePresence>
-              {filteredProblems.length === 0 ? (
-                <m.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="px-6 py-12 text-center text-slate-500"
-                >
-                  No problems found matching your filters.
-                </m.div>
-              ) : (
-                filteredProblems.map((problem, index) => (
-                  <m.div
-                    key={problem.id}
-                    custom={index}
-                    variants={rowVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    whileHover={{ backgroundColor: "rgba(15, 23, 42, 0.5)", x: 5 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  >
-                    <Link
-                      to={problem.locked ? "#" : `/code-demo?problem=${problem.id}`}
-                      className={`grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-4 ${
-                        problem.locked ? "opacity-60 cursor-not-allowed" : ""
-                      }`}
-                      onClick={(e) => problem.locked && e.preventDefault()}
-                    >
-                      {/* Status + Title */}
-                      <div className="flex items-start gap-3 md:col-span-5">
-                        {getStatusIcon(problem.id, problem.locked)}
-                        <div>
-                          <span className="text-xs text-slate-500">
-                            #{problem.number}
-                          </span>
-                          <h3 className="text-sm font-medium text-slate-100">
-                            {problem.title}
-                          </h3>
-                        </div>
-                      </div>
-
-
-                      {/* Difficulty */}
-                      <div className="md:col-span-2">
-                        <span
-                          className={`text-sm font-medium ${getDifficultyColor(
-                            problem.difficulty
-                          )}`}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="text-sm font-semibold border-b border-slate-800 text-slate-400">
+                  <th className="w-16 px-6 py-4 text-center">Status</th>
+                  <th className="px-6 py-4">Title</th>
+                  <th className="px-6 py-4">Difficulty</th>
+                  <th className="px-6 py-4">Tags</th>
+                  <th className="px-6 py-4 text-right">Acceptance</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800">
+                <AnimatePresence>
+                  {paginatedProblems.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
+                        <m.div
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="flex flex-col items-center gap-4"
                         >
-                          {problem.difficulty}
-                        </span>
-                      </div>
-
-
-                      {/* Tags - UPDATED */}
-                      <div className="flex flex-wrap items-center gap-2 md:col-span-3">
-                        {problem.tags.slice(0, 2).map((tag, i) => (
-                          <m.span
-                            key={tag}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: index * 0.03 + i * 0.05 }}
-                            whileHover={{ scale: 1.05 }}
-                            className="inline-flex items-center justify-center
-                                       h-6 px-2
-                                       rounded-md
-                                       bg-slate-800
-                                       text-[11px] text-slate-300
-                                       leading-none"
+                          <Search className="w-16 h-16 text-slate-700" />
+                          <div>
+                            <p className="text-xl font-bold text-white">No problems found</p>
+                            <p className="text-slate-400">
+                              Try adjusting your filters or search terms.
+                            </p>
+                          </div>
+                          <button
+                            onClick={clearAllFilters}
+                            className="px-6 py-2 font-bold text-white transition-transform bg-blue-600 rounded-lg active:scale-95"
                           >
-                            {tag}
-                          </m.span>
-                        ))}
-                        {problem.tags.length > 2 && (
-                          <span className="h-6 px-2 inline-flex items-center text-[11px] text-slate-500">
-                            +{problem.tags.length - 2}
+                            Reset all filters
+                          </button>
+                        </m.div>
+                      </td>
+                    </tr>
+                  ) : (
+                    paginatedProblems.map((problem, index) => (
+                      <m.tr
+                        key={problem.id}
+                        custom={index}
+                        variants={rowVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        whileHover={{
+                          backgroundColor: "rgba(59, 130, 246, 0.05)",
+                        }}
+                        className={`cursor-pointer group ${
+                          problem.locked ? "opacity-60" : ""
+                        }`}
+                      >
+                        <td className="px-6 py-5 text-center">
+                          {getStatusIcon(problem.id, problem.locked)}
+                        </td>
+                        <td className="px-6 py-5">
+                          <Link
+                            to={problem.locked ? "#" : `/code-demo?problem=${problem.id}`}
+                            onClick={(e) => problem.locked && e.preventDefault()}
+                            className="flex flex-col"
+                          >
+                            <span className="font-semibold transition-colors text-slate-100 group-hover:text-blue-400">
+                              {problem.number}. {problem.title}
+                            </span>
+                            <span className="font-mono text-xs text-slate-400">
+                              ID: {String(problem.number).padStart(3, "0")}
+                            </span>
+                          </Link>
+                        </td>
+                        <td className="px-6 py-5">
+                          <span
+                            className={`px-2.5 py-1 text-xs font-bold tracking-tight uppercase border rounded ${getDifficultyStyles(
+                              problem.difficulty
+                            )}`}
+                          >
+                            {problem.difficulty}
                           </span>
-                        )}
-                      </div>
-
-
-                      {/* Acceptance */}
-                      <div className="text-sm md:col-span-2 text-slate-400">
-                        {problem.acceptance}
-                      </div>
-                    </Link>
-                  </m.div>
-                ))
-              )}
-            </AnimatePresence>
+                        </td>
+                        <td className="px-6 py-5">
+                          <div className="flex flex-wrap gap-1.5">
+                            {problem.tags.slice(0, 2).map((tag) => (
+                              <span
+                                key={tag}
+                                className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-slate-800 text-slate-400"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                            {problem.tags.length > 2 && (
+                              <span className="text-[10px] text-slate-500">
+                                +{problem.tags.length - 2}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-5 font-medium text-right text-slate-300">
+                          {problem.acceptance}
+                        </td>
+                      </m.tr>
+                    ))
+                  )}
+                </AnimatePresence>
+              </tbody>
+            </table>
           </div>
-        </m.div>
 
+          {/* Table Footer with Pagination */}
+          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-800">
+            <p className="text-sm text-slate-400">
+              Showing{" "}
+              <span className="font-bold text-white">
+                {filteredProblems.length > 0 ? startIndex + 1 : 0}
+              </span>{" "}
+              to{" "}
+              <span className="font-bold text-white">
+                {Math.min(startIndex + itemsPerPage, filteredProblems.length)}
+              </span>{" "}
+              of <span className="font-bold text-white">{filteredProblems.length}</span> problems
+            </p>
+            <div className="flex gap-2">
+              <m.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-2 transition-colors border rounded-lg border-slate-700 hover:bg-slate-800 text-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </m.button>
+              
+              {[...Array(Math.min(3, totalPages))].map((_, i) => {
+                const pageNum = i + 1;
+                return (
+                  <m.button
+                    key={pageNum}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`px-3.5 py-1.5 text-sm font-bold rounded-lg transition-colors ${
+                      currentPage === pageNum
+                        ? "bg-blue-600 text-white"
+                        : "hover:bg-slate-800"
+                    }`}
+                  >
+                    {pageNum}
+                  </m.button>
+                );
+              })}
 
-        {/* Results count */}
-        <m.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="mt-4 text-sm text-center text-slate-500"
-        >
-          Showing {filteredProblems.length} of {problems.length} problems
+              <m.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="p-2 transition-colors border rounded-lg border-slate-700 hover:bg-slate-800 text-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </m.button>
+            </div>
+          </div>
         </m.div>
       </m.div>
     </main>

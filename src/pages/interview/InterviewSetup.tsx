@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import { 
-  Briefcase, 
   Code, 
+  Briefcase, 
   BarChart3, 
   Palette,
-  Clock, 
   Video, 
   Mic,
-  Info,
-  ChevronRight,
   Sparkles,
-  Target
+  ChevronRight,
+  Rocket,
+  TrendingUp,
+  MessageSquare,
+  Brain,
+  Shuffle
 } from "lucide-react";
 
 const ROLES = [
@@ -20,146 +21,164 @@ const ROLES = [
     id: "swe", 
     name: "Software Engineer", 
     icon: Code,
-    gradient: "from-blue-500 to-cyan-500",
-    bgGradient: "from-blue-500/10 to-cyan-500/10",
-    description: "Master coding interviews with DSA, system design, and problem-solving questions",
-    skills: ["Data Structures", "Algorithms", "System Design", "Problem Solving"],
-    avgDuration: "45-60 min",
-    questionTypes: ["Coding", "System Design", "Behavioral"]
+    gradient: "from-blue-500 to-cyan-400",
+    skills: "System Design, Algorithms, Testing",
+    avgDuration: "45 min"
   },
   { 
     id: "pm", 
     name: "Product Manager", 
-    icon: Briefcase,
+    icon: Rocket,
     gradient: "from-purple-500 to-pink-500",
-    bgGradient: "from-purple-500/10 to-pink-500/10",
-    description: "Practice product strategy, prioritization, metrics, and stakeholder management",
-    skills: ["Product Strategy", "Metrics", "Roadmap", "Leadership"],
-    avgDuration: "40-50 min",
-    questionTypes: ["Product Design", "Strategy", "Behavioral"]
+    skills: "Strategy, Roadmapping, Metrics",
+    avgDuration: "40 min"
   },
   { 
     id: "analyst", 
     name: "Data Analyst", 
-    icon: BarChart3,
-    gradient: "from-emerald-500 to-teal-500",
-    bgGradient: "from-emerald-500/10 to-teal-500/10",
-    description: "Excel at SQL queries, data visualization, and analytical thinking",
-    skills: ["SQL", "Data Viz", "Statistics", "Business Acumen"],
-    avgDuration: "35-45 min",
-    questionTypes: ["SQL", "Case Study", "Behavioral"]
+    icon: TrendingUp,
+    gradient: "from-emerald-500 to-teal-400",
+    skills: "SQL, Visualization, Statistics",
+    avgDuration: "35 min"
   },
   { 
     id: "designer", 
-    name: "UX Designer", 
+    name: "Product Designer", 
     icon: Palette,
-    gradient: "from-amber-500 to-orange-500",
-    bgGradient: "from-amber-500/10 to-orange-500/10",
-    description: "Design user-centered solutions with portfolio reviews and case studies",
-    skills: ["UX Research", "Wireframing", "Prototyping", "User Testing"],
-    avgDuration: "40-50 min",
-    questionTypes: ["Design Challenge", "Portfolio", "Behavioral"]
+    gradient: "from-amber-500 to-orange-400",
+    skills: "UI/UX, Prototyping, Research",
+    avgDuration: "50 min"
   },
 ];
 
 const INTERVIEW_TYPES = [
   { 
     id: "behavioral", 
-    name: "Behavioral Only", 
+    name: "Behavioral", 
     duration: 20,
-    icon: Briefcase,
-    description: "STAR method, leadership, teamwork, and conflict resolution"
+    icon: MessageSquare
   },
   { 
     id: "technical", 
-    name: "Technical Only", 
-    duration: 30,
-    icon: Code,
-    description: "Role-specific technical questions and problem-solving"
+    name: "Technical", 
+    duration: 40,
+    icon: Brain
   },
   { 
     id: "mixed", 
-    name: "Mixed (Recommended)", 
-    duration: 45,
-    icon: Target,
-    description: "Complete interview experience with both behavioral and technical"
+    name: "Mixed Mode", 
+    duration: 60,
+    icon: Shuffle
   },
 ];
 
 const DIFFICULTY_LEVELS = [
-  { level: "easy", label: "Easy", color: "emerald", description: "Perfect for beginners" },
-  { level: "medium", label: "Medium", color: "amber", description: "Standard interview difficulty" },
-  { level: "hard", label: "Hard", color: "rose", description: "FAANG-level challenges" },
+  { 
+    level: "easy", 
+    label: "Standard", 
+    description: "Beginner-friendly, focus on core concepts and clear logic.",
+    color: "emerald",
+    icon: "😊"
+  },
+  { 
+    level: "medium", 
+    label: "Rigorous", 
+    description: "Industry standard. Expect edge cases and follow-ups.",
+    color: "amber",
+    icon: "⚡"
+  },
+  { 
+    level: "hard", 
+    label: "FAANG+", 
+    description: "High pressure, complex trade-offs, and critical deep-dives.",
+    color: "rose",
+    icon: "🔥"
+  },
 ];
 
-export default function InterviewSetup() {
-  const navigate = useNavigate();
+// ✅ Keep the prop interface
+interface InterviewSetupProps {
+  onStart: (config: {
+    role: string;
+    difficulty: "easy" | "medium" | "hard";
+    duration: number;
+    interviewType: "behavioral" | "technical" | "mixed";
+    useVideo: boolean;
+    useAudio: boolean;
+  }) => void;
+}
+
+// ✅ Accept the onStart prop
+export default function InterviewSetup({ onStart }: InterviewSetupProps) {
   const [selectedRole, setSelectedRole] = useState("swe");
   const [hoveredRole, setHoveredRole] = useState<string | null>(null);
-  const [interviewType, setInterviewType] = useState("mixed");
+  const [interviewType, setInterviewType] = useState("behavioral");
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
   const [useVideo, setUseVideo] = useState(true);
   const [useAudio, setUseAudio] = useState(true);
-
-  const handleStart = () => {
-    const selectedTypeData = INTERVIEW_TYPES.find((t) => t.id === interviewType)!;
+  
+  // ✅ Call the parent's onStart callback (same as before)
+  const handleStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     
-    // Create interview config
+    const selectedTypeData = INTERVIEW_TYPES.find((t) => t.id === interviewType);
+    
+    if (!selectedTypeData) {
+      console.error("❌ Interview type not found:", interviewType);
+      return;
+    }
+    
     const config = {
       role: selectedRole,
       difficulty,
       duration: selectedTypeData.duration,
-      interviewType,
+      interviewType: interviewType as "behavioral" | "technical" | "mixed",
       useVideo,
       useAudio,
     };
     
-    // ✅ Store config in localStorage
-    localStorage.setItem("interviewConfig", JSON.stringify(config));
+    console.log("📦 Starting interview with config:", config);
     
-    console.log("🎯 Interview Config:", config);
-    
-    // ✅ Navigate to interview page
-    navigate("/interview");
+    // ✅ Call the callback from parent (same as your old code)
+    onStart(config);
   };
 
-  const selectedRoleData = ROLES.find(r => r.id === selectedRole);
-
   return (
-    <div className="min-h-screen px-4 py-12 bg-slate-950">
-      <div className="mx-auto max-w-7xl">
-        {/* Header */}
+    <div className="min-h-screen bg-[#020617] text-white px-4 py-12">
+      {/* Rest of your JSX remains the same... */}
+      <div className="max-w-[960px] mx-auto">
+        {/* Hero Title */}
         <m.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12 text-center"
+          className="flex flex-col items-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 border rounded-full bg-blue-500/10 border-blue-500/20">
-            <Sparkles className="w-4 h-4 text-blue-400" />
-            <span className="text-sm text-blue-300">AI-Powered Mock Interview</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 text-xs font-bold tracking-widest text-blue-400 uppercase border rounded-full bg-blue-500/10 border-blue-500/20">
+            <Sparkles className="w-3.5 h-3.5" />
+            AI-Powered Session
           </div>
-          
-          <h1 className="mb-4 text-5xl font-bold text-transparent bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text">
+          <h1 className="text-white text-[32px] md:text-[48px] font-bold leading-tight text-center tracking-tight bg-gradient-to-r from-white to-blue-400 bg-clip-text text-transparent">
             Configure Your Interview
           </h1>
-          <p className="max-w-2xl mx-auto text-lg text-slate-400">
-            Customize your practice session to match your target role and experience level
+          <p className="max-w-xl mt-4 text-base font-normal leading-normal text-center text-slate-400 md:text-lg">
+            Tailor your AI-powered mock session to your specific career goals and skill levels.
           </p>
         </m.div>
 
-        {/* Role Selection - Hoverable Cards */}
+        {/* 1. Role Selection */}
         <m.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="mb-12"
         >
-          <div className="flex items-center gap-2 mb-6">
-            <h2 className="text-2xl font-semibold text-white">Select Your Role</h2>
-            <Info className="w-5 h-5 text-slate-500" />
+          <div className="flex items-center gap-2 px-4 mb-6">
+            <span className="flex items-center justify-center text-xs font-bold text-blue-400 rounded-full size-6 bg-blue-500/20">1</span>
+            <h2 className="text-xl font-bold text-white">Select Your Role</h2>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 px-4 md:grid-cols-4">
             {ROLES.map((role, index) => {
               const Icon = role.icon;
               const isSelected = selectedRole === role.id;
@@ -179,80 +198,30 @@ export default function InterviewSetup() {
                     onMouseLeave={() => setHoveredRole(null)}
                     whileHover={{ scale: 1.02, y: -4 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`relative w-full p-6 rounded-2xl border-2 transition-all overflow-hidden ${
+                    className={`w-full p-6 rounded-xl transition-all backdrop-blur-sm ${
                       isSelected
-                        ? `border-transparent bg-gradient-to-br ${role.bgGradient} shadow-lg`
-                        : "border-slate-800 bg-slate-900 hover:border-slate-700"
+                        ? "bg-slate-800/50 border-2 border-blue-500/50 shadow-lg shadow-blue-500/10"
+                        : "bg-slate-800/30 border border-white/5 hover:border-white/20"
                     }`}
                   >
-                    {isSelected && (
-                      <div className={`absolute inset-0 bg-gradient-to-br ${role.gradient} opacity-10`} />
-                    )}
-
-                    <div className={`relative w-14 h-14 mb-4 rounded-xl flex items-center justify-center bg-gradient-to-br ${role.gradient}`}>
-                      <Icon className="text-white w-7 h-7" />
+                    <div className={`size-12 rounded-lg bg-gradient-to-br ${role.gradient} flex items-center justify-center mb-4 text-white`}>
+                      <Icon className="w-7 h-7" />
                     </div>
-
-                    <h3 className="relative mb-2 text-lg font-semibold text-left text-white">
-                      {role.name}
-                    </h3>
-
-                    <p className="relative text-sm text-left text-slate-400 line-clamp-2">
-                      {role.description}
-                    </p>
-
-                    {isSelected && (
-                      <m.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute flex items-center justify-center w-6 h-6 bg-white rounded-full top-4 right-4"
-                      >
-                        <div className={`w-3 h-3 rounded-full bg-gradient-to-br ${role.gradient}`} />
-                      </m.div>
-                    )}
+                    <p className="font-bold leading-tight text-left text-white">{role.name}</p>
                   </m.button>
 
+                  {/* Tooltip */}
                   <AnimatePresence>
                     {isHovered && (
                       <m.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute left-0 right-0 z-10 p-6 mt-2 border shadow-2xl top-full bg-slate-900 border-slate-700 rounded-xl backdrop-blur-xl"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="absolute left-0 right-0 z-20 p-3 text-xs border rounded-lg shadow-xl pointer-events-none -top-20 bg-slate-800 border-white/10 text-slate-300"
                       >
-                        <div className="mb-4">
-                          <p className="mb-2 text-xs font-semibold uppercase text-slate-400">Key Skills</p>
-                          <div className="flex flex-wrap gap-2">
-                            {role.skills.map((skill) => (
-                              <span
-                                key={skill}
-                                className={`px-3 py-1 text-xs rounded-full bg-gradient-to-r ${role.gradient} text-white`}
-                              >
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 mb-3 text-sm text-slate-300">
-                          <Clock className="w-4 h-4 text-slate-500" />
-                          <span>Avg Duration: {role.avgDuration}</span>
-                        </div>
-
-                        <div>
-                          <p className="mb-2 text-xs font-semibold uppercase text-slate-400">Question Types</p>
-                          <div className="flex flex-wrap gap-2">
-                            {role.questionTypes.map((type) => (
-                              <span
-                                key={type}
-                                className="px-2 py-1 text-xs rounded bg-slate-800 text-slate-300"
-                              >
-                                {type}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
+                        <span className="block mb-1 font-bold text-white">Key Skills:</span>
+                        {role.skills}
+                        <div className="mt-2 font-semibold text-blue-400">Avg. {role.avgDuration}</div>
                       </m.div>
                     )}
                   </AnimatePresence>
@@ -262,15 +231,19 @@ export default function InterviewSetup() {
           </div>
         </m.section>
 
-        {/* Interview Type */}
+        {/* 2. Interview Type */}
         <m.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           className="mb-12"
         >
-          <h2 className="mb-6 text-2xl font-semibold text-white">Interview Type</h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="flex items-center gap-2 px-4 mb-6">
+            <span className="flex items-center justify-center text-xs font-bold text-blue-400 rounded-full size-6 bg-blue-500/20">2</span>
+            <h2 className="text-xl font-bold text-white">Interview Type</h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 px-4 md:grid-cols-3">
             {INTERVIEW_TYPES.map((type) => {
               const Icon = type.icon;
               const isSelected = interviewType === type.id;
@@ -281,46 +254,39 @@ export default function InterviewSetup() {
                   onClick={() => setInterviewType(type.id)}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className={`relative p-6 rounded-xl border-2 transition-all text-left ${
+                  className={`flex items-center justify-between p-4 rounded-xl backdrop-blur-sm transition-all ${
                     isSelected
-                      ? "border-blue-500 bg-blue-500/10"
-                      : "border-slate-800 bg-slate-900 hover:border-slate-700"
+                      ? "bg-slate-800/50 border-2 border-blue-500/40 bg-blue-500/5"
+                      : "bg-slate-800/30 border border-white/5 hover:border-white/20"
                   }`}
                 >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className={`p-3 rounded-lg ${isSelected ? "bg-blue-500" : "bg-slate-800"}`}>
-                      <Icon className={`w-5 h-5 ${isSelected ? "text-white" : "text-slate-400"}`} />
-                    </div>
-                    <span className={`text-sm font-medium ${isSelected ? "text-blue-400" : "text-slate-500"}`}>
-                      {type.duration} min
-                    </span>
+                  <div className="flex items-center gap-3">
+                    <Icon className={`w-5 h-5 ${isSelected ? "text-blue-400" : "text-slate-400"}`} />
+                    <span className="font-medium text-white">{type.name}</span>
                   </div>
-
-                  <h3 className="mb-2 text-lg font-semibold text-white">{type.name}</h3>
-                  <p className="text-sm text-slate-400">{type.description}</p>
-
-                  {isSelected && (
-                    <m.div
-                      layoutId="interview-type-indicator"
-                      className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-b-xl"
-                    />
-                  )}
+                  <span className="text-[10px] font-bold px-2 py-1 rounded bg-slate-700 text-slate-400">
+                    {type.duration} MIN
+                  </span>
                 </m.button>
               );
             })}
           </div>
         </m.section>
 
-        {/* Difficulty Level */}
+        {/* 3. Difficulty Level */}
         <m.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           className="mb-12"
         >
-          <h2 className="mb-6 text-2xl font-semibold text-white">Difficulty Level</h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {DIFFICULTY_LEVELS.map(({ level, label, color, description }) => {
+          <div className="flex items-center gap-2 px-4 mb-6">
+            <span className="flex items-center justify-center text-xs font-bold text-blue-400 rounded-full size-6 bg-blue-500/20">3</span>
+            <h2 className="text-xl font-bold text-white">Difficulty Level</h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 px-4 md:grid-cols-3">
+            {DIFFICULTY_LEVELS.map(({ level, label, description, color, icon }) => {
               const isSelected = difficulty === level;
 
               return (
@@ -329,66 +295,78 @@ export default function InterviewSetup() {
                   onClick={() => setDifficulty(level as any)}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className={`p-6 rounded-xl border-2 transition-all ${
+                  className={`bg-slate-800/30 backdrop-blur-sm p-6 rounded-xl border-b-4 flex flex-col items-center text-center cursor-pointer transition-all ${
                     isSelected
-                      ? `border-${color}-500 bg-${color}-500/10`
-                      : "border-slate-800 bg-slate-900 hover:border-slate-700"
+                      ? `border-${color}-500 ring-2 ring-${color}-500/30 scale-105 shadow-2xl bg-${color}-500/5`
+                      : `border-${color}-500/20 hover:bg-${color}-500/5`
                   }`}
                 >
-                  <h3 className={`text-xl font-bold mb-2 ${isSelected ? `text-${color}-400` : "text-white"}`}>
-                    {label}
-                  </h3>
-                  <p className="text-sm text-slate-400">{description}</p>
+                  <div className={`size-10 rounded-full bg-${color}-500/10 text-${color}-500 flex items-center justify-center mb-4 text-2xl`}>
+                    {icon}
+                  </div>
+                  <h3 className="mb-1 font-bold text-white">{label}</h3>
+                  <p className="text-xs text-slate-400">{description}</p>
                 </m.button>
               );
             })}
           </div>
         </m.section>
 
-        {/* Media Settings */}
+        {/* 4. Media & Hardware */}
         <m.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="p-6 mb-12 border bg-slate-900 border-slate-800 rounded-xl"
+          className="px-4 mb-12"
         >
-          <h2 className="mb-6 text-2xl font-semibold text-white">Media Preferences</h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label className="flex items-center gap-4 p-4 transition-all border rounded-lg cursor-pointer bg-slate-950 border-slate-800 hover:border-slate-700">
-              <input
-                type="checkbox"
-                checked={useVideo}
-                onChange={(e) => setUseVideo(e.target.checked)}
-                className="w-5 h-5 rounded accent-blue-500"
-              />
-              <div className="flex items-center flex-1 gap-3">
-                <div className="p-2 rounded-lg bg-blue-500/10">
-                  <Video className="w-5 h-5 text-blue-400" />
-                </div>
-                <div>
-                  <p className="font-medium text-white">Enable Video</p>
-                  <p className="text-sm text-slate-400">AI avatar + your webcam</p>
-                </div>
+          <div className="flex flex-col items-center justify-between gap-8 p-8 border bg-slate-800/30 backdrop-blur-sm border-white/5 rounded-2xl md:flex-row">
+            <div>
+              <h2 className="mb-2 text-lg font-bold text-white">Media Preferences</h2>
+              <p className="text-sm text-slate-400">We recommend enabling both for a realistic experience.</p>
+            </div>
+            <div className="flex gap-6">
+              {/* Video Toggle */}
+              <div className="flex items-center gap-4">
+                <Video className="w-5 h-5 text-slate-400" />
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setUseVideo(!useVideo);
+                  }}
+                  className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors ${
+                    useVideo ? "bg-blue-500" : "bg-slate-700"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      useVideo ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
               </div>
-            </label>
 
-            <label className="flex items-center gap-4 p-4 transition-all border rounded-lg cursor-pointer bg-slate-950 border-slate-800 hover:border-slate-700">
-              <input
-                type="checkbox"
-                checked={useAudio}
-                onChange={(e) => setUseAudio(e.target.checked)}
-                className="w-5 h-5 rounded accent-blue-500"
-              />
-              <div className="flex items-center flex-1 gap-3">
-                <div className="p-2 rounded-lg bg-emerald-500/10">
-                  <Mic className="w-5 h-5 text-emerald-400" />
-                </div>
-                <div>
-                  <p className="font-medium text-white">Enable Voice</p>
-                  <p className="text-sm text-slate-400">Speak your answers</p>
-                </div>
+              {/* Audio Toggle */}
+              <div className="flex items-center gap-4">
+                <Mic className="w-5 h-5 text-slate-400" />
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setUseAudio(!useAudio);
+                  }}
+                  className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors ${
+                    useAudio ? "bg-blue-500" : "bg-slate-700"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      useAudio ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
               </div>
-            </label>
+            </div>
           </div>
         </m.section>
 
@@ -397,18 +375,24 @@ export default function InterviewSetup() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="flex justify-center"
+          className="flex flex-col items-center px-4 pb-20"
         >
-          <m.button
+          <button
+            type="button"
             onClick={handleStart}
-            whileHover={{ scale: 1.02, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            className="group px-12 py-5 rounded-full bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 hover:from-blue-600 hover:via-blue-700 hover:to-indigo-700 text-white font-semibold text-lg shadow-[0_0_30px_rgba(37,99,235,0.6)] hover:shadow-[0_0_50px_rgba(37,99,235,0.8)] transition-all duration-300 flex items-center gap-3"
+            className="group relative w-full md:w-[400px] bg-blue-500 h-16 rounded-2xl flex items-center justify-center gap-3 text-white font-bold text-lg transition-all shadow-[0_0_40px_rgba(37,106,244,0.3)] hover:shadow-[0_0_60px_rgba(37,106,244,0.5)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
           >
-            <span>Start Interview</span>
+            <span>Start Interview Session</span>
             <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-          </m.button>
+          </button>
+          <p className="mt-4 text-xs text-slate-500">By starting, you agree to our privacy policy and recording terms.</p>
         </m.div>
+      </div>
+
+      {/* Decorative Background */}
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px]"></div>
       </div>
     </div>
   );

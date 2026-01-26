@@ -23,8 +23,6 @@ const BackToTop = lazy(() => import("./components/BackToTop"));
 
 // Pages
 const pages = {
-  PrivacyPolicy: lazy(() => import("./pages/PrivacyPolicy")),
-  TermsOfService: lazy(() => import("./pages/TermsOfService")),
   About: lazy(() => import("./pages/About")),
   Contact: lazy(() => import("./pages/Contact")),
   Faq: lazy(() => import("./pages/Faq")),
@@ -39,13 +37,8 @@ const pages = {
   VerifyCode: lazy(() => import("./pages/VerifyCode")),
   VerifySuccess: lazy(() => import("./pages/VerifySuccess")),
   Dashboard: lazy(() => import("./pages/Dashboard")),
-  Sessions: lazy(() => import("./pages/Sessions")),
-  SessionReport: lazy(() => import("./pages/SessionReport")),
   Settings: lazy(() => import("./pages/Settings")),
-  Interview: lazy(() => import("./pages/Interview")),
   Problems: lazy(() => import("./pages/Problems")),
-  ProblemDiscussion: lazy(() => import("./pages/ProblemDiscussion")),
-  Community: lazy(() => import("./pages/Community")),
   InterviewSetup: lazy(() => import("./pages/interview/InterviewSetup")),
 };
 
@@ -91,6 +84,13 @@ export default function App() {
   const location = useLocation();
   const isMaintenanceMode = false;
 
+  // ✅ Define routes where navbar and footer should be hidden
+  const hideNavbarRoutes = [];
+  const isCodeDemoPage = location.pathname === "/code-demo";
+  
+  // ✅ Check if current route should hide navbar/footer
+  const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname) || isCodeDemoPage;
+
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 2500);
     return () => clearTimeout(timer);
@@ -130,10 +130,27 @@ export default function App() {
 
   if (showSplash) return <SplashScreen />;
 
+  // Special layout for pages without navbar/footer
+  if (shouldHideNavbar) {
+    return (
+      <FontProvider>
+        <LazyMotionWrapper>
+          <Suspense fallback={<Spinner />}>
+            <Routes location={location}>
+              <Route path="/code-demo" element={<pages.CodeDemo />} />
+            </Routes>
+          </Suspense>
+          <Analytics />
+        </LazyMotionWrapper>
+      </FontProvider>
+    );
+  }
+
   return (
     <FontProvider>
       <LazyMotionWrapper>
         <div className="min-h-screen overflow-hidden font-sans text-white bg-slate-950">
+          {/* ✅ Navbar only shows when shouldHideNavbar is false */}
           <Navbar scrolled={scrolled} />
           <ScrollToTop />
 
@@ -157,13 +174,10 @@ export default function App() {
                 <Routes location={location}>
                   {/* Public */}
                   <Route path="/" element={<Home />} />
-                  <Route path="/privacy" element={<pages.PrivacyPolicy />} />
-                  <Route path="/terms" element={<pages.TermsOfService />} />
                   <Route path="/about" element={<pages.About />} />
                   <Route path="/contact" element={<pages.Contact />} />
                   <Route path="/faq" element={<pages.Faq />} />
                   <Route path="/changelog" element={<pages.Changelog />} />
-                  <Route path="/code-demo" element={<pages.CodeDemo />} />
                   <Route path="/company/job-intake" element={<Protected><CompanyJobIntake /></Protected>} />
 
                   {/* Auth */}
@@ -182,13 +196,8 @@ export default function App() {
 
                   {/* Protected */}
                   <Route path="/dashboard" element={<Protected><pages.Dashboard /></Protected>} />
-                  <Route path="/sessions" element={<Protected><pages.Sessions /></Protected>} />
-                  <Route path="/sessions/:id" element={<Protected><pages.SessionReport /></Protected>} />
                   <Route path="/settings" element={<Protected><pages.Settings /></Protected>} />
-                  <Route path="/interview" element={<Protected><pages.Interview /></Protected>} />
                   <Route path="/problems" element={<Protected><pages.Problems /></Protected>} />
-                  <Route path="/problems/:id/discuss" element={<Protected><pages.ProblemDiscussion /></Protected>} />
-                  <Route path="/community" element={<Protected><pages.Community /></Protected>} />
                   <Route path="/interview-setup" element={<Protected><pages.InterviewSetup /></Protected>} />
 
                   {/* 404 */}
@@ -203,6 +212,7 @@ export default function App() {
             <BackToTop />
           </Suspense>
 
+          {/* ✅ Footer only shows when shouldHideNavbar is false */}
           <Footer />
           <Analytics />
         </div>

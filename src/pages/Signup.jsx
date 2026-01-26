@@ -59,18 +59,7 @@ export default function Signup() {
     setSuccess(false);
     
     try {
-      // ✅ TODO: Replace with your actual backend API call
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          password: form.password,
-        }),
-      });
-
-      // For now, simulate successful signup
+      // TODO: Replace with your actual backend API call
       await new Promise((r) => setTimeout(r, 1200));
       
       const data = {
@@ -79,19 +68,15 @@ export default function Signup() {
         email: form.email,
       };
 
-      // ✅ Store auth tokens
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("userId", data.userId);
       localStorage.setItem("userEmail", data.email);
       localStorage.setItem("userName", form.name);
-      
-      // ✅ Mark as new user who needs onboarding
       localStorage.setItem("needsOnboarding", "true");
       
       console.log("Signup successful:", form);
       setSuccess(true);
 
-      // ✅ Navigate to onboarding after 1 second
       setTimeout(() => {
         navigate("/onboarding");
       }, 1000);
@@ -105,86 +90,61 @@ export default function Signup() {
   }
 
   return (
-    <>
-      <div className="flex min-h-screen">
-        {/* Left side - Signup Form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center bg-[#0a0e1a] px-6 pt-28 pb-16">
-          <div className="w-full max-w-md">
-            {/* Logo + heading */}
-            <div className="mb-8">
-              <div className="flex items-center justify-center w-12 h-12 mb-6 bg-blue-500/20 rounded-xl">
-                <svg
-                  className="text-blue-400 w-7 h-7"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
+    <div className="flex min-h-screen bg-[#0a0e1a] overflow-hidden">
+      {/* Left Section: Sign Up Form */}
+      <div className="relative z-10 flex flex-col items-center justify-center w-full p-8 lg:w-1/2 md:p-16">
+        <div className="w-full max-w-[480px]">
+
+          {/* Headline Text Section */}
+          <div className="mb-8">
+            <h1 className="mb-2 text-3xl font-bold leading-tight text-white">Create your account</h1>
+            <p className="text-[#9ca6ba] text-sm">
+              Already have an account?{" "}
+              <Link to="/login" className="text-[#0d59f2] hover:underline">
+                Sign in
+              </Link>
+            </p>
+          </div>
+
+          {/* Form Area */}
+          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+            {/* General error message */}
+            {errors.submit && (
+              <div className="px-4 py-3 text-sm border rounded-lg bg-rose-500/10 border-rose-500/20 text-rose-400">
+                {errors.submit}
               </div>
-              <h1 className="mb-2 text-3xl font-bold text-white">
-                Create your account
-              </h1>
-              <p className="text-sm text-slate-400">
-                Already have an account?{" "}
-                <Link
-                  to="/login"
-                  className="font-medium text-blue-400 hover:text-blue-300"
-                >
-                  Sign in
-                </Link>
-              </p>
-            </div>
+            )}
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-              {/* General error message */}
-              {errors.submit && (
-                <div className="px-4 py-3 text-sm border rounded-lg bg-rose-500/10 border-rose-500/20 text-rose-400">
-                  {errors.submit}
-                </div>
-              )}
-
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block mb-2 text-sm font-medium text-slate-200"
-                >
-                  Full name
-                </label>
+            {/* Full Name */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name" className="text-sm font-medium text-white">
+                Full name
+              </label>
+              <div className="relative">
                 <input
                   id="name"
                   name="name"
                   type="text"
                   value={form.name}
                   onChange={handleChange}
-                  className={`w-full rounded-lg bg-[#0f1420] border px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                    errors.name ? "border-red-500" : "border-slate-700/60"
+                  className={`w-full bg-[#0f1420] border-none rounded-lg h-12 px-4 text-white placeholder:text-[#9ca6ba] focus:ring-2 transition-all outline-none ${
+                    errors.name ? "focus:ring-red-500/50" : "focus:ring-[#0d59f2]/50"
                   }`}
-                  placeholder="Alex Johnson"
+                  placeholder="Enter your full name"
                   aria-invalid={!!errors.name}
-                  aria-describedby={errors.name ? "name-error" : undefined}
                 />
-                {errors.name && (
-                  <p id="name-error" className="mt-1 text-xs text-red-400">
-                    {errors.name}
-                  </p>
-                )}
               </div>
+              {errors.name && (
+                <p className="text-xs text-red-400">{errors.name}</p>
+              )}
+            </div>
 
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-slate-200"
-                >
-                  Email address
-                </label>
+            {/* Email Address */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="email" className="text-sm font-medium text-white">
+                Email address
+              </label>
+              <div className="relative">
                 <input
                   id="email"
                   name="email"
@@ -192,30 +152,24 @@ export default function Signup() {
                   autoComplete="email"
                   value={form.email}
                   onChange={handleChange}
-                  className={`w-full rounded-lg bg-[#0f1420] border px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                    errors.email ? "border-red-500" : "border-slate-700/60"
+                  className={`w-full bg-[#0f1420] border-none rounded-lg h-12 px-4 text-white placeholder:text-[#9ca6ba] focus:ring-2 transition-all outline-none ${
+                    errors.email ? "focus:ring-red-500/50" : "focus:ring-[#0d59f2]/50"
                   }`}
-                  placeholder="you@example.com"
+                  placeholder="name@company.com"
                   aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? "signup-email-error" : undefined}
                 />
-                {errors.email && (
-                  <p
-                    id="signup-email-error"
-                    className="mt-1 text-xs text-red-400"
-                  >
-                    {errors.email}
-                  </p>
-                )}
               </div>
+              {errors.email && (
+                <p className="text-xs text-red-400">{errors.email}</p>
+              )}
+            </div>
 
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-slate-200"
-                >
-                  Password
-                </label>
+            {/* Password */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="password" className="text-sm font-medium text-white">
+                Password
+              </label>
+              <div className="relative">
                 <input
                   id="password"
                   name="password"
@@ -223,32 +177,24 @@ export default function Signup() {
                   autoComplete="new-password"
                   value={form.password}
                   onChange={handleChange}
-                  className={`w-full rounded-lg bg-[#0f1420] border px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                    errors.password ? "border-red-500" : "border-slate-700/60"
+                  className={`w-full bg-[#0f1420] border-none rounded-lg h-12 px-4 text-white placeholder:text-[#9ca6ba] focus:ring-2 transition-all outline-none ${
+                    errors.password ? "focus:ring-red-500/50" : "focus:ring-[#0d59f2]/50"
                   }`}
-                  placeholder="Create a password"
+                  placeholder="••••••••"
                   aria-invalid={!!errors.password}
-                  aria-describedby={
-                    errors.password ? "signup-password-error" : undefined
-                  }
                 />
-                {errors.password && (
-                  <p
-                    id="signup-password-error"
-                    className="mt-1 text-xs text-red-400"
-                  >
-                    {errors.password}
-                  </p>
-                )}
               </div>
+              {errors.password && (
+                <p className="text-xs text-red-400">{errors.password}</p>
+              )}
+            </div>
 
-              <div>
-                <label
-                  htmlFor="confirm"
-                  className="block mb-2 text-sm font-medium text-slate-200"
-                >
-                  Confirm password
-                </label>
+            {/* Confirm Password */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="confirm" className="text-sm font-medium text-white">
+                Confirm password
+              </label>
+              <div className="relative">
                 <input
                   id="confirm"
                   name="confirm"
@@ -256,75 +202,79 @@ export default function Signup() {
                   autoComplete="new-password"
                   value={form.confirm}
                   onChange={handleChange}
-                  className={`w-full rounded-lg bg-[#0f1420] border px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                    errors.confirm ? "border-red-500" : "border-slate-700/60"
+                  className={`w-full bg-[#0f1420] border-none rounded-lg h-12 px-4 text-white placeholder:text-[#9ca6ba] focus:ring-2 transition-all outline-none ${
+                    errors.confirm ? "focus:ring-red-500/50" : "focus:ring-[#0d59f2]/50"
                   }`}
-                  placeholder="Repeat your password"
+                  placeholder="••••••••"
                   aria-invalid={!!errors.confirm}
-                  aria-describedby={
-                    errors.confirm ? "confirm-password-error" : undefined
-                  }
                 />
-                {errors.confirm && (
-                  <p
-                    id="confirm-password-error"
-                    className="mt-1 text-xs text-red-400"
-                  >
-                    {errors.confirm}
-                  </p>
-                )}
               </div>
+              {errors.confirm && (
+                <p className="text-xs text-red-400">{errors.confirm}</p>
+              )}
+            </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex items-center justify-center w-full gap-2 px-4 py-3 text-sm font-semibold text-white transition-all duration-200 bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 disabled:bg-blue-500/50 disabled:cursor-not-allowed shadow-blue-500/30"
-              >
-                {loading ? (
-                  <>
-                    <span className="w-4 h-4 border-2 rounded-full animate-spin border-white/40 border-t-white" />
-                    Creating account...
-                  </>
-                ) : (
-                  "Create account"
-                )}
-              </button>
-            </form>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#0d59f2] hover:bg-[#0d59f2]/90 text-white font-bold py-3.5 rounded-lg transition-colors mt-4 text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 rounded-full animate-spin border-white/40 border-t-white" />
+                  Creating account...
+                </>
+              ) : (
+                "Create account"
+              )}
+            </button>
+          </form>
 
-            {/* Success message */}
-            {success && (
-              <div className="flex items-center gap-2 px-4 py-3 mt-4 text-sm text-white rounded-lg shadow-lg bg-emerald-600">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                Account created! Redirecting to onboarding...
-              </div>
-            )}
-
-            {/* Terms notice */}
-            <p className="mt-6 text-xs text-center text-slate-500">
-              By creating an account, you agree to our{" "}
-              <Link to="/terms" className="text-slate-400 hover:text-slate-300">
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link to="/privacy" className="text-slate-400 hover:text-slate-300">
-                Privacy Policy
-              </Link>
+          {/* Legal Notice */}
+          <div className="mt-8 text-center">
+            <p className="text-[#9ca6ba] text-xs leading-relaxed">
+              By signing up, you agree to our Terms of Service and Privacy Policy.
             </p>
           </div>
         </div>
+      </div>
 
-        {/* Right side - Image */}
-        <div className="relative hidden lg:block lg:w-1/2">
-          <img
-            src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=1200&auto=format&fit=crop"
-            alt="Workspace"
-            className="absolute inset-0 object-cover w-full h-full"
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-indigo-900/40"></div>
+      {/* Right Section: Visual Workspace Overlay */}
+      <div className="relative hidden lg:block lg:w-1/2">
+        <div className="absolute inset-0 bg-[#0d59f2]/20 mix-blend-multiply z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a] via-transparent to-transparent z-10 opacity-60"></div>
+        <img
+          alt="Modern developer workspace with multiple monitors"
+          className="object-cover w-full h-full"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUATT7cwTgBIeZOAKuP1-YNNxSoLVWuFkW2x42Lxej_nsXE3xu3Eaeab1jBIq1UfajN9RhqDK-6ZsnAJMU3OfGKIcYcxFxyYHh8BNTjqhWuiEza4AduGlbJoEoBO3-6Mr6srJXZZOdlo4xxsiXZ85efK_8aP5iGfX7p1s9_kv_Yj7AHF26U6d56IiOlrQYJeyFVNro7pQVj59i4LSUyB2oZhmjfrYJtEJHmqeQ-lQWQyTx8iXKquRG52Dg7uukWT9VwRW-bof3vINN"
+        />
+
+        {/* Success Toast Mockup - Shows when success state is true */}
+        {success && (
+          <div className="absolute z-20 top-10 right-10 animate-in slide-in-from-top-5">
+            <div className="flex items-center gap-3 px-6 py-4 text-white border shadow-2xl bg-emerald-500/90 backdrop-blur-md rounded-xl border-emerald-400/30">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <div className="flex flex-col">
+                <p className="text-sm font-bold">Account created!</p>
+                <p className="text-xs text-white/90">Redirecting to onboarding...</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Floating Quote/Detail */}
+        <div className="absolute z-20 max-w-md bottom-20 left-20">
+          <h3 className="mb-2 text-2xl font-bold leading-tight text-white">
+            Elevate your mock testing with AI-driven precision.
+          </h3>
+          <p className="text-sm text-white/70">
+            Join over 10,000 developers building reliable systems faster.
+          </p>
         </div>
       </div>
-    </>
+    </div>
   );
 }

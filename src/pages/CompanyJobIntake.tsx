@@ -3,7 +3,8 @@ import { m } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
   Building2, Briefcase, GraduationCap, Target, Code, CheckCircle,
-  MessageSquare, BarChart3, Heart, Plus, X, Send, AlertCircle,
+  MessageSquare, BarChart3, Heart, Plus, X, Send, AlertCircle, Terminal,
+  Scale, VideoIcon, TrendingUp, CheckCircle2, Eye
 } from "lucide-react";
 
 // Types
@@ -19,6 +20,7 @@ type FormData = {
     minimum_qualification: string;
     preferred_streams: string[];
     certifications: string[];
+    gpa_threshold?: string;
   };
   company_objectives: { primary_goal: string; secondary_goals: string[] };
   technical_requirements: {
@@ -36,13 +38,13 @@ type FormData = {
     difficulty_level: string;
     preferred_languages: string[];
     topics_to_avoid: string[];
+    duration: string;
+    interviewer_persona: string;
   };
   evaluation_weights: {
-    coding: number;
-    theory: number;
-    system_design: number;
-    communication: number;
-    confidence: number;
+    technical_depth: number;
+    experience_projects: number;
+    culture_communication: number;
   };
   evaluation_criteria: {
     correctness: boolean;
@@ -50,44 +52,48 @@ type FormData = {
     edge_case_handling: boolean;
     explanation_clarity: boolean;
   };
-  company_culture: { values: string[]; work_style: string };
+  company_culture: { 
+    values: string[]; 
+    work_style: string;
+    team_description: string;
+  };
 };
 
 // Reusable Components
-const Section = ({ icon, title, color, children, delay }: any) => (
+const Section = ({ icon, title, color, borderColor, children, delay, number }: any) => (
   <m.section
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay }}
-    className="p-6 border rounded-2xl border-slate-800 bg-slate-900/50"
+    className={`glass-card rounded-xl p-8 ${borderColor} relative overflow-hidden`}
   >
-    <div className="flex items-center gap-3 mb-6">
-      <div className={`p-2 rounded-lg ${color}`}>{icon}</div>
-      <h2 className="text-xl font-bold">{title}</h2>
+    <div className="flex items-center gap-4 mb-6">
+      <div className={`p-2 ${color} rounded-lg`}>{icon}</div>
+      <h3 className="text-xl font-bold">{number}. {title}</h3>
     </div>
     {children}
   </m.section>
 );
 
 const Input = ({ label, value, onChange, ...props }: any) => (
-  <div>
-    <label className="block mb-2 text-sm font-medium text-slate-300">{label}</label>
+  <div className="flex flex-col gap-2">
+    <label className="text-sm font-semibold text-slate-300">{label}</label>
     <input
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full px-4 py-2 border rounded-lg bg-slate-950 border-slate-800 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="p-3 transition-all border rounded-lg outline-none bg-slate-900/50 border-slate-700 focus:border-primary focus:ring-1 focus:ring-primary text-slate-100"
       {...props}
     />
   </div>
 );
 
 const Select = ({ label, value, onChange, options, ...props }: any) => (
-  <div>
-    <label className="block mb-2 text-sm font-medium text-slate-300">{label}</label>
+  <div className="flex flex-col gap-2">
+    <label className="text-sm font-semibold text-slate-300">{label}</label>
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full px-4 py-2 border rounded-lg bg-slate-950 border-slate-800 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="p-3 border rounded-lg outline-none bg-slate-900/50 border-slate-700 focus:border-primary focus:ring-1 focus:ring-primary text-slate-100"
       {...props}
     >
       {options.map((opt: string) => (
@@ -98,31 +104,27 @@ const Select = ({ label, value, onChange, options, ...props }: any) => (
 );
 
 const TagInput = ({ label, items, onAdd, onRemove, tempValue, setTempValue, color, placeholder }: any) => (
-  <div>
-    <label className="block mb-2 text-sm font-medium text-slate-300">{label}</label>
-    <div className="flex gap-2 mb-2">
+  <div className="flex flex-col gap-2">
+    <label className="text-sm font-semibold text-slate-300">{label}</label>
+    <div className="flex flex-wrap gap-2 p-3 bg-slate-900/50 border border-slate-700 rounded-lg min-h-[100px] items-start">
+      {items.map((item: string, idx: number) => (
+        <span key={idx} className={`bg-${color}-500/20 text-${color}-500 border border-${color}-500/30 px-3 py-1 rounded-full text-sm flex items-center gap-2`}>
+          {item}
+          <button type="button" onClick={() => onRemove(idx)} className="hover:opacity-70">
+            <X className="w-3 h-3" />
+          </button>
+        </span>
+      ))}
       <input
         type="text"
         value={tempValue}
         onChange={(e) => setTempValue(e.target.value)}
         onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), onAdd())}
-        className={`flex-1 px-4 py-2 border rounded-lg bg-slate-950 border-slate-800 text-slate-100 focus:outline-none focus:ring-2 focus:ring-${color}-500`}
+        className="bg-transparent border-none focus:ring-0 text-sm text-slate-300 py-1 flex-grow min-w-[120px] outline-none"
         placeholder={placeholder}
       />
-      <button type="button" onClick={onAdd} className={`p-2 transition-colors bg-${color}-600 rounded-lg hover:bg-${color}-500`}>
-        <Plus className="w-5 h-5" />
-      </button>
     </div>
-    <div className="flex flex-wrap gap-2">
-      {items.map((item: string, idx: number) => (
-        <span key={idx} className={`flex items-center gap-2 px-3 py-1 text-sm border rounded-full bg-${color}-500/10 border-${color}-500/30 text-${color}-300`}>
-          {item}
-          <button type="button" onClick={() => onRemove(idx)} className={`hover:text-${color}-100`}>
-            <X className="w-3 h-3" />
-          </button>
-        </span>
-      ))}
-    </div>
+    <p className="text-xs text-slate-500">Press enter to add a tag. Proficiency for these will be tested by the AI.</p>
   </div>
 );
 
@@ -131,15 +133,22 @@ export default function CompanyJobIntake() {
   
   const [formData, setFormData] = useState<FormData>({
     company_id: "", company_name: "", job_role: "", job_type: "Full-Time",
-    experience_range: "0-2 years", location: "", work_mode: "Hybrid",
-    education_requirements: { minimum_qualification: "B.Tech", preferred_streams: [], certifications: [] },
+    experience_range: "Junior", location: "", work_mode: "Hybrid",
+    education_requirements: { minimum_qualification: "Bachelor's in Computer Science", preferred_streams: [], certifications: [], gpa_threshold: "" },
     company_objectives: { primary_goal: "", secondary_goals: [] },
     technical_requirements: { mandatory_skills: [], good_to_have_skills: [], skill_level: "Intermediate" },
     role_expectations: { dsa_level: "Medium", system_design: "Basic", code_quality_focus: true },
-    interview_preferences: { question_types: [], difficulty_level: "Medium", preferred_languages: [], topics_to_avoid: [] },
-    evaluation_weights: { coding: 50, theory: 20, system_design: 20, communication: 5, confidence: 5 },
+    interview_preferences: { 
+      question_types: [], 
+      difficulty_level: "Medium", 
+      preferred_languages: [], 
+      topics_to_avoid: [],
+      duration: "60m",
+      interviewer_persona: "The FAANG Principal (Strict & Technical)"
+    },
+    evaluation_weights: { technical_depth: 45, experience_projects: 30, culture_communication: 25 },
     evaluation_criteria: { correctness: true, time_complexity: true, edge_case_handling: true, explanation_clarity: true },
-    company_culture: { values: [], work_style: "Agile" },
+    company_culture: { values: [], work_style: "Agile", team_description: "" },
   });
 
   const [temps, setTemps] = useState({ stream: "", cert: "", goal: "", mand: "", good: "", lang: "", avoid: "", value: "" });
@@ -182,6 +191,18 @@ export default function CompanyJobIntake() {
   };
 
   const getTotalWeight = () => Object.values(formData.evaluation_weights).reduce((a, b) => a + b, 0);
+  const getProgressPercentage = () => {
+    const fields = [
+      formData.company_id,
+      formData.company_name,
+      formData.job_role,
+      formData.location,
+      formData.company_objectives.primary_goal,
+      formData.technical_requirements.mandatory_skills.length > 0,
+      formData.company_culture.values.length > 0
+    ].filter(Boolean).length;
+    return Math.round((fields / 7) * 100);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -200,20 +221,10 @@ export default function CompanyJobIntake() {
     setIsSubmitting(true);
     
     try {
-      // Log the data
       console.log("📋 Company Job Intake JSON:", JSON.stringify(formData, null, 2));
       
-      // TODO: Send to backend
-      // await fetch('/api/company/intake', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData)
-      // });
-      
-      // Simulate API call
       await new Promise(r => setTimeout(r, 1500));
       
-      // ✅ Store job configuration
       localStorage.setItem("jobIntakeComplete", "true");
       localStorage.removeItem("needsJobIntake");
       localStorage.setItem("jobConfiguration", JSON.stringify(formData));
@@ -221,7 +232,6 @@ export default function CompanyJobIntake() {
       setIsSubmitting(false);
       setSubmitSuccess(true);
       
-      // ✅ Navigate to Interview Setup after success message
       setTimeout(() => {
         navigate("/interview-setup");
       }, 1500);
@@ -235,173 +245,340 @@ export default function CompanyJobIntake() {
 
   const opts = {
     jobTypes: ["Full-Time", "Part-Time", "Contract", "Internship"],
-    expRanges: ["0-2 years", "2-5 years", "5-10 years", "10+ years"],
+    seniorityLevels: ["Junior", "Mid", "Senior", "Lead"],
     workModes: ["Remote", "Hybrid", "On-site"],
-    quals: ["B.Tech", "M.Tech", "BCA", "MCA", "BSc", "MSc", "PhD"],
+    quals: ["Bachelor's in Computer Science", "Master's Degree", "Ph.D.", "Self-Taught / No Degree"],
     skills: ["Beginner", "Intermediate", "Advanced", "Expert"],
-    dsa: ["Easy", "Medium", "Hard", "Expert"],
-    sysDesign: ["None", "Basic", "Intermediate", "Advanced"],
+    dsa: ["Easy - Basic Arrays & Strings", "Medium - Graphs, DP, Trees", "Hard - Advanced Competitive level"],
+    sysDesign: ["None - Frontend only", "Basic - API Design & Databases", "Complex - Distributed Systems"],
     difficulty: ["Easy", "Medium", "Hard", "Mixed"],
     qTypes: ["Coding", "Conceptual", "Scenario", "Behavioral"],
     workStyles: ["Agile", "Waterfall", "Scrum", "Kanban", "Flexible"],
+    durations: ["30m", "60m", "90m"],
+    personas: ["The Encouraging Mentor (Constructive)", "The FAANG Principal (Strict & Technical)", "The Casual Peer (Vibe Check focus)"],
+    cultureValues: ["Innovation", "Ownership", "Velocity", "Integrity"]
   };
 
   return (
-    <main className="min-h-screen px-4 pt-24 pb-20 bg-slate-950 text-slate-100 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
-        <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 border rounded-full bg-blue-500/10 border-blue-500/20">
-            <Building2 className="w-4 h-4 text-blue-400" />
-            <span className="text-sm font-medium text-blue-300">Job Configuration</span>
-          </div>
-          <h1 className="mb-3 text-4xl font-bold text-transparent bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text">
-            Company Job & Interview Configuration
-          </h1>
-          <p className="text-slate-400">Configure job requirements for AI-powered candidate evaluation</p>
-        </m.div>
+    <div className="min-h-screen bg-[#020617] text-slate-100">
+      <main className="py-12 mx-auto pb-33 pt-18 px-7 max-w-7xl">
+        {/* Page Title */}
+        <div className="mb-10">
+          <h2 className="mb-2 text-4xl font-black tracking-tight">Job & Interview Configuration</h2>
+          <p className="text-lg text-slate-400">Define the parameters for your AI-driven technical screening process.</p>
+        </div>
 
         {validationError && (
-          <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 p-4 mb-6 border rounded-lg bg-rose-500/10 border-rose-500/30">
+          <m.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            className="flex items-center gap-2 p-4 mb-6 border rounded-lg bg-rose-500/10 border-rose-500/30"
+          >
             <AlertCircle className="w-5 h-5 text-rose-400" />
             <p className="text-sm text-rose-300">{validationError}</p>
           </m.div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <Section icon={<Building2 className="w-5 h-5 text-blue-400" />} title="Company & Role Details" color="bg-blue-500/20" delay={0.1}>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Input label="Company ID *" value={formData.company_id} onChange={(v: string) => updateField('company_id', v)} placeholder="COMP123" required />
-              <Input label="Company Name *" value={formData.company_name} onChange={(v: string) => updateField('company_name', v)} placeholder="ABC Tech" required />
-              <Input label="Job Role *" value={formData.job_role} onChange={(v: string) => updateField('job_role', v)} placeholder="Backend Engineer" required />
-              <Select label="Job Type" value={formData.job_type} onChange={(v: string) => updateField('job_type', v)} options={opts.jobTypes} />
-              <Select label="Experience" value={formData.experience_range} onChange={(v: string) => updateField('experience_range', v)} options={opts.expRanges} />
-              <Input label="Location *" value={formData.location} onChange={(v: string) => updateField('location', v)} placeholder="India" required />
-              <Select label="Work Mode" value={formData.work_mode} onChange={(v: string) => updateField('work_mode', v)} options={opts.workModes} />
-            </div>
-          </Section>
-
-          <Section icon={<GraduationCap className="w-5 h-5 text-purple-400" />} title="Education" color="bg-purple-500/20" delay={0.2}>
-            <div className="space-y-4">
-              <Select label="Min Qualification" value={formData.education_requirements.minimum_qualification} onChange={(v: string) => updateField('education_requirements.minimum_qualification', v)} options={opts.quals} />
-              <TagInput label="Preferred Streams" items={formData.education_requirements.preferred_streams} tempValue={temps.stream} setTempValue={(v: string) => setTemps({...temps, stream: v})} onAdd={() => { addToArray('education_requirements.preferred_streams', temps.stream); setTemps({...temps, stream: ''}); }} onRemove={(i: number) => removeFromArray('education_requirements.preferred_streams', i)} color="purple" placeholder="CSE, IT" />
-              <TagInput label="Certifications" items={formData.education_requirements.certifications} tempValue={temps.cert} setTempValue={(v: string) => setTemps({...temps, cert: v})} onAdd={() => { addToArray('education_requirements.certifications', temps.cert); setTemps({...temps, cert: ''}); }} onRemove={(i: number) => removeFromArray('education_requirements.certifications', i)} color="purple" placeholder="AWS Certified" />
-            </div>
-          </Section>
-
-          <Section icon={<Target className="w-5 h-5 text-emerald-400" />} title="Objectives" color="bg-emerald-500/20" delay={0.3}>
-            <div className="space-y-4">
-              <div>
-                <label className="block mb-2 text-sm font-medium text-slate-300">Primary Goal</label>
-                <textarea value={formData.company_objectives.primary_goal} onChange={(e) => updateField('company_objectives.primary_goal', e.target.value)} rows={3} className="w-full px-4 py-2 border rounded-lg resize-none bg-slate-950 border-slate-800 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Hire engineers with strong problem-solving" />
-              </div>
-              <TagInput label="Secondary Goals" items={formData.company_objectives.secondary_goals} tempValue={temps.goal} setTempValue={(v: string) => setTemps({...temps, goal: v})} onAdd={() => { addToArray('company_objectives.secondary_goals', temps.goal); setTemps({...temps, goal: ''}); }} onRemove={(i: number) => removeFromArray('company_objectives.secondary_goals', i)} color="emerald" placeholder="Clean code" />
-            </div>
-          </Section>
-
-          <Section icon={<Code className="w-5 h-5 text-amber-400" />} title="Technical Requirements" color="bg-amber-500/20" delay={0.4}>
-            <div className="space-y-4">
-              <TagInput label="Mandatory Skills" items={formData.technical_requirements.mandatory_skills} tempValue={temps.mand} setTempValue={(v: string) => setTemps({...temps, mand: v})} onAdd={() => { addToArray('technical_requirements.mandatory_skills', temps.mand); setTemps({...temps, mand: ''}); }} onRemove={(i: number) => removeFromArray('technical_requirements.mandatory_skills', i)} color="amber" placeholder="Python, FastAPI" />
-              <TagInput label="Good to Have" items={formData.technical_requirements.good_to_have_skills} tempValue={temps.good} setTempValue={(v: string) => setTemps({...temps, good: v})} onAdd={() => { addToArray('technical_requirements.good_to_have_skills', temps.good); setTemps({...temps, good: ''}); }} onRemove={(i: number) => removeFromArray('technical_requirements.good_to_have_skills', i)} color="amber" placeholder="Docker, AWS" />
-              <Select label="Skill Level" value={formData.technical_requirements.skill_level} onChange={(v: string) => updateField('technical_requirements.skill_level', v)} options={opts.skills} />
-            </div>
-          </Section>
-
-          <Section icon={<Briefcase className="w-5 h-5 text-cyan-400" />} title="Role Expectations" color="bg-cyan-500/20" delay={0.5}>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Select label="DSA Level" value={formData.role_expectations.dsa_level} onChange={(v: string) => updateField('role_expectations.dsa_level', v)} options={opts.dsa} />
-              <Select label="System Design" value={formData.role_expectations.system_design} onChange={(v: string) => updateField('role_expectations.system_design', v)} options={opts.sysDesign} />
-              <div className="sm:col-span-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={formData.role_expectations.code_quality_focus} onChange={(e) => updateField('role_expectations.code_quality_focus', e.target.checked)} className="w-4 h-4 rounded bg-slate-950 border-slate-700 text-cyan-600" />
-                  <span className="text-sm text-slate-300">Code Quality Focus</span>
-                </label>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-8">
+          {/* Section 1: Company & Role (Blue) */}
+          <Section 
+            icon={<Building2 className="w-6 h-6" />} 
+            title="Company & Role Details" 
+            color="bg-[#0d59f2]/20 text-[#0d59f2]" 
+            borderColor="gradient-border-blue"
+            delay={0.1}
+            number="1"
+          >
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <Input label="Company Name" value={formData.company_name} onChange={(v: string) => updateField('company_name', v)} placeholder="e.g. Acme Corp" />
+              <Input label="Job Title" value={formData.job_role} onChange={(v: string) => updateField('job_role', v)} placeholder="Senior Frontend Engineer" />
+              <div className="flex flex-col gap-2 md:col-span-2">
+                <label className="text-sm font-semibold text-slate-300">Seniority Level</label>
+                <div className="grid grid-cols-4 gap-3">
+                  {opts.seniorityLevels.map(level => (
+                    <button
+                      key={level}
+                      type="button"
+                      onClick={() => updateField('experience_range', level)}
+                      className={`py-2 px-4 rounded-lg font-medium transition-all ${
+                        formData.experience_range === level
+                          ? 'bg-[#0d59f2] text-white'
+                          : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                      }`}
+                    >
+                      {level}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </Section>
 
-          <Section icon={<MessageSquare className="w-5 h-5 text-pink-400" />} title="Interview Preferences" color="bg-pink-500/20" delay={0.6}>
-            <div className="space-y-4">
-              <div>
-                <label className="block mb-2 text-sm font-medium text-slate-300">Question Types</label>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {opts.qTypes.map(t => (
-                    <label key={t} className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" checked={formData.interview_preferences.question_types.includes(t)} onChange={(e) => updateField('interview_preferences.question_types', e.target.checked ? [...formData.interview_preferences.question_types, t] : formData.interview_preferences.question_types.filter(x => x !== t))} className="w-4 h-4 rounded bg-slate-950" />
-                      <span className="text-sm text-slate-300">{t}</span>
+          {/* Section 2: Education (Purple) */}
+          <Section 
+            icon={<GraduationCap className="w-6 h-6" />} 
+            title="Education Requirements" 
+            color="bg-purple-500/20 text-purple-400" 
+            borderColor="gradient-border-purple"
+            delay={0.2}
+            number="2"
+          >
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <Select 
+                label="Minimum Degree" 
+                value={formData.education_requirements.minimum_qualification} 
+                onChange={(v: string) => updateField('education_requirements.minimum_qualification', v)} 
+                options={opts.quals} 
+              />
+              <Input 
+                label="GPA Threshold (Optional)" 
+                value={formData.education_requirements.gpa_threshold || ""} 
+                onChange={(v: string) => updateField('education_requirements.gpa_threshold', v)} 
+                placeholder="3.5" 
+                type="number"
+                step="0.1"
+              />
+            </div>
+          </Section>
+
+          {/* Section 3: Technical Requirements (Amber) */}
+          <Section 
+            icon={<Terminal className="w-6 h-6" />} 
+            title="Technical Requirements" 
+            color="bg-amber-500/20 text-amber-500" 
+            borderColor="gradient-border-amber"
+            delay={0.3}
+            number="3"
+          >
+            <TagInput 
+              label="Skills & Tech Stack" 
+              items={formData.technical_requirements.mandatory_skills} 
+              tempValue={temps.mand} 
+              setTempValue={(v: string) => setTemps({...temps, mand: v})} 
+              onAdd={() => { 
+                addToArray('technical_requirements.mandatory_skills', temps.mand); 
+                setTemps({...temps, mand: ''}); 
+              }} 
+              onRemove={(i: number) => removeFromArray('technical_requirements.mandatory_skills', i)} 
+              color="amber" 
+              placeholder="Add a skill..." 
+            />
+          </Section>
+
+          {/* Section 4: Role Expectations (Cyan) */}
+          <Section 
+            icon={<Target className="w-6 h-6" />} 
+            title="Assessment Expectations" 
+            color="bg-cyan-500/20 text-cyan-400" 
+            borderColor="gradient-border-cyan"
+            delay={0.4}
+            number="4"
+          >
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <Select 
+                label="DSA Difficulty" 
+                value={formData.role_expectations.dsa_level} 
+                onChange={(v: string) => updateField('role_expectations.dsa_level', v)} 
+                options={opts.dsa} 
+              />
+              <Select 
+                label="System Design" 
+                value={formData.role_expectations.system_design} 
+                onChange={(v: string) => updateField('role_expectations.system_design', v)} 
+                options={opts.sysDesign} 
+              />
+            </div>
+          </Section>
+
+          {/* Section 5: Interview Preferences (Pink) */}
+          <Section 
+            icon={<VideoIcon className="w-6 h-6" />} 
+            title="Interview Preferences" 
+            color="bg-pink-500/20 text-pink-400" 
+            borderColor="gradient-border-pink"
+            delay={0.5}
+            number="5"
+          >
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-slate-300">Duration</label>
+                <div className="flex gap-2">
+                  {opts.durations.map(dur => (
+                    <button
+                      key={dur}
+                      type="button"
+                      onClick={() => updateField('interview_preferences.duration', dur)}
+                      className={`flex-1 py-2 rounded-lg text-sm transition-all ${
+                        formData.interview_preferences.duration === dur
+                          ? 'bg-pink-500 text-white'
+                          : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                      }`}
+                    >
+                      {dur}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col col-span-2 gap-2">
+                <label className="text-sm font-semibold text-slate-300">AI Interviewer Persona</label>
+                <Select 
+                  label="" 
+                  value={formData.interview_preferences.interviewer_persona} 
+                  onChange={(v: string) => updateField('interview_preferences.interviewer_persona', v)} 
+                  options={opts.personas} 
+                />
+              </div>
+            </div>
+          </Section>
+
+          {/* Section 6: Evaluation Weights (Indigo) */}
+          <Section 
+            icon={<Scale className="w-6 h-6" />} 
+            title="Evaluation Weights" 
+            color="bg-indigo-500/20 text-indigo-400" 
+            borderColor="gradient-border-indigo"
+            delay={0.6}
+            number="6"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex-1"></div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-indigo-600 border rounded-full shadow-lg shadow-indigo-500/40 border-indigo-400/50">
+                <span className="text-xs font-bold tracking-widest text-indigo-100 uppercase">Total</span>
+                <span className={`text-xl font-black leading-none ${getTotalWeight() === 100 ? 'text-white' : 'text-rose-300'}`}>
+                  {getTotalWeight()}%
+                </span>
+              </div>
+            </div>
+            <div className="space-y-8">
+              {(Object.keys(formData.evaluation_weights) as Array<keyof typeof formData.evaluation_weights>).map((k, idx) => (
+                <div key={k} className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium capitalize text-slate-300">
+                      {k.replace(/_/g, ' ')}
+                    </span>
+                    <span className="text-lg font-bold text-indigo-400">{formData.evaluation_weights[k]}%</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    value={formData.evaluation_weights[k]} 
+                    onChange={(e) => updateField(`evaluation_weights.${k}`, parseInt(e.target.value))} 
+                    className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-slate-800 accent-indigo-600"
+                  />
+                </div>
+              ))}
+            </div>
+          </Section>
+
+          {/* Section 7: Company Culture (Rose) */}
+          <Section 
+            icon={<Heart className="w-6 h-6" />} 
+            title="Company Culture" 
+            color="bg-rose-500/20 text-rose-500" 
+            borderColor="gradient-border-rose"
+            delay={0.7}
+            number="7"
+          >
+            <div className="grid grid-cols-1 gap-6">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-slate-300">Key Values</label>
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                  {opts.cultureValues.map(val => (
+                    <label key={val} className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer bg-slate-900/50 border-slate-700 hover:bg-slate-800">
+                      <input 
+                        type="checkbox" 
+                        checked={formData.company_culture.values.includes(val)} 
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            addToArray('company_culture.values', val);
+                          } else {
+                            const idx = formData.company_culture.values.indexOf(val);
+                            if (idx > -1) removeFromArray('company_culture.values', idx);
+                          }
+                        }}
+                        className="rounded border-slate-600 text-rose-500 bg-slate-900 focus:ring-rose-500" 
+                      />
+                      <span className="text-sm">{val}</span>
                     </label>
                   ))}
                 </div>
               </div>
-              <Select label="Difficulty" value={formData.interview_preferences.difficulty_level} onChange={(v: string) => updateField('interview_preferences.difficulty_level', v)} options={opts.difficulty} />
-              <TagInput label="Preferred Languages" items={formData.interview_preferences.preferred_languages} tempValue={temps.lang} setTempValue={(v: string) => setTemps({...temps, lang: v})} onAdd={() => { addToArray('interview_preferences.preferred_languages', temps.lang); setTemps({...temps, lang: ''}); }} onRemove={(i: number) => removeFromArray('interview_preferences.preferred_languages', i)} color="pink" placeholder="Python, Java" />
-              <TagInput label="Avoid Topics" items={formData.interview_preferences.topics_to_avoid} tempValue={temps.avoid} setTempValue={(v: string) => setTemps({...temps, avoid: v})} onAdd={() => { addToArray('interview_preferences.topics_to_avoid', temps.avoid); setTemps({...temps, avoid: ''}); }} onRemove={(i: number) => removeFromArray('interview_preferences.topics_to_avoid', i)} color="pink" placeholder="Competitive Programming" />
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-slate-300">Team Description</label>
+                <textarea 
+                  value={formData.company_culture.team_description}
+                  onChange={(e) => updateField('company_culture.team_description', e.target.value)}
+                  className="p-3 border rounded-lg outline-none resize-none bg-slate-900/50 border-slate-700 focus:border-rose-500 text-slate-100" 
+                  placeholder="Describe your team's day-to-day workflow..." 
+                  rows={4}
+                />
+              </div>
             </div>
           </Section>
 
-          <Section icon={<BarChart3 className="w-5 h-5 text-indigo-400" />} title={<div className="flex items-center justify-between w-full"><span>Evaluation Weights</span><span className={`px-3 py-1 rounded-full text-sm font-semibold ${getTotalWeight() === 100 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'}`}>Total: {getTotalWeight()}%</span></div>} color="bg-indigo-500/20" delay={0.7}>
-            <div className="space-y-4">
-              {(Object.keys(formData.evaluation_weights) as Array<keyof typeof formData.evaluation_weights>).map(k => (
-                <div key={k}>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium capitalize text-slate-300">{k.replace('_', ' ')}</label>
-                    <span className="text-sm font-bold text-indigo-400">{formData.evaluation_weights[k]}%</span>
-                  </div>
-                  <input type="range" min="0" max="100" value={formData.evaluation_weights[k]} onChange={(e) => updateField(`evaluation_weights.${k}`, parseInt(e.target.value))} className="w-full h-2 rounded-lg appearance-none bg-slate-800 accent-indigo-600" />
-                </div>
-              ))}
-            </div>
-          </Section>
-
-          <Section icon={<CheckCircle className="w-5 h-5 text-teal-400" />} title="Evaluation Criteria" color="bg-teal-500/20" delay={0.8}>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {(Object.keys(formData.evaluation_criteria) as Array<keyof typeof formData.evaluation_criteria>).map(k => (
-                <label key={k} className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={formData.evaluation_criteria[k]} onChange={(e) => updateField(`evaluation_criteria.${k}`, e.target.checked)} className="w-4 h-4 text-teal-600 rounded bg-slate-950 border-slate-700" />
-                  <span className="text-sm capitalize text-slate-300">{k.replace(/_/g, ' ')}</span>
-                </label>
-              ))}
-            </div>
-          </Section>
-
-          <Section icon={<Heart className="w-5 h-5 text-rose-400" />} title="Company Culture" color="bg-rose-500/20" delay={0.9}>
-            <div className="space-y-4">
-              <TagInput label="Values" items={formData.company_culture.values} tempValue={temps.value} setTempValue={(v: string) => setTemps({...temps, value: v})} onAdd={() => { addToArray('company_culture.values', temps.value); setTemps({...temps, value: ''}); }} onRemove={(i: number) => removeFromArray('company_culture.values', i)} color="rose" placeholder="Ownership, Learning" />
-              <Select label="Work Style" value={formData.company_culture.work_style} onChange={(v: string) => updateField('company_culture.work_style', v)} options={opts.workStyles} />
-            </div>
-          </Section>
-
-          <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="flex justify-center pt-4">
-            <m.button 
-              type="submit" 
-              disabled={isSubmitting || submitSuccess} 
-              whileHover={{ scale: 1.02 }} 
-              whileTap={{ scale: 0.98 }} 
-              className={`flex items-center gap-3 px-8 py-4 text-lg font-semibold text-white rounded-xl transition-all ${
-                submitSuccess 
-                  ? 'bg-emerald-600' 
-                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
+          {/* Footer Action */}
+          <div className="flex flex-col items-center gap-4 py-8">
+            <m.button
+              type="submit"
+              disabled={isSubmitting || submitSuccess}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative group"
             >
-              {isSubmitting ? (
-                <>
-                  <div className="w-6 h-6 border-2 rounded-full border-white/30 border-t-white animate-spin" />
-                  Submitting...
-                </>
-              ) : submitSuccess ? (
-                <>
-                  <CheckCircle className="w-6 h-6" />
-                  Submitted! Redirecting...
-                </>
-              ) : (
-                <>
-                  <Send className="w-6 h-6" />
-                  Submit Configuration
-                </>
-              )}
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#0d59f2] to-purple-600 rounded-xl blur opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+              <div className={`relative flex items-center gap-3 min-w-[320px] justify-center font-black py-5 px-10 rounded-xl text-lg tracking-wide hover:scale-[1.02] transition-transform active:scale-95 shadow-2xl ${
+                submitSuccess 
+                  ? 'bg-emerald-600 text-white' 
+                  : 'bg-[#0d59f2] text-white'
+              } disabled:opacity-50`}>
+                {isSubmitting ? (
+                  <>
+                    <div className="w-6 h-6 border-2 rounded-full border-white/30 border-t-white animate-spin" />
+                    SUBMITTING...
+                  </>
+                ) : submitSuccess ? (
+                  <>
+                    <CheckCircle className="w-6 h-6" />
+                    SUBMITTED! REDIRECTING...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-6 h-6" />
+                    SUBMIT CONFIGURATION
+                  </>
+                )}
+              </div>
             </m.button>
-          </m.div>
+            <p className="flex items-center gap-2 text-sm text-slate-500">
+              <AlertCircle className="w-4 h-4" />
+              Ready to generate the interview module
+            </p>
+          </div>
         </form>
+      </main>
+
+      {/* Visual Gradient Background Blobs */}
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-[#0d59f2]/10 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-[20%] right-[5%] w-[500px] h-[500px] bg-purple-900/10 rounded-full blur-[120px]"></div>
+        <div className="absolute top-[40%] right-[15%] w-[300px] h-[300px] bg-amber-900/10 rounded-full blur-[100px]"></div>
       </div>
-    </main>
+
+      <style>{`
+        .glass-card {
+          background: rgba(15, 23, 42, 0.6);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .gradient-border-blue { border-top: 4px solid #0d59f2; }
+        .gradient-border-purple { border-top: 4px solid #a855f7; }
+        .gradient-border-amber { border-top: 4px solid #f59e0b; }
+        .gradient-border-cyan { border-top: 4px solid #06b6d4; }
+        .gradient-border-pink { border-top: 4px solid #ec4899; }
+        .gradient-border-indigo { border-top: 4px solid #6366f1; }
+        .gradient-border-rose { border-top: 4px solid #f43f5e; }
+      `}</style>
+    </div>
   );
 }
