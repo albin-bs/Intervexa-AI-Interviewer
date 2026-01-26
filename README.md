@@ -9,17 +9,6 @@
 
 ---
 
-## 📋 Table of Contents
-
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Documentation](#-documentation)
-- [Team](#-team-members)
-- [Contributing](#-contributing)
-- [Support](#-support)
-
----
-
 ## ✨ Features
 
 ### 🎯 Core Features
@@ -83,19 +72,6 @@
 ### **Deployment**
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
-
----
-
-## 📚 Documentation
-
-| Document | Description |
-|----------|-------------|
-| [Setup Guide](docs/setup.md) | Deployment, environment variables, hosting |
-| [API Reference](docs/api.md) | Backend endpoints, request/response formats |
-| [AI Integration](docs/ai.md) | LLM usage, prompt engineering, bias mitigation |
-| [Customization](docs/customization.md) | Theming, adding problems, UI tweaks |
-| [Testing](docs/testing.md) | Unit, integration, and E2E testing |
-| [FAQ](docs/faq.md) | Troubleshooting, common issues |
 
 ---
 
@@ -164,16 +140,6 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for:
 [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:team@mockmate.tech)
 
 </div>
-
----
-
-## 💖 Support the Project
-
-If MockMate helped you, consider supporting the developers:
-
-<a href="https://www.buymeacoffee.com/albinbs" target="_blank">
-  <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="50">
-</a>
 
 ---
 
