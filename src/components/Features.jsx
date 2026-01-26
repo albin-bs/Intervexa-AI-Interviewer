@@ -113,7 +113,7 @@ const Features = memo(function Features() {
 
 
       {/* NFT Card Glassmorphic Styles with Softer Gradients */}
-      <style jsx>{`
+      <style>{`
         .bg-mockmate {
           position: fixed;
           top: 50%;

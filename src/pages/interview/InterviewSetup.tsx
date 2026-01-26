@@ -96,7 +96,7 @@ const DIFFICULTY_LEVELS = [
   },
 ];
 
-// ✅ Keep the prop interface
+// ✅ Props interface
 interface InterviewSetupProps {
   onStart: (config: {
     role: string;
@@ -108,7 +108,7 @@ interface InterviewSetupProps {
   }) => void;
 }
 
-// ✅ Accept the onStart prop
+// ✅ Accept onStart prop from parent
 export default function InterviewSetup({ onStart }: InterviewSetupProps) {
   const [selectedRole, setSelectedRole] = useState("swe");
   const [hoveredRole, setHoveredRole] = useState<string | null>(null);
@@ -117,7 +117,6 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
   const [useVideo, setUseVideo] = useState(true);
   const [useAudio, setUseAudio] = useState(true);
   
-  // ✅ Call the parent's onStart callback (same as before)
   const handleStart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -140,13 +139,12 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
     
     console.log("📦 Starting interview with config:", config);
     
-    // ✅ Call the callback from parent (same as your old code)
+    // ✅ Call parent's onStart callback
     onStart(config);
   };
 
   return (
     <div className="min-h-screen bg-[#020617] text-white px-4 py-12">
-      {/* Rest of your JSX remains the same... */}
       <div className="max-w-[960px] mx-auto">
         {/* Hero Title */}
         <m.div
@@ -154,10 +152,7 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col items-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 text-xs font-bold tracking-widest text-blue-400 uppercase border rounded-full bg-blue-500/10 border-blue-500/20">
-            <Sparkles className="w-3.5 h-3.5" />
-            AI-Powered Session
-          </div>
+          <br/>
           <h1 className="text-white text-[32px] md:text-[48px] font-bold leading-tight text-center tracking-tight bg-gradient-to-r from-white to-blue-400 bg-clip-text text-transparent">
             Configure Your Interview
           </h1>
