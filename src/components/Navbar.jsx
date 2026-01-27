@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { m, AnimatePresence } from "framer-motion";
 
+
+
 export default function Navbar({ scrolled }) {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -11,14 +13,20 @@ export default function Navbar({ scrolled }) {
   const location = useLocation();
   const navigate = useNavigate();
 
+
+
   // Check authentication
   const isAuthenticated = !!localStorage.getItem("accessToken");
   const userName = localStorage.getItem("userName") || "User";
+
+
 
   // Navigation links based on auth state
   const publicLinks = [
     { to: "/about", label: "About" },
   ];
+
+
 
   const authenticatedLinks = [
     { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
@@ -26,7 +34,11 @@ export default function Navbar({ scrolled }) {
     { to: "/problems", label: "Problems" },
   ];
 
+
+
   const navLinks = isAuthenticated ? authenticatedLinks : publicLinks;
+
+
 
   // Handle scroll to show/hide navbar
   useEffect(() => {
@@ -44,9 +56,13 @@ export default function Navbar({ scrolled }) {
       setLastScrollY(currentScrollY);
     };
 
+
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
+
+
 
   // Scroll to hash target
   useEffect(() => {
@@ -61,11 +77,15 @@ export default function Navbar({ scrolled }) {
     }
   }, [location]);
 
+
+
   // Close menus on route change
   useEffect(() => {
     setMobileMenuIsOpen(false);
     setUserMenuOpen(false);
   }, [location.pathname]);
+
+
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -74,6 +94,8 @@ export default function Navbar({ scrolled }) {
       document.body.style.overflow = "unset";
     };
   }, [mobileMenuIsOpen]);
+
+
 
   // Close user menu when clicking outside
   useEffect(() => {
@@ -86,6 +108,8 @@ export default function Navbar({ scrolled }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [userMenuOpen]);
 
+
+
   const isActive = (path) => {
     if (path.startsWith("/#")) {
       return location.pathname === "/" && location.hash === path.substring(1);
@@ -93,48 +117,46 @@ export default function Navbar({ scrolled }) {
     return location.pathname === path;
   };
 
+
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
     setUserMenuOpen(false);
   };
 
+
+
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        visible ? "translate-y-0" : "-translate-y-full"
+      className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95vw] max-w-[1440px] z-50 transition-all duration-300 rounded-full ring-2 ring-white/20 shadow-[0_10px_20px_-10px_black] ${
+        visible ? "translate-y-0" : "-translate-y-[200%]"
       } ${
         scrolled
-          ? "bg-slate-950/95 backdrop-blur-xl border-b border-slate-800 shadow-lg shadow-slate-900/50"
-          : "bg-slate-950/30 backdrop-blur-sm"
+          ? "bg-slate-900/60 backdrop-blur-xl border border-slate-800/50"
+          : "bg-slate-900/40 backdrop-blur-sm border border-slate-800/30"
       }`}
     >
-      <div className="relative flex items-center justify-between h-16 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 md:h-20">
+      <div className="relative flex items-center justify-between h-16 px-4 mx-auto sm:px-6 lg:px-8 md:h-20">
         {/* Logo */}
         <Link
           to="/"
-          className="flex items-center gap-2 cursor-pointer group"
+          className="flex items-center cursor-pointer group"
         >
           <m.div
-            whileHover={{ rotate: 360, scale: 1.1 }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
             className="relative"
           >
             <img
-              src="/logo.png"
+              src="/mockmate.png"
               alt="MockMateAI"
-              className="w-8 h-8 rounded-lg md:w-10 md:h-10"
+              className="w-auto h-8 md:h-10"
             />
-            <div className="absolute inset-0 transition-opacity rounded-lg opacity-0 bg-blue-500/20 blur-sm group-hover:opacity-100" />
           </m.div>
-          <span className="text-xl font-bold md:text-2xl">
-            <span className="text-white">Mock</span>
-            <span className="text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text">
-              Mate
-            </span>
-            <span className="text-white">AI</span>
-          </span>
         </Link>
+
+
 
         {/* Centered Desktop Navigation */}
         <div className="absolute hidden transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 lg:flex lg:items-center lg:space-x-3">
@@ -178,24 +200,47 @@ export default function Navbar({ scrolled }) {
           ))}
         </div>
 
+
+
         {/* Right Side: Auth Only */}
         <div className="items-center hidden gap-3 md:flex">
           {isAuthenticated ? (
-            // User Menu
+            // ✅ User Menu - MATCHING "GET STARTED" BUTTON STYLE
             <div className="relative user-menu-container">
-              <m.button
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white transition-all rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/30"
-              >
-                <div className="flex items-center justify-center text-sm font-semibold text-white rounded-full w-7 h-7 bg-white/20">
-                  {userName.charAt(0).toUpperCase()}
-                </div>
-                <span className="hidden lg:block">
-                  {userName}
-                </span>
-              </m.button>
+              <div className="relative inline-flex">
+                <m.button
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="group relative inline-flex items-center gap-2 overflow-hidden transition rounded-full px-6 py-2.5 bg-slate-900 border border-blue-500/50"
+                >
+                  {/* Spinning conic gradient ring - SLOWER animation */}
+                  <div className="absolute inset-0 flex items-center [container-type:inline-size]">
+                    <div 
+                      style={{ animationDuration: '3s' }}
+                      className="absolute size-[100cqw] animate-spin bg-[conic-gradient(from_0_at_50%_50%,rgba(59,130,246,1)_0deg,transparent_60deg,transparent_300deg,rgba(59,130,246,1)_360deg)] opacity-0 transition duration-300 group-hover:opacity-100"
+                    ></div>
+                  </div>
+                  
+                  {/* Inner background */}
+                  <div className="absolute inset-0.5 bg-slate-900 rounded-full"></div>
+                  
+                  {/* Bottom glow - Blue themed */}
+                  <div className="absolute bottom-0 w-4/5 transition-all duration-500 -translate-x-1/2 rounded-full opacity-70 left-1/2 h-1/3 bg-blue-400/60 blur-md group-hover:h-2/3 group-hover:opacity-100"></div>
+                  
+                  {/* Content - Avatar + Name */}
+                  <div className="relative z-10 flex items-center gap-2">
+                    <div className="flex items-center justify-center text-sm font-semibold text-white bg-blue-500 rounded-full w-7 h-7">
+                      {userName.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="hidden text-base font-semibold text-white lg:block">
+                      {userName}
+                    </span>
+                  </div>
+                </m.button>
+              </div>
+
+
 
               {/* User Dropdown */}
               <AnimatePresence>
@@ -251,18 +296,38 @@ export default function Navbar({ scrolled }) {
               </AnimatePresence>
             </div>
           ) : (
-            // Get Started Button
-            <m.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                to="/signup"
-                className="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white transition-all rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/30"
+            // ✅ GET STARTED BUTTON
+            <div className="relative inline-flex">
+              <button
+                type="button"
+                onClick={() => navigate("/Login")}
+                className="group relative inline-flex items-center overflow-hidden transition rounded-lg px-8 py-2.5 bg-slate-900 border border-blue-500/50"
               >
-                <Sparkles className="w-4 h-4" />
-                Get Started
-              </Link>
-            </m.div>
+                {/* Spinning conic gradient ring - SLOWER animation */}
+                <div className="absolute inset-0 flex items-center [container-type:inline-size]">
+                  <div 
+                    style={{ animationDuration: '3s' }}
+                    className="absolute size-[100cqw] animate-spin bg-[conic-gradient(from_0_at_50%_50%,rgba(59,130,246,1)_0deg,transparent_60deg,transparent_300deg,rgba(59,130,246,1)_360deg)] opacity-0 transition duration-300 group-hover:opacity-100"
+                  ></div>
+                </div>
+                
+                {/* Inner background */}
+                <div className="absolute inset-0.5 bg-slate-900 rounded-lg"></div>
+                
+                {/* Bottom glow */}
+                <div className="absolute bottom-0 w-4/5 transition-all duration-500 -translate-x-1/2 rounded-lg opacity-70 left-1/2 h-1/3 bg-blue-400/60 blur-md group-hover:h-2/3 group-hover:opacity-100"></div>
+                
+                {/* Content */}
+                <span className="relative z-10 flex items-center justify-center gap-2 text-base font-semibold text-white">
+                  Get started
+                  <Sparkles className="w-4 h-4" />
+                </span>
+              </button>
+            </div>
           )}
         </div>
+
+
 
         {/* Mobile Menu Toggle */}
         <m.button
@@ -296,6 +361,8 @@ export default function Navbar({ scrolled }) {
           </AnimatePresence>
         </m.button>
       </div>
+
+
 
       {/* Mobile Menu */}
       <AnimatePresence>
@@ -336,6 +403,8 @@ export default function Navbar({ scrolled }) {
                 </button>
               </div>
 
+
+
               {/* Navigation Links */}
               <div>
                 <ul>
@@ -359,6 +428,8 @@ export default function Navbar({ scrolled }) {
                   ))}
                 </ul>
               </div>
+
+
 
               {/* Auth Buttons */}
               <div className="mt-auto">
@@ -390,14 +461,16 @@ export default function Navbar({ scrolled }) {
                     </>
                   ) : (
                     <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <Link
-                        to="/signup"
-                        onClick={() => setMobileMenuIsOpen(false)}
+                      <button
+                        onClick={() => {
+                          navigate("/contact");
+                          setMobileMenuIsOpen(false);
+                        }}
                         className="flex items-center justify-center w-full gap-2 px-4 py-3 mb-2 text-xs font-semibold leading-none text-center text-white bg-blue-600 rounded-full hover:bg-blue-700"
                       >
                         <Sparkles className="w-5 h-5" />
-                        Get Started Free
-                      </Link>
+                        Let's work together
+                      </button>
                     </m.div>
                   )}
                 </div>

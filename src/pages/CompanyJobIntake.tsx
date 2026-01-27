@@ -7,6 +7,7 @@ import {
   Scale, VideoIcon, TrendingUp, CheckCircle2, Eye
 } from "lucide-react";
 
+
 // Types
 type FormData = {
   company_id: string;
@@ -43,8 +44,8 @@ type FormData = {
   };
   evaluation_weights: {
     technical_depth: number;
-    experience_projects: number;
-    culture_communication: number;
+    project_experience: number;
+    communication: number;
   };
   evaluation_criteria: {
     correctness: boolean;
@@ -58,6 +59,7 @@ type FormData = {
     team_description: string;
   };
 };
+
 
 // Reusable Components
 const Section = ({ icon, title, color, borderColor, children, delay, number }: any) => (
@@ -75,6 +77,7 @@ const Section = ({ icon, title, color, borderColor, children, delay, number }: a
   </m.section>
 );
 
+
 const Input = ({ label, value, onChange, ...props }: any) => (
   <div className="flex flex-col gap-2">
     <label className="text-sm font-semibold text-slate-300">{label}</label>
@@ -86,6 +89,7 @@ const Input = ({ label, value, onChange, ...props }: any) => (
     />
   </div>
 );
+
 
 const Select = ({ label, value, onChange, options, ...props }: any) => (
   <div className="flex flex-col gap-2">
@@ -102,6 +106,7 @@ const Select = ({ label, value, onChange, options, ...props }: any) => (
     </select>
   </div>
 );
+
 
 const TagInput = ({ label, items, onAdd, onRemove, tempValue, setTempValue, color, placeholder }: any) => (
   <div className="flex flex-col gap-2">
@@ -128,6 +133,7 @@ const TagInput = ({ label, items, onAdd, onRemove, tempValue, setTempValue, colo
   </div>
 );
 
+
 export default function CompanyJobIntake() {
   const navigate = useNavigate();
   
@@ -146,15 +152,17 @@ export default function CompanyJobIntake() {
       duration: "60m",
       interviewer_persona: "The FAANG Principal (Strict & Technical)"
     },
-    evaluation_weights: { technical_depth: 45, experience_projects: 30, culture_communication: 25 },
+    evaluation_weights: { technical_depth: 45, project_experience: 30, communication: 25 },
     evaluation_criteria: { correctness: true, time_complexity: true, edge_case_handling: true, explanation_clarity: true },
     company_culture: { values: [], work_style: "Agile", team_description: "" },
   });
+
 
   const [temps, setTemps] = useState({ stream: "", cert: "", goal: "", mand: "", good: "", lang: "", avoid: "", value: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [validationError, setValidationError] = useState("");
+
 
   const updateField = (path: string, value: any) => {
     const keys = path.split('.');
@@ -166,6 +174,7 @@ export default function CompanyJobIntake() {
       return updated;
     });
   };
+
 
   const addToArray = (path: string, value: string) => {
     if (!value.trim()) return;
@@ -179,6 +188,7 @@ export default function CompanyJobIntake() {
     });
   };
 
+
   const removeFromArray = (path: string, index: number) => {
     const keys = path.split('.');
     setFormData(prev => {
@@ -190,25 +200,14 @@ export default function CompanyJobIntake() {
     });
   };
 
+
   const getTotalWeight = () => Object.values(formData.evaluation_weights).reduce((a, b) => a + b, 0);
-  const getProgressPercentage = () => {
-    const fields = [
-      formData.company_id,
-      formData.company_name,
-      formData.job_role,
-      formData.location,
-      formData.company_objectives.primary_goal,
-      formData.technical_requirements.mandatory_skills.length > 0,
-      formData.company_culture.values.length > 0
-    ].filter(Boolean).length;
-    return Math.round((fields / 7) * 100);
-  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
-    if (!formData.company_id || !formData.company_name || !formData.job_role || !formData.location) {
+    if (!formData.company_name || !formData.job_role) {
       setValidationError("Please fill all required fields");
       return;
     }
@@ -226,7 +225,6 @@ export default function CompanyJobIntake() {
       await new Promise(r => setTimeout(r, 1500));
       
       localStorage.setItem("jobIntakeComplete", "true");
-      localStorage.removeItem("needsJobIntake");
       localStorage.setItem("jobConfiguration", JSON.stringify(formData));
       
       setIsSubmitting(false);
@@ -242,6 +240,7 @@ export default function CompanyJobIntake() {
       setIsSubmitting(false);
     }
   };
+
 
   const opts = {
     jobTypes: ["Full-Time", "Part-Time", "Contract", "Internship"],
@@ -259,14 +258,15 @@ export default function CompanyJobIntake() {
     cultureValues: ["Innovation", "Ownership", "Velocity", "Integrity"]
   };
 
+
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100">
       <main className="py-12 mx-auto pb-33 pt-18 px-7 max-w-7xl">
-        {/* Page Title */}
         <div className="mb-10">
           <h2 className="mb-2 text-4xl font-black tracking-tight">Job & Interview Configuration</h2>
           <p className="text-lg text-slate-400">Define the parameters for your AI-driven technical screening process.</p>
         </div>
+
 
         {validationError && (
           <m.div 
@@ -278,6 +278,7 @@ export default function CompanyJobIntake() {
             <p className="text-sm text-rose-300">{validationError}</p>
           </m.div>
         )}
+
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-8">
           {/* Section 1: Company & Role (Blue) */}
@@ -314,6 +315,7 @@ export default function CompanyJobIntake() {
             </div>
           </Section>
 
+
           {/* Section 2: Education (Purple) */}
           <Section 
             icon={<GraduationCap className="w-6 h-6" />} 
@@ -341,6 +343,7 @@ export default function CompanyJobIntake() {
             </div>
           </Section>
 
+
           {/* Section 3: Technical Requirements (Amber) */}
           <Section 
             icon={<Terminal className="w-6 h-6" />} 
@@ -364,6 +367,7 @@ export default function CompanyJobIntake() {
               placeholder="Add a skill..." 
             />
           </Section>
+
 
           {/* Section 4: Role Expectations (Cyan) */}
           <Section 
@@ -389,6 +393,7 @@ export default function CompanyJobIntake() {
               />
             </div>
           </Section>
+
 
           {/* Section 5: Interview Preferences (Pink) */}
           <Section 
@@ -431,7 +436,8 @@ export default function CompanyJobIntake() {
             </div>
           </Section>
 
-          {/* Section 6: Evaluation Weights (Indigo) */}
+
+          {/* Section 6: Evaluation Weights with Sliders (Indigo) */}
           <Section 
             icon={<Scale className="w-6 h-6" />} 
             title="Evaluation Weights" 
@@ -442,35 +448,154 @@ export default function CompanyJobIntake() {
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex-1"></div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-indigo-600 border rounded-full shadow-lg shadow-indigo-500/40 border-indigo-400/50">
-                <span className="text-xs font-bold tracking-widest text-indigo-100 uppercase">Total</span>
-                <span className={`text-xl font-black leading-none ${getTotalWeight() === 100 ? 'text-white' : 'text-rose-300'}`}>
-                  {getTotalWeight()}%
-                </span>
-              </div>
             </div>
-            <div className="space-y-8">
-              {(Object.keys(formData.evaluation_weights) as Array<keyof typeof formData.evaluation_weights>).map((k, idx) => (
-                <div key={k} className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium capitalize text-slate-300">
-                      {k.replace(/_/g, ' ')}
-                    </span>
-                    <span className="text-lg font-bold text-indigo-400">{formData.evaluation_weights[k]}%</span>
+
+            {/* Slider Controls */}
+            <div className="grid grid-cols-1 gap-8">
+              {(Object.keys(formData.evaluation_weights) as Array<keyof typeof formData.evaluation_weights>).map((k) => (
+                <div key={k} className="flex items-center gap-8">
+                  {/* LEFT: Gauge */}
+                  <div className="relative flex-shrink-0" style={{ width: '200px', height: '140px' }}>
+                    <svg
+                      width="200"
+                      height="140"
+                      viewBox="0 0 300 180"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      {/* Needle */}
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M152.991 34.67C152.706 30.9785 147.294 30.9785 147.009 34.67L138.696 142.139C136.395 144.776 135 148.225 135 152C135 160.284 141.716 167 150 167C158.284 167 165 160.284 165 152C165 148.225 163.606 144.776 161.304 142.139L152.991 34.67Z"
+                        fill="#6366f1"
+                        transform={`rotate(${-90 + 1.8 * formData.evaluation_weights[k]}, 150, 152)`}
+                      />
+
+                      {/* Center and Ticks */}
+                      <g transform="translate(150, 152)">
+                        <circle r="8" fill="#1e293b" />
+                        {Array(41)
+                          .fill(0)
+                          .map((_, i) => {
+                            const r1 = 130;
+                            const r2 = 150;
+                            const r3 = 140;
+                            const delta = Math.PI / 40;
+                            const angle = delta * i - Math.PI;
+                            const ss = Math.sin(angle);
+                            const cc = Math.cos(angle);
+                            const rs = i % 5 === 0 ? r1 : r3;
+                            const x1 = rs * cc;
+                            const y1 = rs * ss;
+                            const x2 = r2 * cc;
+                            const y2 = r2 * ss;
+                            const color = Math.ceil(formData.evaluation_weights[k] * (41 / 100)) > i ? "#6366f1" : "#334155";
+                            
+                            return (
+                              <line
+                                key={i}
+                                x1={x1}
+                                y1={y1}
+                                x2={x2}
+                                y2={y2}
+                                stroke={color}
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                              />
+                            );
+                          })}
+                      </g>
+                    </svg>
+                    
+                    {/* Label and Value Overlay */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ top: '60px' }}>
+                      <span className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
+                        {k.replace(/_/g, ' ')}
+                      </span>
+                      <br/><br/>
+                      <span className="mt-1 text-xl font-bold text-indigo-400">
+                        {formData.evaluation_weights[k]}%
+                      </span>
+                    </div>
                   </div>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="100" 
-                    value={formData.evaluation_weights[k]} 
-                    onChange={(e) => updateField(`evaluation_weights.${k}`, parseInt(e.target.value))} 
-                    className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-slate-800 accent-indigo-600"
-                  />
+
+                  {/* RIGHT: Slider Bar */}
+                  <div className="flex flex-col flex-1 gap-2">
+                    {/* Range Input Container */}
+                    <div className="relative" style={{ height: '24px' }}>
+                      {/* Track Background */}
+                      <div
+                        className="absolute rounded-full bg-slate-700"
+                        style={{
+                          left: '0',
+                          right: '0',
+                          height: '8px',
+                          top: '50%',
+                          transform: 'translate(0, -50%)',
+                        }}
+                      />
+                      
+                      {/* Track Filled */}
+                      <div
+                        className="absolute bg-indigo-500 rounded-full"
+                        style={{
+                          left: '0',
+                          width: `${formData.evaluation_weights[k]}%`,
+                          height: '8px',
+                          top: '50%',
+                          transform: 'translate(0, -50%)',
+                        }}
+                      />
+                      
+                      {/* Thumb */}
+                      <div
+                        className="absolute grid transition-all duration-150 place-items-center"
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          top: '0',
+                          left: `calc(${formData.evaluation_weights[k]}% - 12px)`,
+                        }}
+                      >
+                        <div className="grid w-5 h-5 bg-white rounded-full shadow-lg place-items-center ring-2 ring-indigo-500/50">
+                          <div
+                            className="bg-indigo-500 rounded-full"
+                            style={{
+                              width: '14px',
+                              height: '14px',
+                            }}
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* Hidden Range Input */}
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={formData.evaluation_weights[k]}
+                        onChange={(e) => updateField(`evaluation_weights.${k}`, parseInt(e.target.value))}
+                        className="absolute w-full h-6 opacity-0 cursor-pointer"
+                        style={{
+                          left: '0',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                        }}
+                      />
+                    </div>
+
+                    {/* Min/Max Labels */}
+                    <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+                      <div>0</div>
+                      <div>100</div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           </Section>
-
+          
           {/* Section 7: Company Culture (Rose) */}
           <Section 
             icon={<Heart className="w-6 h-6" />} 
@@ -485,7 +610,7 @@ export default function CompanyJobIntake() {
                 <label className="text-sm font-semibold text-slate-300">Key Values</label>
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                   {opts.cultureValues.map(val => (
-                    <label key={val} className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer bg-slate-900/50 border-slate-700 hover:bg-slate-800">
+                    <label key={val} className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer group bg-slate-900/50 border-slate-700 hover:bg-slate-800">
                       <input 
                         type="checkbox" 
                         checked={formData.company_culture.values.includes(val)} 
@@ -497,7 +622,7 @@ export default function CompanyJobIntake() {
                             if (idx > -1) removeFromArray('company_culture.values', idx);
                           }
                         }}
-                        className="rounded border-slate-600 text-rose-500 bg-slate-900 focus:ring-rose-500" 
+                        className="appearance-none before:transition-all before:duration-300 before:block before:h-4 before:w-4 before:border-2 before:border-solid before:border-rose-500 group-hover:before:border-4 checked:before:rotate-180 checked:before:border-x-2 checked:before:border-y-8 checked:before:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500/50" 
                       />
                       <span className="text-sm">{val}</span>
                     </label>
@@ -516,6 +641,7 @@ export default function CompanyJobIntake() {
               </div>
             </div>
           </Section>
+
 
           {/* Footer Action */}
           <div className="flex flex-col items-center gap-4 py-8">
@@ -558,12 +684,14 @@ export default function CompanyJobIntake() {
         </form>
       </main>
 
+
       {/* Visual Gradient Background Blobs */}
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-[#0d59f2]/10 rounded-full blur-[120px]"></div>
         <div className="absolute bottom-[20%] right-[5%] w-[500px] h-[500px] bg-purple-900/10 rounded-full blur-[120px]"></div>
         <div className="absolute top-[40%] right-[15%] w-[300px] h-[300px] bg-amber-900/10 rounded-full blur-[100px]"></div>
       </div>
+
 
       <style>{`
         .glass-card {
@@ -578,6 +706,26 @@ export default function CompanyJobIntake() {
         .gradient-border-pink { border-top: 4px solid #ec4899; }
         .gradient-border-indigo { border-top: 4px solid #6366f1; }
         .gradient-border-rose { border-top: 4px solid #f43f5e; }
+        
+        /* Custom slider styling */
+        .slider::-webkit-slider-thumb {
+          appearance: none;
+          width: 20px;
+          height: 20px;
+          background: #6366f1;
+          cursor: pointer;
+          border-radius: 50%;
+          box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        }
+        .slider::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+          background: #6366f1;
+          cursor: pointer;
+          border-radius: 50%;
+          box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+          border: none;
+        }
       `}</style>
     </div>
   );

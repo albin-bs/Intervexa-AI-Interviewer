@@ -1,5 +1,6 @@
 import { useState, useEffect, memo } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { 
   Code, 
   Flame, 
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 import { m } from "framer-motion";
 
+
 // Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -24,6 +26,7 @@ const containerVariants = {
     },
   },
 };
+
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -37,6 +40,7 @@ const itemVariants = {
   },
 };
 
+
 const cardHoverVariants = {
   rest: { scale: 1 },
   hover: {
@@ -49,8 +53,10 @@ const cardHoverVariants = {
 };
 
 const Dashboard = memo(function Dashboard() {
+  const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
   const [streak, setStreak] = useState(12);
+
 
   // Mock user data
   const [user] = useState({
@@ -62,12 +68,14 @@ const Dashboard = memo(function Dashboard() {
     location: "San Francisco, CA",
   });
 
+
   // Progress data
   const [progress] = useState({
     easy: { solved: 45, total: 100 },
     medium: { solved: 28, total: 150 },
     hard: { solved: 5, total: 80 },
   });
+
 
   // Recent submissions
   const [recentSubmissions] = useState([
@@ -109,13 +117,16 @@ const Dashboard = memo(function Dashboard() {
     },
   ]);
 
+
   // Session activity data (for bar chart)
   const sessionData = [12, 28, 52, 18, 40, 64, 33];
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+
   useEffect(() => {
     setIsLoaded(true);
   }, []);
+
 
   const difficultyColors = {
     Easy: "text-emerald-400",
@@ -123,10 +134,12 @@ const Dashboard = memo(function Dashboard() {
     Hard: "text-rose-400",
   };
 
+
   const statusColors = {
     Accepted: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
     "Wrong Answer": "bg-rose-500/10 text-rose-500 border-rose-500/20",
   };
+
 
   return (
     <main className="min-h-screen bg-[#0b1120] text-slate-100 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
@@ -185,6 +198,7 @@ const Dashboard = memo(function Dashboard() {
           </div>
         </m.section>
 
+
         {/* Quick Actions Grid */}
         <m.section
           variants={itemVariants}
@@ -195,6 +209,7 @@ const Dashboard = memo(function Dashboard() {
             variants={cardHoverVariants}
             initial="rest"
             whileHover="hover"
+            onClick={() => navigate("/problems")} // ✅ Add this
             className="relative p-8 overflow-hidden border shadow-lg cursor-pointer rounded-xl bg-slate-900/70 backdrop-blur-xl border-white/10 hover:border-emerald-500/50 group"
           >
             <div className="absolute top-0 right-0 p-8 transition-opacity opacity-10 group-hover:opacity-20">
@@ -221,6 +236,7 @@ const Dashboard = memo(function Dashboard() {
             variants={cardHoverVariants}
             initial="rest"
             whileHover="hover"
+            onClick={() => navigate("/interview")} // ✅ Add this
             className="relative p-8 overflow-hidden border shadow-lg cursor-pointer rounded-xl bg-slate-900/70 backdrop-blur-xl border-white/10 hover:border-blue-500/50 group"
           >
             <div className="absolute top-0 right-0 p-8 transition-opacity opacity-10 group-hover:opacity-20">
@@ -258,6 +274,7 @@ const Dashboard = memo(function Dashboard() {
                 </div>
               </div>
 
+
               <div className="space-y-6">
                 {/* Progress Bars */}
                 {Object.entries(progress).map(([difficulty, { solved, total }], index) => {
@@ -285,6 +302,7 @@ const Dashboard = memo(function Dashboard() {
                 })}
               </div>
 
+
               <div className="pt-6 mt-8 border-t border-slate-800">
                 <p className="mb-4 text-xs font-bold tracking-widest uppercase text-slate-500">
                   Core Skills
@@ -302,6 +320,7 @@ const Dashboard = memo(function Dashboard() {
               </div>
             </m.div>
 
+
             {/* Upgrade Card */}
             <m.div
               variants={itemVariants}
@@ -317,71 +336,90 @@ const Dashboard = memo(function Dashboard() {
             </m.div>
           </section>
 
+
           {/* Right Main Content */}
           <section className="space-y-6 lg:col-span-2">
             {/* Charts Grid */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {/* Session Activity Bar Chart */}
+              {/* ✅ Session Activity Bar Chart WITH HOVER EFFECT */}
               <m.div
                 variants={itemVariants}
-                className="flex flex-col h-64 p-6 border shadow-lg rounded-xl bg-slate-900/70 backdrop-blur-xl border-white/10"
+                className="group [background:linear-gradient(theme(colors.slate.900),theme(colors.slate.900))_padding-box,linear-gradient(45deg,theme(colors.slate.800),theme(colors.slate.600/.8),theme(colors.slate.800))_border-box] relative before:absolute before:inset-0 rounded-2xl border border-transparent shadow-lg overflow-hidden"
               >
-                <h3 className="flex items-center gap-2 mb-4 text-sm font-bold text-slate-400">
-                  <TrendingUp className="w-4 h-4" /> Sessions Over Time
-                </h3>
-                <div className="flex items-end flex-1 gap-2 px-2 pb-2">
-                  {sessionData.map((value, index) => {
-                    const maxValue = Math.max(...sessionData);
-                    const height = (value / maxValue) * 100;
-                    
-                    return (
-                      <m.div
-                        key={index}
-                        initial={{ height: 0 }}
-                        animate={{ height: `${height}%` }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        className="relative flex-1 transition-colors rounded-t-sm group bg-blue-500/20 hover:bg-blue-500/40"
-                      >
-                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-slate-900 text-[10px] px-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                          {value}
-                        </div>
-                      </m.div>
-                    );
-                  })}
+                {/* Gradient accent bar on top */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-cyan-500 to-teal-500" />
+                
+                <div className="relative flex flex-col h-64 p-6">
+                  <h3 className="flex items-center gap-2 mb-4 text-sm font-bold text-indigo-400">
+                    <TrendingUp className="w-4 h-4" /> Sessions Over Time
+                  </h3>
+                  <div className="flex items-end flex-1 gap-2 px-2 pb-2">
+                    {sessionData.map((value, index) => {
+                      const maxValue = Math.max(...sessionData);
+                      const height = (value / maxValue) * 100;
+                      
+                      return (
+                        <m.div
+                          key={index}
+                          initial={{ height: 0 }}
+                          animate={{ height: `${height}%` }}
+                          transition={{ duration: 0.5, delay: index * 0.1 }}
+                          className="relative flex-1 transition-all duration-300 rounded-t-sm group/bar bg-blue-500/20 hover:bg-blue-500/40"
+                        >
+                          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity font-bold border border-blue-500/30">
+                            {value}
+                          </div>
+                        </m.div>
+                      );
+                    })}
+                  </div>
+                  <div className="flex justify-between mt-2 text-[10px] text-slate-500 uppercase tracking-tighter">
+                    {days.map(day => <span key={day}>{day}</span>)}
+                  </div>
                 </div>
-                <div className="flex justify-between mt-2 text-[10px] text-slate-500 uppercase tracking-tighter">
-                  {days.map(day => <span key={day}>{day}</span>)}
+
+                {/* Hover image effect (optional - add your image) */}
+                <div className="relative transition-transform duration-500 ease-in-out opacity-0 pointer-events-none group-hover:-translate-y-1">
+                  {/* You can add an image here if needed */}
                 </div>
               </m.div>
 
-              {/* Skill Matrix Placeholder */}
+
+              {/* ✅ Skill Matrix WITH HOVER EFFECT */}
               <m.div
                 variants={itemVariants}
-                className="relative flex flex-col items-center justify-center h-64 p-6 overflow-hidden border shadow-lg rounded-xl bg-slate-900/70 backdrop-blur-xl border-white/10"
+                className="group [background:linear-gradient(theme(colors.slate.900),theme(colors.slate.900))_padding-box,linear-gradient(45deg,theme(colors.slate.800),theme(colors.slate.600/.8),theme(colors.slate.800))_border-box] relative before:absolute before:inset-0 rounded-2xl border border-transparent shadow-lg overflow-hidden"
               >
-                <h3 className="absolute flex items-center gap-2 text-sm font-bold top-6 left-6 text-slate-400">
-                  <Target className="w-4 h-4" /> Skill Matrix
-                </h3>
-                <div className="relative size-32">
-                  <svg className="absolute inset-0 overflow-visible size-full" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
-                    <circle cx="50" cy="50" r="32" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
-                    <circle cx="50" cy="50" r="16" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
-                    <polygon 
-                      points="50,10 85,35 75,75 25,75 15,35" 
-                      fill="rgba(59, 130, 246, 0.4)" 
-                      stroke="#3b82f6" 
-                      strokeWidth="2" 
-                    />
-                  </svg>
-                  <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-[10px] text-white">Logic</span>
-                  <span className="absolute top-1/4 -right-12 text-[10px] text-white">Speed</span>
-                  <span className="absolute -bottom-4 right-0 text-[10px] text-white">Comm.</span>
-                  <span className="absolute -bottom-4 left-0 text-[10px] text-white">Design</span>
-                  <span className="absolute top-1/4 -left-12 text-[10px] text-white">Debug</span>
+                {/* Gradient accent bar */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-400 via-pink-500 to-rose-500" />
+                
+                <div className="relative flex flex-col items-center justify-center h-64 p-6">
+                  <h3 className="absolute flex items-center gap-2 text-sm font-bold text-indigo-400 top-6 left-6">
+                    <Target className="w-4 h-4" /> Skill Matrix
+                  </h3>
+                  <div className="relative size-32">
+                    <svg className="absolute inset-0 overflow-visible size-full" viewBox="0 0 100 100">
+                      <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                      <circle cx="50" cy="50" r="32" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                      <circle cx="50" cy="50" r="16" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                      <polygon 
+                        points="50,10 85,35 75,75 25,75 15,35" 
+                        fill="rgba(59, 130, 246, 0.4)" 
+                        stroke="#3b82f6" 
+                        strokeWidth="2" 
+                        className="transition-all duration-300 group-hover:fill-[rgba(59,130,246,0.6)]"
+                      />
+                    </svg>
+                    <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-[10px] text-white">Logic</span>
+                    <span className="absolute top-1/4 -right-12 text-[10px] text-white">Speed</span>
+                    <span className="absolute -bottom-4 right-0 text-[10px] text-white">Comm.</span>
+                    <span className="absolute -bottom-4 left-0 text-[10px] text-white">Design</span>
+                    <span className="absolute top-1/4 -left-12 text-[10px] text-white">Debug</span>
+                  </div>
                 </div>
               </m.div>
             </div>
+
 
             {/* Recent Submissions */}
             <m.div
@@ -439,5 +477,6 @@ const Dashboard = memo(function Dashboard() {
     </main>
   );
 });
+
 
 export default Dashboard;

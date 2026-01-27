@@ -4,7 +4,9 @@ import { Analytics } from "@vercel/analytics/react";
 import { AnimatePresence, m } from "framer-motion";
 import LazyMotionWrapper from "./components/LazyMotionWrapper";
 
+
 // Immediate loads
+import CookieConsent from './components/CookieConsent'; // ✅ Already imported
 import SplashScreen from "./components/SplashScreen";
 import ScrollToTop from "./components/ScrollToTop";
 import Navbar from "./components/Navbar";
@@ -12,10 +14,12 @@ import Hero from "./components/Hero";
 import Footer from "./components/Footer";
 import CompanyJobIntake from './pages/CompanyJobIntake';
 
+
 // Lazy loads
 const Features = lazy(() => import("./components/Features"));
 const FloatingAnnouncement = lazy(() => import("./components/FloatingAnnouncement"));
 const BackToTop = lazy(() => import("./components/BackToTop"));
+
 
 // Pages
 const pages = {
@@ -35,8 +39,9 @@ const pages = {
   Dashboard: lazy(() => import("./pages/Dashboard")),
   Settings: lazy(() => import("./pages/Settings")),
   Problems: lazy(() => import("./pages/Problems")),
-  Interview: lazy(() => import("./pages/Interview")), // ✅ Changed from InterviewSetup to Interview
+  Interview: lazy(() => import("./pages/Interview")),
 };
+
 
 // Loading spinner
 const Spinner = () => (
@@ -49,6 +54,7 @@ const Spinner = () => (
   </div>
 );
 
+
 // Protected route wrapper
 const Protected = ({ children, needsOnboarding = false }) => {
   const isAuth = !!localStorage.getItem("accessToken");
@@ -60,6 +66,7 @@ const Protected = ({ children, needsOnboarding = false }) => {
   return <Suspense fallback={<Spinner />}>{children}</Suspense>;
 };
 
+
 // Home page
 const Home = () => (
   <>
@@ -70,6 +77,7 @@ const Home = () => (
   </>
 );
 
+
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
@@ -77,17 +85,17 @@ export default function App() {
   const location = useLocation();
   const isMaintenanceMode = false;
 
-  // ✅ Define routes where navbar and footer should be hidden
-  const hideNavbarRoutes = ['/interview']; // ✅ Added /interview to hide navbar
+
+  const hideNavbarRoutes = ['/interview'];
   const isCodeDemoPage = location.pathname === "/code-demo";
-  
-  // ✅ Check if current route should hide navbar/footer
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname) || isCodeDemoPage;
+
 
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 2500);
     return () => clearTimeout(timer);
   }, []);
+
 
   useEffect(() => {
     let ticking = false;
@@ -104,11 +112,13 @@ export default function App() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => setLoading(false), 300);
     return () => clearTimeout(timer);
   }, [location.pathname]);
+
 
   if (isMaintenanceMode) {
     return (
@@ -121,7 +131,9 @@ export default function App() {
     );
   }
 
+
   if (showSplash) return <SplashScreen />;
+
 
   // Special layout for pages without navbar/footer
   if (shouldHideNavbar) {
@@ -130,21 +142,23 @@ export default function App() {
         <Suspense fallback={<Spinner />}>
           <Routes location={location}>
             <Route path="/code-demo" element={<pages.CodeDemo />} />
-            {/* ✅ Added /interview route here */}
             <Route path="/interview" element={<Protected><pages.Interview /></Protected>} />
           </Routes>
         </Suspense>
+        {/* ✅ Cookie consent shows even on pages without navbar */}
+        <CookieConsent />
         <Analytics />
       </LazyMotionWrapper>
     );
   }
 
+
   return (
     <LazyMotionWrapper>
       <div className="min-h-screen overflow-hidden font-sans text-white bg-slate-950">
-        {/* ✅ Navbar only shows when shouldHideNavbar is false */}
         <Navbar scrolled={scrolled} />
         <ScrollToTop />
+
 
         <AnimatePresence>
           {loading && (
@@ -159,6 +173,7 @@ export default function App() {
           )}
         </AnimatePresence>
 
+
         <AnimatePresence mode="wait">
           <m.div key={location.pathname} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25, ease: "easeOut" }}>
@@ -172,13 +187,16 @@ export default function App() {
                 <Route path="/changelog" element={<pages.Changelog />} />
                 <Route path="/company/job-intake" element={<Protected><CompanyJobIntake /></Protected>} />
 
+
                 {/* Auth */}
                 <Route path="/login" element={<pages.Login />} />
                 <Route path="/signup" element={<pages.Signup />} />
                 <Route path="/interviewer/signup" element={<pages.InterviewerSignup />} />
 
+
                 {/* Onboarding */}
                 <Route path="/onboarding" element={<Protected needsOnboarding><pages.UserOnboarding /></Protected>} />
+
 
                 {/* Verification */}
                 <Route path="/verify/method" element={<Protected><pages.VerifyMethod /></Protected>} />
@@ -186,11 +204,12 @@ export default function App() {
                 <Route path="/verify/code" element={<Protected><pages.VerifyCode /></Protected>} />
                 <Route path="/verify/success" element={<Protected><pages.VerifySuccess /></Protected>} />
 
+
                 {/* Protected */}
                 <Route path="/dashboard" element={<Protected><pages.Dashboard /></Protected>} />
                 <Route path="/settings" element={<Protected><pages.Settings /></Protected>} />
                 <Route path="/problems" element={<Protected><pages.Problems /></Protected>} />
-                {/* ✅ /interview route removed from here - it's in the shouldHideNavbar section */}
+
 
                 {/* 404 */}
                 <Route path="*" element={<Navigate to="/" replace />} />
@@ -199,13 +218,18 @@ export default function App() {
           </m.div>
         </AnimatePresence>
 
+
         <Suspense fallback={null}>
           <FloatingAnnouncement />
           <BackToTop />
         </Suspense>
 
-        {/* ✅ Footer only shows when shouldHideNavbar is false */}
+
         <Footer />
+        
+        {/* ✅ Cookie Consent - Shows on all pages with navbar/footer */}
+        <CookieConsent />
+        
         <Analytics />
       </div>
     </LazyMotionWrapper>

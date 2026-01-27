@@ -170,6 +170,18 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
     return () => clearInterval(timer);
   }, [onEnd, permissionsGranted]);
 
+  // Add this useEffect after your other useEffects
+  useEffect(() => {
+    // Send initial AI welcome message when permissions are granted
+    if (permissionsGranted && chatMessages.length === 0) {
+      setChatMessages([{
+        text: "Hello! I'm your AI interviewer. Feel free to ask me questions during the interview.",
+        sender: "ai",
+        time: new Date()
+      }]);
+    }
+  }, [permissionsGranted]);
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -200,7 +212,7 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
               className="w-full max-w-md p-8 border shadow-2xl bg-slate-900 rounded-2xl border-slate-800"
             >
               <div className="text-center">
-                <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600">
+                <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 rounded-full bg-linear-to-br from-blue-500 to-indigo-600">
                   {isLoadingMedia ? (
                     <Loader className="w-10 h-10 text-white animate-spin" />
                   ) : (
@@ -221,7 +233,7 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
 
                     <div className="p-4 mb-6 border bg-blue-500/10 border-blue-500/20 rounded-xl">
                       <div className="flex items-start gap-3">
-                        <Sparkles className="flex-shrink-0 w-5 h-5 text-blue-400 mt-0.5" />
+                        <Sparkles className="shrink-0 w-5 h-5 text-blue-400 mt-0.5" />
                         <div className="text-left">
                           <p className="mb-1 text-sm font-medium text-blue-300">Why we need access</p>
                           <ul className="space-y-1 text-xs text-slate-400">
@@ -236,7 +248,7 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
                 ) : (
                   <div className="p-4 mb-6 border bg-rose-500/10 border-rose-500/20 rounded-xl">
                     <div className="flex items-start gap-3">
-                      <AlertTriangle className="flex-shrink-0 w-5 h-5 text-rose-400 mt-0.5" />
+                      <AlertTriangle className="shrink-0 w-5 h-5 text-rose-400 mt-0.5" />
                       <div className="text-left">
                         <p className="mb-1 text-sm font-medium text-rose-300">Access Denied</p>
                         <p className="text-xs text-slate-400">{mediaError}</p>
@@ -406,7 +418,7 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
                   <div className="absolute w-64 h-64 border rounded-full border-blue-500/20"></div>
                   
                   {/* AI Identity */}
-                  <div className="relative w-48 h-48 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-[0_0_50px_rgba(37,106,244,0.4)] animate-pulse">
+                  <div className="relative w-48 h-48 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-[0_0_50px_rgba(37,106,244,0.4)] animate-pulse">
                     <Sparkles className="w-20 h-20 text-white" />
                   </div>
                   
@@ -517,7 +529,7 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
                   onClick={onEnd}
                   className="flex items-center gap-3 px-6 py-3 text-sm font-bold text-white transition-colors rounded-full bg-rose-600 hover:bg-rose-500"
                 >
-                  <Phone className="w-5 h-5 rotate-[135deg]" />
+                  <Phone className="w-5 h-5 rotate-135" />
                   <span>End Interview</span>
                 </m.button>
               </div>
@@ -612,7 +624,7 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
                     <div className="space-y-3">
                       <h4 className="text-xs font-bold tracking-widest uppercase text-white/30">AI Insights</h4>
                       <div className="flex gap-3 p-3 border rounded-xl bg-blue-500/10 border-blue-500/20">
-                        <Sparkles className="flex-shrink-0 w-5 h-5 text-blue-400" />
+                        <Sparkles className="w-5 h-5 text-blue-400 shrink-0" />
                         <p className="text-sm text-blue-100">Try to maintain eye contact with the camera more frequently.</p>
                       </div>
                     </div>
@@ -622,18 +634,56 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
                 {/* Chat Section */}
                 {showChat && (
                   <div className="flex flex-col h-[calc(100vh-200px)]">
-                    <div className="flex-1 space-y-3 overflow-y-auto">
-                      {chatMessages.map((msg, i) => (
-                        <div key={i} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
-                          <div className={`max-w-[80%] px-4 py-2 rounded-2xl ${
-                            msg.sender === "user" ? "bg-blue-600 text-white" : "bg-slate-800 text-slate-200"
-                          }`}>
-                            <p className="text-sm">{msg.text}</p>
+                    {/* Chat Messages Area */}
+                    <div className="flex flex-col p-4 overflow-auto grow">
+                      {chatMessages.length === 0 ? (
+                        <div className="flex items-center justify-center flex-1">
+                          <div className="text-center">
+                            <MessageSquare className="w-12 h-12 mx-auto mb-3 text-slate-700" />
+                            <p className="text-sm text-slate-500">No messages yet</p>
+                            <p className="text-xs text-slate-600">Start a conversation with the AI</p>
                           </div>
                         </div>
-                      ))}
+                      ) : (
+                        <>
+                          {chatMessages.map((msg, i) => (
+                            msg.sender === "ai" ? (
+                              // AI Message (Left side)
+                              <div key={i} className="flex w-full max-w-xs mt-2 space-x-3">
+                                <div className="flex items-center justify-center w-10 h-10 bg-blue-500 rounded-full shrink-0">
+                                  <Bot className="w-6 h-6 text-white" />
+                                </div>
+                                <div>
+                                  <div className="p-3 rounded-r-lg rounded-bl-lg bg-slate-800">
+                                    <p className="text-sm text-white">{msg.text}</p>
+                                  </div>
+                                  <span className="text-xs leading-none text-slate-500">
+                                    {new Date(msg.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
+                                </div>
+                              </div>
+                            ) : (
+                              // User Message (Right side)
+                              <div key={i} className="flex justify-end w-full max-w-xs mt-2 ml-auto space-x-3">
+                                <div>
+                                  <div className="p-3 text-white bg-blue-600 rounded-l-lg rounded-br-lg">
+                                    <p className="text-sm">{msg.text}</p>
+                                  </div>
+                                  <span className="text-xs leading-none text-slate-500">
+                                    {new Date(msg.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
+                                </div>
+                                <div className="flex items-center justify-center w-10 h-10 rounded-full shrink-0 bg-slate-700">
+                                  <User className="w-6 h-6 text-white" />
+                                </div>
+                              </div>
+                            )
+                          ))}
+                        </>
+                      )}
                     </div>
 
+                    {/* Input Area */}
                     <div className="pt-4 mt-4 border-t border-white/10">
                       <div className="flex gap-2">
                         <input
@@ -642,27 +692,18 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
                           onChange={(e) => setNewMessage(e.target.value)}
                           onKeyPress={(e) => e.key === "Enter" && sendMessage()}
                           placeholder="Type a message..."
-                          className="flex-1 px-4 py-2 text-sm border rounded-lg bg-slate-950 border-slate-800 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="flex-1 px-4 py-3 text-sm border rounded-lg bg-slate-950 border-slate-800 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <button
                           onClick={sendMessage}
-                          className="p-2 transition-colors bg-blue-600 rounded-lg hover:bg-blue-500"
+                          className="p-3 transition-colors bg-blue-600 rounded-lg hover:bg-blue-500"
                         >
                           <Send className="w-5 h-5 text-white" />
                         </button>
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
-
-              {/* Footer button in sidebar */}
-              <div className="p-6 mt-auto border-t border-white/10">
-                <button className="flex items-center justify-center w-full gap-2 py-4 font-bold text-white transition-all border bg-white/5 hover:bg-white/10 border-white/10 rounded-xl">
-                  <BarChart3 className="w-5 h-5" />
-                  View Full Report
-                </button>
-              </div>
+                )}              </div>
             </aside>
           </main>
         </>

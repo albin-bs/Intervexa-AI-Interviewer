@@ -29,7 +29,8 @@
     "react-helmet-async": "^2.0.5",
     "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.9.6",
-    "react-syntax-highlighter": "^15.6.6"
+    "react-syntax-highlighter": "^15.6.6",
+    "recharts": "^3.7.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
