@@ -9,17 +9,6 @@
 
 ---
 
-## 📋 Table of Contents
-
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Documentation](#-documentation)
-- [Team](#-team-members)
-- [Contributing](#-contributing)
-- [Support](#-support)
-
----
-
 ## ✨ Features
 
 ### 🎯 Core Features
@@ -42,18 +31,10 @@
 - 📝 **Monaco Editor** — Full-featured code editor with syntax highlighting, themes, and shortcuts
 - 💾 **Auto-Save & History** — Never lose your work; restore previous submissions
 
-#### **3. Community & Discussions**
-- 💬 **Problem-Specific Forums** — Ask questions, share solutions, discuss approaches
-- 🏆 **Leaderboard System** — Track your progress against 12.5K+ active users
-- 🔥 **Streak Tracking** — Maintain daily coding habits with visual streak badges
-- 📊 **User Statistics** — View solve counts by difficulty, language preferences
-- 🎮 **Discord Integration** — Join developers in live chat
-
 #### **4. Progress Analytics Dashboard**
 - 📈 **Performance Metrics** — Visualize acceptance rates, average runtimes, memory usage
 - 🎯 **Skill Gap Analysis** — Identify weak areas with targeted recommendations
 - 📊 **Session History** — Review all past interviews and coding sessions
-- 🏅 **Achievement System** — Earn badges for milestones (100-day streak, top-10 solver, etc.)
 - 📥 **Export & Sharing** — Download reports or share highlights with mentors
 
 ---
@@ -86,19 +67,6 @@
 
 ---
 
-## 📚 Documentation
-
-| Document | Description |
-|----------|-------------|
-| [Setup Guide](docs/setup.md) | Deployment, environment variables, hosting |
-| [API Reference](docs/api.md) | Backend endpoints, request/response formats |
-| [AI Integration](docs/ai.md) | LLM usage, prompt engineering, bias mitigation |
-| [Customization](docs/customization.md) | Theming, adding problems, UI tweaks |
-| [Testing](docs/testing.md) | Unit, integration, and E2E testing |
-| [FAQ](docs/faq.md) | Troubleshooting, common issues |
-
----
-
 ## 👨‍💻 Team Members
 
 <table align="center">
@@ -110,7 +78,6 @@
         <b>Aswin Asokan</b>
       </a>
       <br />
-      <sub>Full Stack Developer</sub>
     </td>
     <td align="center">
       <a href="https://github.com/albin-bs">
@@ -119,7 +86,6 @@
         <b>Albin B S</b>
       </a>
       <br />
-      <sub>Lead Developer & AI Integration</sub>
     </td>
     <td align="center">
       <a href="https://github.com/Actinker">
@@ -128,54 +94,9 @@
         <b>Actinker</b>
       </a>
       <br />
-      <sub>Backend & DevOps</sub>
     </td>
   </tr>
 </table>
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for:
-
-- 🐛 Reporting bugs
-- ✨ Suggesting features
-- 🔧 Submitting pull requests
-- 📝 Improving documentation
-
----
-
-## 🏆 Acknowledgments
-
-- **Judge0** for code execution infrastructure
-- **Tailwind UI** for design inspiration
-- **Open Source Community** for amazing tools and libraries
-
----
-
-## 📞 Community & Contact
-
-<div align="center">
-
-[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/your-invite-link)
-[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/mockmate)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/company/mockmate)
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:team@mockmate.tech)
-
-</div>
-
----
-
-## 💖 Support the Project
-
-If MockMate helped you, consider supporting the developers:
-
-<a href="https://www.buymeacoffee.com/albinbs" target="_blank">
-  <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="50">
-</a>
-
----
 
 <div align="center">
 
@@ -183,6 +104,7 @@ If MockMate helped you, consider supporting the developers:
 <img src="https://user-images.githubusercontent.com/74038190/212284087-bbe7e430-757e-4901-90bf-4cd2ce3e1852.gif" width="100">
 <img src="https://user-images.githubusercontent.com/74038190/212257468-1e9a91f1-b626-4baa-b15d-5c385dfa7ed2.gif" width="100">
 
+---
 
 **© 2025 MockMate — Empowering the next generation of developers**
 
