@@ -1,121 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/logo.png" />
-    <link rel="apple-touch-icon" href="/logo.png" />
-    
-    <!-- Primary Meta Tags -->
-    <title>MockMate AI – Your Personal Interview Coach</title>
-    <meta
-      name="title"
-      content="MockMate AI – Your Personal Interview Coach"
-    />
-    <meta
-      name="description"
-      content="MockMate is your AI-powered interview coach. Practice mock interviews, get instant feedback, and ace your next job interview with our modern, interactive platform."
-    />
-    <meta name="keywords" content="mock interview, AI interview coach, interview practice, job interview prep, coding interview, MockMate" />
-    <meta name="author" content="MockMate AI Team" />
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://mockmateai.com/" />
-    <meta property="og:title" content="MockMate AI – Your Personal Interview Coach" />
-    <meta
-      property="og:description"
-      content="Practice mock interviews with AI-powered feedback and ace your next job interview."
-    />
-    <meta property="og:image" content="https://mockmateai.com/og-image.png" />
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://mockmateai.com/" />
-    <meta property="twitter:title" content="MockMate AI – Your Personal Interview Coach" />
-    <meta
-      property="twitter:description"
-      content="Practice mock interviews with AI-powered feedback and ace your next job interview."
-    />
-    <meta property="twitter:image" content="https://mockmateai.com/og-image.png" />
-    
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#020618" />
-    
-    <!-- Preconnect for Performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
-    
-    <!-- Fonts - Optimized Loading with Multiple Options -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto Serif:wght@300;400;500;700;900&family=Poppins:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&family=Lato:wght@300;400;700;900&display=swap"
-      rel="stylesheet"
-    />
-    
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J2MKZY3R47"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag("js", new Date());
-      gtag("config", "G-J2MKZY3R47", {
-        page_path: window.location.pathname,
-        send_page_view: true
-      });
-    </script>
-    
-    <!-- Preload Critical Assets -->
-    <link rel="preload" href="/logo.png" as="image" />
-  </head>
-  
-  <body>
-    <!-- Root App Container -->
-    <div id="root"></div>
-    
-    <!-- Main App Script -->
-    <script type="module" src="/src/main.jsx"></script>
-    
-    <!-- Typebot Chat Bubble -->
-    <!--
-    <script type="module">
-      import Typebot from "https://cdn.jsdelivr.net/npm/@typebot.io/js@0/dist/web.js";
-      
-      // Initialize after page load for better performance
-      window.addEventListener('load', () => {
-        Typebot.initBubble({
-          typebot: "my-typebot-w26ubw8",
-          theme: {
-            button: {
-              backgroundColor: "#020618",
-              customIconSrc:
-                "https://s3.typebot.io/public/workspaces/cmggm71ex001tl7043d54fz4d/typebots/cmggm9kwi0001jy042w26ubw8/bubble-icon?v=1764499093251",
-            },
-          },
-          placement: "left",
-        });
-      });
-    </script>
-    -->
-    
-    <!-- No JavaScript Fallback -->
-    <noscript>
-      <div style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background: #fef3c7;
-        color: #92400e;
-        padding: 1rem;
-        text-align: center;
-        z-index: 9999;
-      ">
-        Please enable JavaScript to use MockMate AI.
-      </div>
-    </noscript>
-  </body>
-</html>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mockmate AI – Your personal interview coach</title>
+  <meta name="description" content="Mockmate is your AI-powered interview coach. Practice, get feedback, and ace your next job interview with Mockmate's modern, interactive web app." />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-J2MKZY3R47"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-J2MKZY3R47');
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
