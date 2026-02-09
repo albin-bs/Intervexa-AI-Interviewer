@@ -1,126 +1,157 @@
+import { m } from "framer-motion";
+import { Linkedin, Github } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { AnimatedGridPattern } from "../components/ui/animated-grid-pattern";
+
 const people = [
   {
     name: "Albin Binu Sebastian",
-    role: "Co‑Founder / Product Lead",
     imageUrl: "/albin.png",
+    linkedin: "https://www.linkedin.com/in/albin-binu-sebastian/",
+    github: "https://github.com/albin-bs",
   },
   {
     name: "Aswin Asokan",
-    role: "Co‑Founder / Front‑end Engineer",
     imageUrl: "/aswin.png",
+    linkedin: "https://www.linkedin.com/in/aswinasokan2004/",
+    github: "https://github.com/AswinAsokan2004/AswinAsokan2004",
   },
   {
     name: "Abin AC",
-    role: "AI & Backend Engineer",
     imageUrl: "/abin.png",
+    linkedin: "https://www.linkedin.com/in/abin-a-c/",
+    github: "https://github.com/Actinker/Actinker",
   },
   {
     name: "Aaron Stephan Cherian",
-    role: "Developer Experience & Integrations",
     imageUrl: "/aaron.png",
+    linkedin: "https://www.linkedin.com/in/aaron-stephen-cherian-69383224a/",
   },
 ];
 
 function About() {
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 px-4 sm:px-6 lg:px-8 py-20">
-      <div className="mx-auto max-w-7xl">
-        {/* About company */}
-        <div className="max-w-3xl mb-12 lg:mb-16">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-4">
-            About Mockmate
-          </h1>
-          <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-4">
-            Mockmate is an AI‑powered interview practice platform built by a
-            small team of engineers who have gone through dozens of tech
-            interviews ourselves. The goal is simple: give candidates a safe,
-            realistic space to practice, get structured feedback, and track
-            progress over time.
-          </p>
-          <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
-            We combine conversational AI, structured scoring, and friendly UX to
-            simulate real interviews for software engineers, product roles, and
-            more—so you can walk into your next interview prepared and confident.
-          </p>
-        </div>
+    <div className="relative min-h-screen overflow-x-hidden bg-slate-950">
+      {/* ===== BACKGROUND LAYERS ===== */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        {/* Animated Grid */}
+        <AnimatedGridPattern
+          numSquares={40}
+          maxOpacity={0.06}
+          duration={4}
+          repeatDelay={1.5}
+          className={cn(
+            "absolute inset-0",
+            "mask-[radial-gradient(600px_circle_at_center,white,transparent)]",
+            "skew-y-12"
+          )}
+        />
 
-        {/* Team section */}
-        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl py-10 sm:py-12 px-6 sm:px-8">
-          <div className="mx-auto max-w-6xl grid gap-12 lg:gap-16 lg:grid-cols-3">
-            <div className="max-w-xl">
-              <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white">
-                Meet the team
-              </h2>
-              <p className="mt-4 text-sm sm:text-base text-gray-400 leading-relaxed">
-                Mockmate is built by a focused team of developers who enjoy
-                solving real candidate pain points—everything from question
-                quality and feedback depth to keeping practice genuinely fun.
-              </p>
-            </div>
-
-            <ul
-              role="list"
-              className="grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:col-span-2"
-            >
-              {people.map((person) => (
-                <li key={person.name}>
-                  <div className="flex items-center gap-x-4">
-                    <img
-                      alt={person.name}
-                      src={person.imageUrl}
-                      className="h-16 w-16 rounded-full object-cover outline outline-1 -outline-offset-1 outline-white/10"
-                    />
-                    <div>
-                      <h3 className="text-sm sm:text-base font-semibold tracking-tight text-white">
-                        {person.name}
-                      </h3>
-                      <p className="text-xs sm:text-sm font-semibold text-blue-400">
-                        {person.role}
-                      </p>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Partners section */}
-        <section id="partners" className="mt-16 max-w-3xl">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-4">
-            How does MockMateAI work?
-          </h2>
-          <p className="text-sm sm:text-base text-gray-300 leading-relaxed mb-6">
-            Mockmate is built on a modern developer stack and supported by tools
-            we use every day. These platforms help us deliver fast, reliable,
-            and secure interview practice for candidates.
-          </p>
-
-          <div className="flex flex-wrap gap-4 sm:gap-6 items-center">
-            <div className="px-3 py-2 rounded-xl bg-slate-900/70 border border-slate-800">
-              <span className="text-xs font-semibold text-gray-400">Cloud</span>
-              <p className="text-sm text-slate-100">Vercel</p>
-            </div>
-            <div className="px-3 py-2 rounded-xl bg-slate-900/70 border border-slate-800">
-              <span className="text-xs font-semibold text-gray-400">
-                Code &amp; CI
-              </span>
-              <p className="text-sm text-slate-100">GitHub &amp; GitHub Actions</p>
-            </div>
-            <div className="px-3 py-2 rounded-xl bg-slate-900/70 border border-slate-800">
-              <span className="text-xs font-semibold text-gray-400">AI</span>
-              <p className="text-sm text-slate-100">Leading LLM providers</p>
-            </div>
-            <div className="px-3 py-2 rounded-xl bg-slate-900/70 border border-slate-800">
-              <span className="text-xs font-semibold text-gray-400">
-                Education
-              </span>
-              <p className="text-sm text-slate-100">Student‑built project</p>
-            </div>
-          </div>
-        </section>
+        {/* Glow blobs */}
+        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-blue-500/20 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] -right-[5%] w-[30%] h-[50%] bg-purple-500/10 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-[30%] bg-indigo-500/10 rounded-full blur-[150px]" />
       </div>
-    </main>
+
+      {/* ===== CONTENT ===== */}
+      <main className="relative z-10 px-6 py-12 mx-auto max-w-7xl lg:py-24">
+        {/* Hero Section */}
+        <section className="mb-24 text-center">
+          <m.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 border rounded-full bg-white/5 border-white/10">
+              <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+              <span className="text-xs font-bold tracking-widest uppercase text-slate-300">
+                Empowering Your Career Journey
+              </span>
+            </div>
+
+            <h1 className="text-5xl md:text-8xl font-black leading-[1.1] mb-8 tracking-tighter">
+              AI-Powered <br />
+              <span className="text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 bg-clip-text">
+                Interview Mastery
+              </span>
+            </h1>
+
+            <p className="max-w-2xl mx-auto mb-6 text-lg md:text-xl text-slate-400">
+              MockMate is an AI-powered interview practice platform built by
+              engineers who have gone through dozens of tech interviews
+              ourselves.
+            </p>
+
+            <p className="max-w-2xl mx-auto mb-10 text-lg md:text-xl text-slate-400">
+              Our mission is simple: give candidates a safe, realistic space to
+              practice, receive structured feedback, and track progress.
+            </p>
+          </m.div>
+        </section>
+
+        {/* Team Header */}
+        <div className="mb-16">
+          <h2 className="mb-4 text-3xl font-bold text-white">
+            The Visionaries
+          </h2>
+          <div className="w-20 h-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-500" />
+          <p className="max-w-2xl mt-4 text-slate-400">
+            A passionate team of developers solving real candidate pain points.
+          </p>
+        </div>
+
+        {/* Team Grid */}
+        <section className="grid grid-cols-1 gap-8 mb-32 md:grid-cols-2 lg:grid-cols-4">
+          {people.map((member, index) => (
+            <m.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="relative p-1 transition-all rounded-xl bg-white/5 hover:bg-gradient-to-br from-blue-500/20 to-purple-500/20"
+            >
+              <div className="flex flex-col items-center h-full p-6 text-center rounded-lg bg-white/5 backdrop-blur-sm">
+                <div className="relative mb-6">
+                  <div className="relative z-10 w-32 h-32 overflow-hidden border-2 rounded-full border-blue-500/50">
+                    <img
+                      src={member.imageUrl}
+                      alt={member.name}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                </div>
+
+                <p className="mb-4 text-xl font-bold text-white">
+                  {member.name}
+                </p>
+
+                <div className="flex gap-3">
+                  <a
+                    href={member.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 transition rounded-full bg-white/10 hover:bg-white/20"
+                  >
+                    <Linkedin className="w-4 h-4 text-white" />
+                  </a>
+
+                  {member.github && (
+                    <a
+                      href={member.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 transition rounded-full bg-white/10 hover:bg-white/20"
+                    >
+                      <Github className="w-4 h-4 text-white" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </m.div>
+          ))}
+        </section>
+      </main>
+    </div>
   );
 }
 

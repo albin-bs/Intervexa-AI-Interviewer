@@ -1,101 +1,111 @@
-<img src="public/mockmate.png" alt="Mockmate AI Demo" width="800"/>
+<img src="public/mockmate.png" alt="Mockmate AI" width="800"/>
 
-> **Mockmate is a comprehensive, AI-powered interview preparation and coaching platform designed for next-gen software engineers, technical candidates, and career builders. With personalized feedback, realistic mock interviews, and adaptive practice prompts, Mockmate helps users overcome interview anxiety, master diverse technical and behavioral questions, and confidently showcase their skills to employers. The platform leverages advanced AI to analyze responses, track improvement, and provide actionable insights, ensuring every candidate can practice on demand, focus on their weaknesses, and prepare for job-specific roles in any industry. Whether you’re a student, developer, or executive, Mockmate delivers real-time coaching, progress analytics, and unlimited practice to help you land your dream job faster and smarter in today’s competitive market.**
-
----
-
-### 🔥 Demo Preview
+> **MockMate is a next-generation AI-powered platform combining realistic mock interviews, interactive coding practice, and community-driven learning. Built for software engineers, students, and technical candidates, MockMate delivers personalized feedback, real-time code execution, AI-assisted debugging, and comprehensive analytics to help you master technical interviews, ace coding challenges, and land your dream job with confidence.**
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-mockmate.tech-blue?style=for-the-badge&logo=vercel)](https://mockmate.tech)
+![Website](https://img.shields.io/website-up-down-green-red/https/mockmate.tech?style=for-the-badge)
 
----
-
-## 🛠 Tech Stack
-
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![HeadlessUI](https://img.shields.io/badge/HeadlessUI-fff?style=for-the-badge&logo=headlessui&logoColor=4B5563)](https://headlessui.com/)
-[![HeroIcons](https://img.shields.io/badge/HeroIcons-4B5563?style=for-the-badge&logo=heroicons&logoColor=06B6D4)](https://heroicons.com/)
+</div>
 
 ---
 
 ## ✨ Features
 
-- 🏠 **Responsive Home, Interview, and Dashboard Pages**  
-  Adaptive modern UI with real-time updates and seamless navigation for all devices.
+### 🎯 Core Features
 
-- 🤖 **Multimodal Mock Interview Simulation**  
-  Practice with AI-generated, context-aware questions; answer via video, audio, or text, and interact with an AI interviewer for rich, realistic experiences.
+#### **1. AI-Powered Mock Interviews**
+- 🤖 **Multimodal Interview Simulation** — Practice with AI-generated questions; answer via video, audio, or text
+- 🎤 **Real-Time Feedback** — Instant analysis of content, clarity, tone, facial expressions, and confidence
+- 📋 **Role-Specific Questions** — Personalized prompts based on your resume, target job, and experience level
+- 🛡️ **Bias-Aware Scoring** — Fair, transparent feedback calibrated for inclusivity
 
-- 🎤 **Real-Time AI Feedback & Analytics**  
-  Get instant, structured critique on answer content, speaking clarity, facial expressions, tone, pacing, and confidence—driven by advanced LLMs, Whisper transcription, and computer vision AI.
+#### **2. Interactive Code Playground**
+- 💻 **Multi-Language Support** — Python, JavaScript, C++, Java, C#, Go, Ruby, PHP, TypeScript
+- ⚡ **Real-Time Execution** — Powered by Judge0 API with custom test case support
+- 🧪 **Automated Test Judging** — Run against multiple test cases with detailed pass/fail analysis
+- 🤖 **AI Code Assistant**
+  - 🔍 Explain failures and suggest fixes
+  - 🎨 Refactor code for better performance
+  - 🧩 Generate edge test cases
+  - 📊 Analyze time/space complexity
+- 📝 **Monaco Editor** — Full-featured code editor with syntax highlighting, themes, and shortcuts
+- 💾 **Auto-Save & History** — Never lose your work; restore previous submissions
 
-- 📋 **Personalized, Role-Specific Interview Prompts**  
-  Automatic question generation tuned to your resume, target job, or location; supports both technical and behavioral interviews, plus campus placement scenarios.
-
-- 📈 **Progress Dashboard & Skill Gap Analysis**  
-  Visualize your growth, review analytics on strengths and weaknesses, and get actionable insights for ongoing improvement with session history and trend charts.
-
-- 🛡️ **Bias & Fairness Aware Scoring**  
-  Transparent feedback calibrated for fairness, inclusivity, and bias mitigation—suitable for both individual users and institutional pilot programs.
-
-- 🔒 **Privacy-First, Secure by Design**  
-  All interview data is user-controlled, anonymized, and protected; users have clear consent and data export options.
-
-- 💬 **Feedback Export and Sharing**  
-  Download interview transcripts and analytic reports, or share highlights with mentors and career coaches.
-
----
-
-## 📚 Documentation
-
-- **Setup:** See [`docs/setup.md`](docs/setup.md) for deployment, environment, and configuration tips.
-- **Components:** Browse all reusable UI blocks in [`src/components`](src/components).
-- **AI & Backend:** API, inference, and analytics endpoints are documented in [`docs/api.md`](docs/api.md) and [`docs/ai.md`](docs/ai.md).
-- **Customization:** Guidance for theming, custom question sets, and editing UI in [`docs/customization.md`](docs/customization.md).
-- **Testing:** End-to-end and unit testing strategies are detailed in [`docs/testing.md`](docs/testing.md).
-- **Contributing:** Want to help improve Mockmate? See [`CONTRIBUTING.md`](CONTRIBUTING.md) for guidelines on reporting issues, proposing new features, and contributing code or documentation.
-- **Changelog:** Track all major updates and new features in [`CHANGELOG.md`](CHANGELOG.md).
-- **FAQ:** Common questions and troubleshooting tips are in [`docs/faq.md`](docs/faq.md).
+#### **4. Progress Analytics Dashboard**
+- 📈 **Performance Metrics** — Visualize acceptance rates, average runtimes, memory usage
+- 🎯 **Skill Gap Analysis** — Identify weak areas with targeted recommendations
+- 📊 **Session History** — Review all past interviews and coding sessions
+- 📥 **Export & Sharing** — Download reports or share highlights with mentors
 
 ---
 
-## 👏 Team members
+## 🛠 Tech Stack
 
-| [Aswin Asokan](https://github.com/AswinAsokan2004) | [Albin B S](https://github.com/albin-bs) | [Actinker](https://github.com/Actinker) |
-|:---:|:---:|:---:|
-| <img src="https://github.com/AswinAsokan2004.png" width="80" style="border-radius:50%" /> | <img src="https://github.com/albin-bs.png" width="80" style="border-radius:50%" /> | <img src="https://github.com/Actinker.png" width="80" style="border-radius:50%" /> |
+### **Frontend**
+![React](https://img.shields.io/badge/React%2018-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite%205-646CFF?style=for-the-badge&logo=vite&logoColor=FFD62E)
+![TailwindCSS](https://img.shields.io/badge/Tailwind%203-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
+![Framer m](https://img.shields.io/badge/Framer_m-0055FF?style=for-the-badge&logo=framer&logoColor=white)
+
+### **Backend & APIs**
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
+![Judge0](https://img.shields.io/badge/Judge0-FF6C37?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAowAAAKMB8MeazgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAE)
+
+### **AI & ML**
+![Whisper](https://img.shields.io/badge/Whisper_API-412991?style=for-the-badge&logo=openai&logoColor=white)
+
+### **Dev Tools**
+![Monaco Editor](https://img.shields.io/badge/Monaco_Editor-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white)
+![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
+![Lucide Icons](https://img.shields.io/badge/Lucide-F56565?style=for-the-badge&logo=lucide&logoColor=white)
+
+### **Deployment**
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 
 ---
 
-## 🏆 Credits
+## 👨‍💻 Team Members
 
-- Built with [Vite](https://vitejs.dev/guide/) & [React](https://react.dev/)
-- UI inspired by [Tailwind UI Blocks](https://tailwindcss.com/blocks)
-- Badges via [shields.io](https://shields.io/), [SimpleIcons](https://simpleicons.org/)
-
----
-
-## 🖤 Community & Contact
-
-*Contribute features, open issues, or reach out via [Twitter](#), [LinkedIn](#), or [Email](mailto:team@mockmate.tech).*
-
----
-
-## Kindly support the developers by
-
-<a href="https://www.buymeacoffee.com/albinbs" target="_blank">
-  <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174">
-</a>
-
-![Profile views](https://komarev.com/ghpvc/?username=albin-bs&color=blue)
-![Website](https://img.shields.io/website-up-down-green-red/https/mockmate.tech)
-
-© 2025 Mockmate — Built with dedication.
+<table align="center">
+  <tr>
+    <td align="center">
+      <a href="https://github.com/AswinAsokan2004">
+        <img src="https://github.com/AswinAsokan2004.png" width="100" style="border-radius:50%" />
+        <br />
+        <b>Aswin Asokan</b>
+      </a>
+      <br />
+    </td>
+    <td align="center">
+      <a href="https://github.com/albin-bs">
+        <img src="https://github.com/albin-bs.png" width="100" style="border-radius:50%" />
+        <br />
+        <b>Albin B S</b>
+      </a>
+      <br />
+    </td>
+    <td align="center">
+      <a href="https://github.com/Actinker">
+        <img src="https://github.com/Actinker.png" width="100" style="border-radius:50%" />
+        <br />
+        <b>Actinker</b>
+      </a>
+      <br />
+    </td>
+  </tr>
+</table>
 
 <div align="center">
+
 <img src="https://user-images.githubusercontent.com/74038190/212257465-7ce8d493-cac5-494e-982a-5a9deb852c4b.gif" width="100">
-<img src="https://user-images.githubusercontent.com/74038190/212284087-bbe7e430-757e-4901-90bf-4cd2ce3e1852.gif" width="100" data-animated-image="" style="max-width: 100%;">
+<img src="https://user-images.githubusercontent.com/74038190/212284087-bbe7e430-757e-4901-90bf-4cd2ce3e1852.gif" width="100">
 <img src="https://user-images.githubusercontent.com/74038190/212257468-1e9a91f1-b626-4baa-b15d-5c385dfa7ed2.gif" width="100">
+
+---
+
+**© 2025 MockMate — Empowering the next generation of developers**
+
 </div>

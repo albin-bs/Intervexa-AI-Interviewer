@@ -1,136 +1,312 @@
-import SyntaxHighlighter from "react-syntax-highlighter";
-import { nightOwl } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { memo, useMemo, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import { Sparkles, BarChart3, Code2 } from "lucide-react";
 
-const features = [
+import { cn } from "@/lib/utils";
+import { DotPattern } from "../components/ui/dot-pattern";
+
+/* ---------------- FEATURES DATA ---------------- */
+
+const FEATURES_DATA = [
   {
-    title: "AI Interview Simulation",
+    id: "demo",
+    icon: <Sparkles className="w-6 h-6" />,
+    title: "AI INTERVIEW SIMULATION",
+    heading: "Mobile friendly AI practice",
     description:
-      "Practice with realistic, adaptive interview questions tailored by Mockmate’s AI. Get better every session with scenario-based and behavioral prompts.",
-    codeSnippet: `const question = await mockmate.generatePrompt({
-  role: "Software Engineer",
-  difficulty: "medium"
-});
-/* Output: "Describe a challenging bug you fixed in a past project." */`,
-    imagePosition: "left",
+      "Practice with realistic, adaptive interview questions tailored by Mockmate's AI.",
+    ctaTo: "/interview",
+    image:
+      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&h=300&fit=crop",
+    accentColor: "#5b8cf6",
   },
   {
-    title: "Instant AI Feedback",
+    id: "dashboard",
+    icon: <BarChart3 className="w-6 h-6" />,
+    title: "INSTANT AI FEEDBACK",
+    heading: "Performance you can measure",
     description:
-      "Receive actionable feedback on your answers—including structure, depth, and communication style. Mockmate AI catches strengths and areas to improve instantly.",
-    codeSnippet: `const feedback = await mockmate.analyzeAnswer({
-  response: userAnswer,
-});
-/* Output:
-- Clear intro & examples (✔️)
-- Needs more detail on teamwork (⚠️)
-- Avoid too many filler words (💡) */`,
-    imagePosition: "right",
+      "Get actionable feedback on clarity, structure, and communication.",
+    ctaTo: "/dashboard",
+    image:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=300&fit=crop",
+    accentColor: "#9b7cf6",
   },
   {
-    title: "Progress Analytics & Insights",
+    id: "code",
+    icon: <Code2 className="w-6 h-6" />,
+    title: "LIVE CODE PRACTICE",
+    heading: "Practice coding in your browser",
     description:
-      "Track your performance and see growth over time. View analytics on content, confidence, tone, and highlight trends to optimize your practice plan.",
-    codeSnippet: `const stats = mockmate.getProgress("user-id");
-/*
-{
-  sessions: 23,
-  topSkills: ["Leadership", "Problem-Solving"],
-  avgConfidence: 8.4,
-  suggestions: ["Add more data-driven examples"]
-}
-*/`,
-    imagePosition: "left",
+      "Write and test solutions instantly using MockMate's built-in editor.",
+    ctaTo: "/code-demo",
+    image:
+      "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=500&h=300&fit=crop",
+    accentColor: "#ff8844",
   },
 ];
 
-export default function Features() {
-  return (
-    <section
-      id="features"
-      className="py-16 sm:py-20 px-10 sm:px-6 lg:px-8 relative"
-    >
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-          <h2 className="text-5xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
-            <span className="bg-gradient-to-b from-white to-gray-300 bg-clip-text text-transparent">
-              Mockmate Interview
-            </span>
-            <br />
-            <span className="bg-gradient-to-b from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-              Practice Suite
-            </span>
-          </h2>
+/* ---------------- SPOTLIGHT EFFECT ---------------- */
+class Spotlight {
+  constructor(container) {
+    this.container = container;
+    this.cards = Array.from(container.children);
+    this.rect = null;
+
+    this.onMouseMove = this.onMouseMove.bind(this);
+    this.onResize = this.onResize.bind(this);
+
+    this.init();
+  }
+
+  onResize() {
+    this.rect = this.container.getBoundingClientRect();
+  }
+
+  onMouseMove(e) {
+    if (!this.rect) return;
+
+    const x = e.clientX - this.rect.left;
+    const y = e.clientY - this.rect.top;
+
+    if (x < 0 || y < 0 || x > this.rect.width || y > this.rect.height) return;
+
+    this.cards.forEach((card) => {
+      const cardRect = card.getBoundingClientRect();
+
+      const cardX = e.clientX - cardRect.left;
+      const cardY = e.clientY - cardRect.top;
+
+      card.style.setProperty("--mouse-x", `${cardX}px`);
+      card.style.setProperty("--mouse-y", `${cardY}px`);
+    });
+  }
+
+  init() {
+    this.onResize();
+    window.addEventListener("resize", this.onResize);
+    this.container.addEventListener("mousemove", this.onMouseMove);
+  }
+
+  destroy() {
+    window.removeEventListener("resize", this.onResize);
+    this.container.removeEventListener("mousemove", this.onMouseMove);
+  }
+}
+
+/* ---------------- NFT CARD ---------------- */
+
+const NFTCard = memo(({ feature }) => (
+  <Link to={feature.ctaTo} className="nft-card spotlight-card">
+    <div className="card-inner">
+      <div className="card-glow">
+        <div className="card-glow-inner" />
+      </div>
+
+      <div className="card-main">
+        <div className="relative inline-flex w-full">
+          <div
+            className="image-glow"
+            style={{ backgroundColor: feature.accentColor }}
+          />
+          <img
+            className="token-image"
+            src={feature.image}
+            alt={feature.heading}
+          />
         </div>
 
-        <div className="space-y-16 sm:space-y-20 lg:space-y-32">
-          {features.map((feature, key) => (
-            <div
-              key={key}
-              className={`flex flex-col lg:flex-row items-center gap-8 sm:gap-12 ${
-                feature.imagePosition === "right" ? "lg:flex-row-reverse" : ""
-              }`}
-            >
-              {/* Code Section */}
-              <div className="flex-1 w-full">
-                <div className="relative group">
-                  <div
-                    className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 
-                    rounded-xl sm:rounded-2xl transition-all duration-500"
-                  />
-                  <div
-                    className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 
-                    rounded-xl sm:rounded-2xl p-4 sm:p-6 overflow-hidden group-hover:border-1 
-                    group-hover:border-blue-600/50 transition-all duration-300"
-                  >
-                    {/* Ide Interface */}
-                    <div className="bg-gray-950 rounded-lg p-3 sm:p-4 font-mono text-xs sm:text-sm">
-                      <div className="flex items-center space-x-1 sm:space-x-2 mb-3 sm:mb-4">
-                        <div className="flex items-center space-x-1 sm:space-x-2">
-                          <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500" />
-                          <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500" />
-                          <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500" />
-                        </div>
-                        <span className="text-gray-400 ml-2 sm:ml-4 text-xs sm:text-sm">
-                          {feature.title}
-                        </span>
-                      </div>
-                      <div>
-                        <SyntaxHighlighter
-                          language="javascript"
-                          style={nightOwl}
-                          customStyle={{
-                            margin: 0,
-                            background: "transparent",
-                            borderRadius: "8px",
-                            fontSize: "0.75rem",
-                            lineHeight: "1.4",
-                            height: "100%",
-                          }}
-                          wrapLines={true}
-                        >
-                          {feature.codeSnippet}
-                        </SyntaxHighlighter>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <div className="card-content">
+          <h2 className="card-title">{feature.heading}</h2>
+          <p className="card-description">{feature.description}</p>
 
-              {/* text section */}
-              <div className="flex-1 w-full">
-                <div className="max-w-lg mx-auto lg:mx-0 text-center lg:text-left">
-                  <h3 className="text-4xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 text-white">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-300 text-base text-xl sm:text-lg leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
+          <div className="token-info">
+            <div className="price" style={{ color: feature.accentColor }}>
+              {feature.icon}
+              <p>{feature.title}</p>
             </div>
-          ))}
+          </div>
         </div>
       </div>
+    </div>
+  </Link>
+));
+
+/* ---------------- MAIN ---------------- */
+
+const Features = memo(function Features() {
+  const containerRef = useRef(null);
+  const spotlightRef = useRef(null);
+
+  const cards = useMemo(
+    () => FEATURES_DATA.map((f) => <NFTCard key={f.id} feature={f} />),
+    []
+  );
+
+  useEffect(() => {
+    if (containerRef.current && !spotlightRef.current) {
+      spotlightRef.current = new Spotlight(containerRef.current);
+    }
+
+    return () => spotlightRef.current?.destroy();
+  }, []);
+
+  return (
+    <section className="relative py-24 overflow-hidden bg-[#020618]">
+      {/* ===== DOT PATTERN BACKGROUND ===== */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <DotPattern
+          className={cn(
+            "absolute inset-0 opacity-25",
+            "[mask-image:radial-gradient(700px_circle_at_center,white,transparent)]"
+          )}
+        />
+      </div>
+
+      {/* ===== CONTENT ===== */}
+      <div className="relative z-10 px-6 mx-auto max-w-7xl">
+        <div className="mb-20 text-center">
+          <h2 className="text-3xl font-bold text-white sm:text-5xl">
+            Everything you need to{" "}
+            <span className="text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-orange-400 bg-clip-text">
+              prep smarter
+            </span>
+          </h2>
+          <p className="mt-4 text-lg text-gray-400">
+            AI-powered practice, feedback, and insights
+          </p>
+        </div>
+
+        <div ref={containerRef} className="nft-cards-container spotlight-group">
+          {cards}
+        </div>
+      </div>
+
+      {/* ===== STYLES ===== */}
+      <style>{`
+        .nft-cards-container {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 3rem;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .spotlight-card {
+          position: relative;
+          background: #1e293b;
+          border-radius: 1.5rem;
+          padding: 1px;
+          overflow: hidden;
+        }
+
+        .spotlight-card::before,
+        .spotlight-card::after {
+          content: "";
+          position: absolute;
+          width: 22rem;
+          height: 22rem;
+          border-radius: 50%;
+          pointer-events: none;
+          transform: translate(var(--mouse-x, 0), var(--mouse-y, 0));
+          opacity: 0;
+          transition: opacity 0.4s;
+          filter: blur(100px);
+        }
+
+        .spotlight-card::before {
+          background: #94a3b8;
+          z-index: 5;
+        }
+
+        .spotlight-card::after {
+          background: #6366f1;
+          z-index: 6;
+        }
+
+        .spotlight-group:hover .spotlight-card::before {
+          opacity: 0.15;
+        }
+
+        .spotlight-card:hover::after {
+          opacity: 0.12;
+        }
+
+        .card-inner {
+          background: #0f172a;
+          border-radius: 1.5rem;
+          padding: 1.5rem;
+          position: relative;
+          z-index: 10;
+        }
+
+        .card-glow {
+          position: absolute;
+          bottom: -30%;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 60%;
+          aspect-ratio: 1;
+          pointer-events: none;
+        }
+
+        .card-glow-inner {
+          background: #1e293b;
+          border-radius: 50%;
+          filter: blur(90px);
+          width: 100%;
+          height: 100%;
+        }
+
+        .image-glow {
+          position: absolute;
+          inset: 0;
+          margin: auto;
+          width: 40%;
+          height: 40%;
+          border-radius: 50%;
+          filter: blur(3rem);
+          opacity: 0.6;
+        }
+
+        .token-image {
+          border-radius: 0.75rem;
+          width: 100%;
+          height: 250px;
+          object-fit: cover;
+          border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .card-title {
+          margin-top: 1rem;
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: #e2e8f0;
+        }
+
+        .card-description {
+          margin: 0.5rem 0 1rem;
+          font-size: 0.875rem;
+          color: #94a3b8;
+          line-height: 1.6;
+        }
+
+        .price {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.75rem;
+          font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+          .nft-cards-container {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
     </section>
   );
-}
+});
+
+export default Features;
