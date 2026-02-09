@@ -16,7 +16,6 @@ import {
   Shuffle
 } from "lucide-react";
 
-import { BackgroundImageTexture } from "@/components/ui/bg-image-texture"
 
 // Custom loader components
 const LoaderComponents = {
@@ -315,27 +314,23 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
         }
       `}</style>
 
-      <BackgroundImageTexture
-        variant="debut-light"
-        opacity={0.5}
-        className="min-h-screen text-white"
-      >
-        <div className="min-h-screen bg-[#020617]/70 px-4 py-12">
-          <div className="max-w-[960px] mx-auto">
-              {/* Hero Title */}
-              <m.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col items-center mb-12"
-              >
-                <br/>
-                <h1 className="text-white text-[32px] md:text-[48px] font-bold leading-tight text-center tracking-tight bg-gradient-to-r from-white to-blue-400 bg-clip-text text-transparent">
-                  Configure Your Interview
-                </h1>
-                <p className="max-w-xl mt-4 text-base font-normal leading-normal text-center text-slate-400 md:text-lg">
-                  Tailor your AI-powered mock session to your specific career goals and skill levels.
-                </p>
-              </m.div>
+      <div className="min-h-screen bg-[#020617] text-white px-4 py-12">
+        <div className="max-w-[960px] mx-auto">
+          {/* Hero Title */}
+          <m.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center mb-12"
+          >
+            <br/>
+            <h1 className="text-white text-[32px] md:text-[48px] font-bold leading-tight text-center tracking-tight bg-gradient-to-r from-white to-blue-400 bg-clip-text text-transparent">
+              Configure Your Interview
+            </h1>
+            <p className="max-w-xl mt-4 text-base font-normal leading-normal text-center text-slate-400 md:text-lg">
+              Tailor your AI-powered mock session to your specific career goals and skill levels.
+            </p>
+          </m.div>
+
 
           {/* 1. Role Selection */}
           <m.section
@@ -429,29 +424,25 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
               const isSelected = interviewType === type.id;
 
               return (
-              <m.button
-                key={type.id}
-                onClick={() => setInterviewType(type.id)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex justify-center w-full"
-              >
-                <div className="outbutton">
-                  <div
-                    className={`corner-button ${
-                      isSelected ? "corner-selected" : ""
-                    }`}
-                  >
-                    <span className="flex items-center gap-3">
-                      <Icon className="w-5 h-5" />
-                      {type.name}
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-700/60 text-slate-300">
-                        {type.duration} MIN
-                      </span>
-                    </span>
+                <m.button
+                  key={type.id}
+                  onClick={() => setInterviewType(type.id)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`flex items-center justify-between p-4 rounded-xl backdrop-blur-sm transition-all ${
+                    isSelected
+                      ? "bg-slate-800/50 border-2 border-blue-500/40 bg-blue-500/5"
+                      : "bg-slate-800/30 border border-white/5 hover:border-white/20"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className={`w-5 h-5 ${isSelected ? "text-blue-400" : "text-slate-400"}`} />
+                    <span className="font-medium text-white">{type.name}</span>
                   </div>
-                </div>
-              </m.button>
+                  <span className="text-[10px] font-bold px-2 py-1 rounded bg-slate-700 text-slate-400">
+                    {type.duration} MIN
+                  </span>
+                </m.button>
               );
             })}
           </div>
@@ -474,38 +465,23 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
               const isSelected = difficulty === level;
 
               return (
-              <m.button
-                key={level}
-                onClick={() => setDifficulty(level as any)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onMouseMove={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  e.currentTarget.style.setProperty(
-                    "--glow-left",
-                    `${e.clientX - rect.left}px`
-                  );
-                  e.currentTarget.style.setProperty(
-                    "--glow-top",
-                    `${e.clientY - rect.top}px`
-                  );
-                }}
-                onMouseEnter={(e) =>
-                  e.currentTarget.style.setProperty("--glow-opacity", "1")
-                }
-                onMouseLeave={(e) =>
-                  e.currentTarget.style.setProperty("--glow-opacity", "0.75")
-                }
-                className={`glow w-full p-6 rounded-xl flex flex-col items-center text-center transition-all ${
-                  isSelected ? "glow-selected" : ""
-                }`}
-              >
-                <div className={`size-10 rounded-full mb-4 bg-${color}-500/20 text-${color}-400 flex items-center justify-center text-2xl`}>
-                  {icon}
-                </div>
-                <h3 className="mb-1 font-bold text-white">{label}</h3>
-                <p className="text-xs text-slate-400">{description}</p>
-              </m.button>
+                <m.button
+                  key={level}
+                  onClick={() => setDifficulty(level as any)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`bg-slate-800/30 backdrop-blur-sm p-6 rounded-xl border-b-4 flex flex-col items-center text-center cursor-pointer transition-all ${
+                    isSelected
+                      ? `border-${color}-500 ring-2 ring-${color}-500/30 scale-105 shadow-2xl bg-${color}-500/5`
+                      : `border-${color}-500/20 hover:bg-${color}-500/5`
+                  }`}
+                >
+                  <div className={`size-10 rounded-full bg-${color}-500/10 text-${color}-500 flex items-center justify-center mb-4 text-2xl`}>
+                    {icon}
+                  </div>
+                  <h3 className="mb-1 font-bold text-white">{label}</h3>
+                  <p className="text-xs text-slate-400">{description}</p>
+                </m.button>
               );
             })}
           </div>
@@ -579,24 +555,21 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
           <button
             type="button"
             onClick={handleStart}
-            className="shiny-cta w-full md:w-[400px] h-16 flex items-center justify-center gap-3"
+            className="group relative w-full md:w-[400px] bg-blue-500 h-16 rounded-2xl flex items-center justify-center gap-3 text-white font-bold text-lg transition-all shadow-[0_0_40px_rgba(37,106,244,0.3)] hover:shadow-[0_0_60px_rgba(37,106,244,0.5)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
           >
-            <span className="flex items-center gap-3">
-              Start Interview Session
-              <ChevronRight className="w-5 h-5" />
-            </span>
+            <span>Start Interview Session</span>
+            <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
           </button>
           <p className="mt-4 text-xs text-slate-500">By starting, you agree to our privacy policy and recording terms.</p>
         </m.div>
+      </div>
 
-        {/* Decorative Background */}
-        <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-          <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px]"></div>
-          <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px]"></div>
-        </div>
-          </div>
-        </div>
-      </BackgroundImageTexture>
+      {/* Decorative Background */}
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px]"></div>
+      </div>
+    </div>
     </>
   );
 }

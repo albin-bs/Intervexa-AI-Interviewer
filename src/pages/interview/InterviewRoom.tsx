@@ -196,44 +196,6 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
 
   return (
     <div className="flex flex-col h-screen w-full bg-[#020617] text-white overflow-hidden">
-      {/* SVG Filters */}
-      <svg width="0" height="0" aria-hidden="true">
-        <filter id="grainy">
-          <feTurbulence type="fractalNoise" baseFrequency=".75" />
-          <feColorMatrix type="saturate" values="0" />
-          <feComposite in="SourceGraphic" operator="in" />
-        </filter>
-
-        <filter id="sinset">
-          <feGaussianBlur stdDeviation="1" />
-          <feComposite operator="out" in="SourceGraphic" result="inverse" />
-          <feFlood floodColor="hsla(0,0%,100%,.35)" />
-          <feComposite operator="in" in2="inverse" />
-          <feComposite operator="over" in2="SourceGraphic" />
-        </filter>
-
-        <filter id="emboss">
-          <feGaussianBlur in="SourceAlpha" stdDeviation="9" />
-          <feSpecularLighting
-            surfaceScale="2"
-            specularConstant=".75"
-            specularExponent="17"
-            lightingColor="#ededed"
-          >
-            <fePointLight x="50%" y="-29000" z="20000" />
-          </feSpecularLighting>
-          <feComposite in2="SourceAlpha" operator="in" />
-          <feComposite
-            in="SourceGraphic"
-            operator="arithmetic"
-            k1="0"
-            k2="1"
-            k3="1"
-            k4="0"
-          />
-        </filter>
-      </svg>
-
       {/* Permission Prompt Modal */}
       <AnimatePresence>
         {showPermissionPrompt && (
@@ -517,73 +479,58 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
                 )}
               </div>
 
-              {/* Control Bar Wrapper */}
-              <div className="absolute flex items-center gap-6 -translate-x-1/2 bottom-6 left-1/2">
-
-                {/* Controls */}
-                <div className="flex gap-4 px-6 py-3 border rounded-full shadow-2xl bg-slate-900/80 backdrop-blur-xl border-white/10">
-
-                  <m.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setIsMicOn(!isMicOn)}
-                    className="emboss-btn"
-                    data-char="🎤"
-                    aria-label="Toggle microphone"
-                  >
-                    {isMicOn ? <Mic /> : <MicOff />}
-                  </m.button>
-
-                  <m.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setIsCameraOn(!isCameraOn)}
-                    className="emboss-btn"
-                    data-char="📷"
-                    aria-label="Toggle camera"
-                  >
-                    {isCameraOn ? <Video /> : <VideoOff />}
-                  </m.button>
-
-                  <m.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setIsSpeakerOn(!isSpeakerOn)}
-                    className="emboss-btn"
-                    data-char="🔊"
-                    aria-label="Toggle speaker"
-                  >
-                    {isSpeakerOn ? <Volume2 /> : <VolumeX />}
-                  </m.button>
-
-                  <div className="w-px h-8 mx-2 bg-white/10" />
-
-                  <m.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setShowSettings(true)}
-                    className="emboss-btn"
-                    data-char="⚙"
-                    aria-label="Open settings"
-                  >
-                    <Settings />
-                  </m.button>
-                </div>
-
-                {/* End Interview (Destructive Action) */}
+              {/* Control Bar */}
+              <div className="absolute flex items-center gap-4 px-6 py-3 -translate-x-1/2 border rounded-full shadow-2xl bottom-6 left-1/2 bg-slate-900/80 backdrop-blur-xl border-white/10">
                 <m.button
-                  type="button"
-                  onClick={onEnd}
-                  whileTap={{ scale: 0.98 }}
-                  className="end-3d-button"
-                  aria-label="End interview"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsMicOn(!isMicOn)}
+                  className={`size-12 rounded-full flex items-center justify-center transition-colors ${
+                    isMicOn ? "bg-white/5 hover:bg-white/10" : "bg-rose-600 hover:bg-rose-500"
+                  }`}
                 >
-                  <div className="end-3d-top">
-                    <Phone className="w-4 h-4 rotate-135" />
-                    <span>End Interview</span>
-                  </div>
-                  <div className="end-3d-bottom" />
-                  <div className="end-3d-base" />
+                  {isMicOn ? <Mic className="w-5 h-5 text-white" /> : <MicOff className="w-5 h-5 text-white" />}
+                </m.button>
+
+                <m.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsCameraOn(!isCameraOn)}
+                  className={`size-12 rounded-full flex items-center justify-center transition-colors ${
+                    isCameraOn ? "bg-white/5 hover:bg-white/10 text-blue-400" : "bg-rose-600 hover:bg-rose-500"
+                  }`}
+                >
+                  {isCameraOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5 text-white" />}
+                </m.button>
+
+                <m.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsSpeakerOn(!isSpeakerOn)}
+                  className="flex items-center justify-center transition-colors rounded-full size-12 bg-white/5 hover:bg-white/10"
+                >
+                  {isSpeakerOn ? <Volume2 className="w-5 h-5 text-white" /> : <VolumeX className="w-5 h-5 text-white" />}
+                </m.button>
+
+                <div className="w-px h-8 mx-2 bg-white/10"></div>
+
+                <m.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowSettings(true)}
+                  className="flex items-center justify-center transition-colors rounded-full size-12 bg-white/5 hover:bg-white/10"
+                >
+                  <Settings className="w-5 h-5 text-white" />
+                </m.button>
+
+                <m.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={onEnd}
+                  className="flex items-center gap-3 px-6 py-3 text-sm font-bold text-white transition-colors rounded-full bg-rose-600 hover:bg-rose-500"
+                >
+                  <Phone className="w-5 h-5 rotate-135" />
+                  <span>End Interview</span>
                 </m.button>
               </div>
             </div>

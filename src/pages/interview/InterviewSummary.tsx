@@ -1,7 +1,4 @@
 import { m } from "framer-motion";
-
-import { TextureOverlay } from "@/components/ui/texture-overlay";
-
 import { Link } from "react-router-dom";
 import { 
   Trophy, 
@@ -102,16 +99,8 @@ export default function InterviewSummary({ sessionId, onRestart }: InterviewSumm
   const circleOffset = circleCircumference - (summary.overallScore / 100) * circleCircumference;
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-[#101622] text-white overflow-hidden">
-      <TextureOverlay
-        texture="scatteredDots"
-        opacity={0.75}
-        className="text-white/30[background-size:36px_36px][mask-image:linear-gradient(to_bottom,white,white,transparent)]"
-      />
-
-      {/* Foreground Content */}
-      <div className="relative z-10 flex flex-col w-full min-h-screen">
-        <main className="flex-1 max-w-[1200px] mx-auto w-full px-4 md:px-10 py-8">
+    <div className="relative flex min-h-screen w-full flex-col bg-[#101622] text-white">
+      <main className="flex-1 max-w-[1200px] mx-auto w-full px-4 md:px-10 py-8">
         {/* Headline Text & Meta Text */}
         <m.div 
           initial={{ opacity: 0, y: -20 }}
@@ -374,13 +363,12 @@ export default function InterviewSummary({ sessionId, onRestart }: InterviewSumm
             </button>
           </div>
         </m.div>
-        </main>
+      </main>
 
-        {/* Footer */}
-        <footer className="py-6 px-10 border-t border-[#282e39] text-center">
-          <p className="text-xs text-slate-400">© 2024 MockMate-AI Inc. All sessions are encrypted and confidential.</p>
-        </footer>
-      </div>
+      {/* Footer */}
+      <footer className="py-6 px-10 border-t border-[#282e39] text-center">
+        <p className="text-xs text-slate-400">© 2024 MockMate-AI Inc. All sessions are encrypted and confidential.</p>
+      </footer>
     </div>
   );
 }

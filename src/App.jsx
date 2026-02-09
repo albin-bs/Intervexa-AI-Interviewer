@@ -6,6 +6,7 @@ import LazyMotionWrapper from "./components/LazyMotionWrapper";
 
 
 // Immediate loads
+import CookieConsent from './components/CookieConsent'; // ✅ Already imported
 import SplashScreen from "./components/SplashScreen";
 import ScrollToTop from "./components/ScrollToTop";
 import Navbar from "./components/Navbar";
@@ -144,6 +145,8 @@ export default function App() {
             <Route path="/interview" element={<Protected><pages.Interview /></Protected>} />
           </Routes>
         </Suspense>
+        {/* ✅ Cookie consent shows even on pages without navbar */}
+        <CookieConsent />
         <Analytics />
       </LazyMotionWrapper>
     );
@@ -223,6 +226,9 @@ export default function App() {
 
 
         <Footer />
+        
+        {/* ✅ Cookie Consent - Shows on all pages with navbar/footer */}
+        <CookieConsent />
         
         <Analytics />
       </div>

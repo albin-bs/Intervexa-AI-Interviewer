@@ -17,6 +17,7 @@ const footerLinks = {
     { name: "About us", to: "/about" },
     { name: "Contact us", to: "/contact" },
     { name: "FAQ", to: "/faq" },
+    { name: "Changelog", to: "/changelog" },
   ],
 };
 
@@ -43,6 +44,10 @@ const teamMembers = [
 
 export default function Footer() {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [isCookieOpen, setIsCookieOpen] = useState(false);
+  const [performanceOn, setPerformanceOn] = useState(true);
+  const [functionalOn, setFunctionalOn] = useState(true);
+  const [targetingOn, setTargetingOn] = useState(false);
 
 
   const UnderlineLink = ({ children, as: Comp = "span", ...rest }) => (
@@ -63,6 +68,17 @@ export default function Footer() {
           as="button"
           type="button"
           onClick={() => setIsVideoOpen(true)}
+        >
+          {link.name}
+        </UnderlineLink>
+      );
+    }
+    if (link.action === "cookie") {
+      return (
+        <UnderlineLink
+          as="button"
+          type="button"
+          onClick={() => setIsCookieOpen(true)}
         >
           {link.name}
         </UnderlineLink>
@@ -190,9 +206,149 @@ export default function Footer() {
           </m.div>
         )}
       </AnimatePresence>
+
+
+      {/* Cookie Settings Modal */}
+      <AnimatePresence>
+        {isCookieOpen && (
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            onClick={() => setIsCookieOpen(false)}
+          >
+            <m.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="relative w-full max-w-2xl p-6 mx-4 border shadow-2xl bg-slate-950 rounded-2xl border-slate-800 sm:p-8 max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <m.button
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setIsCookieOpen(false)}
+                className="absolute flex items-center justify-center w-8 h-8 transition-colors rounded-full top-4 right-4 text-slate-400 hover:text-white hover:bg-white/10"
+              >
+                <X className="w-5 h-5" />
+              </m.button>
+
+
+              <div className="flex items-center gap-3 mb-4">
+                <Shield className="w-8 h-8 text-blue-400" />
+                <h2 className="text-2xl font-bold text-white sm:text-3xl">
+                  Cookie Settings
+                </h2>
+              </div>
+              
+              <p className="mb-6 text-sm leading-relaxed text-gray-400 sm:text-base">
+                We use cookies to enhance your experience. Choose which categories you want to allow.
+              </p>
+
+
+              <div className="mb-8 space-y-4">
+                {/* Strictly Necessary */}
+                <div className="p-4 border rounded-xl bg-slate-900/50 border-slate-800">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <p className="mb-1 text-base font-semibold text-white">
+                        Strictly necessary
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        Required for core features like security and navigation
+                      </p>
+                    </div>
+                    <span className="px-3 py-1 text-xs font-semibold border rounded-full text-emerald-400 bg-emerald-500/20 border-emerald-500/30 whitespace-nowrap">
+                      Always on
+                    </span>
+                  </div>
+                </div>
+
+
+                {/* Performance */}
+                <CookieToggle
+                  title="Performance cookies"
+                  description="Help us understand how visitors use MockMateAI"
+                  enabled={performanceOn}
+                  onChange={() => setPerformanceOn(!performanceOn)}
+                />
+
+
+                {/* Functional */}
+                <CookieToggle
+                  title="Functional cookies"
+                  description="Remember preferences and interface settings"
+                  enabled={functionalOn}
+                  onChange={() => setFunctionalOn(!functionalOn)}
+                />
+
+
+                {/* Targeting */}
+                <CookieToggle
+                  title="Targeting cookies"
+                  description="Used for personalized content and marketing"
+                  enabled={targetingOn}
+                  onChange={() => setTargetingOn(!targetingOn)}
+                />
+              </div>
+
+
+              <div className="flex flex-col justify-end gap-3 sm:flex-row">
+                <m.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-6 py-2.5 text-sm font-medium text-gray-100 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
+                  onClick={() => setIsCookieOpen(false)}
+                >
+                  Confirm choices
+                </m.button>
+                <m.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/30 transition-all"
+                  onClick={() => {
+                    setPerformanceOn(true);
+                    setFunctionalOn(true);
+                    setTargetingOn(true);
+                    setIsCookieOpen(false);
+                  }}
+                >
+                  Accept all cookies
+                </m.button>
+              </div>
+            </m.div>
+          </m.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
+
+
+// Cookie Toggle Component
+function CookieToggle({ title, description, enabled, onChange }) {
+  return (
+    <div className="p-4 transition-colors border rounded-xl bg-slate-900/50 border-slate-800 hover:border-slate-700">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex-1">
+          <p className="mb-1 text-base font-semibold text-white">{title}</p>
+          <p className="text-xs text-gray-400">{description}</p>
+        </div>
+        <m.button
+          whileTap={{ scale: 0.95 }}
+          onClick={onChange}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+            enabled ? "bg-blue-600" : "bg-slate-700"
+          }`}
+        >
+          <m.span
+            animate={{ x: enabled ? 20 : 4 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            className="inline-block w-4 h-4 bg-white rounded-full shadow-lg"
+          />
+        </m.button>
+      </div>
     </div>
   );
 }
