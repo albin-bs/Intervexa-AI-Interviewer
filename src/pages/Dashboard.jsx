@@ -1,64 +1,64 @@
 import { useState, useEffect, memo } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { 
-  Code, 
-  Flame, 
-  Calendar, 
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Flame,
+  Calendar,
   MapPin,
-  Share2,
-  Settings as SettingsIcon,
   TrendingUp,
   Target,
-  ArrowRight,
-  Clock
 } from "lucide-react";
 import { m } from "framer-motion";
+import { RetroGrid } from "../components/ui/retro-grid";
 
+/* ---------------- Animation Variants ---------------- */
 
-// Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
+    transition: { staggerChildren: 0.1 },
   },
 };
-
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-    },
+    transition: { duration: 0.5, ease: "easeOut" },
   },
 };
 
+const difficultyStyles = {
+  easy: {
+    text: "text-emerald-400",
+    bar: "bg-emerald-500",
+  },
+  medium: {
+    text: "text-amber-400",
+    bar: "bg-amber-500",
+  },
+  hard: {
+    text: "text-rose-400",
+    bar: "bg-rose-500",
+  },
+};
 
 const cardHoverVariants = {
   rest: { scale: 1 },
   hover: {
     scale: 1.02,
-    transition: {
-      duration: 0.2,
-      ease: "easeInOut",
-    },
+    transition: { duration: 0.2, ease: "easeInOut" },
   },
 };
+
+/* ---------------- Dashboard ---------------- */
 
 const Dashboard = memo(function Dashboard() {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
   const [streak, setStreak] = useState(12);
 
-
-  // Mock user data
   const [user] = useState({
     name: "Alex Developer",
     email: "alex@mockmate.ai",
@@ -68,16 +68,12 @@ const Dashboard = memo(function Dashboard() {
     location: "San Francisco, CA",
   });
 
-
-  // Progress data
   const [progress] = useState({
     easy: { solved: 45, total: 100 },
     medium: { solved: 28, total: 150 },
     hard: { solved: 5, total: 80 },
   });
 
-
-  // Recent submissions
   const [recentSubmissions] = useState([
     {
       id: 1,
@@ -117,60 +113,47 @@ const Dashboard = memo(function Dashboard() {
     },
   ]);
 
-
-  // Session activity data (for bar chart)
   const sessionData = [12, 28, 52, 18, 40, 64, 33];
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
-
-
-  const difficultyColors = {
-    Easy: "text-emerald-400",
-    Medium: "text-amber-400",
-    Hard: "text-rose-400",
-  };
-
+  useEffect(() => setIsLoaded(true), []);
 
   const statusColors = {
     Accepted: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
     "Wrong Answer": "bg-rose-500/10 text-rose-500 border-rose-500/20",
   };
 
-
   return (
-    <main className="min-h-screen bg-[#0b1120] text-slate-100 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
+    <main className="relative min-h-screen bg-[#0b1120] text-slate-100 pt-20 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      
+      {/* ===== Retro Grid Background (ONLY ADDITION) ===== */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <RetroGrid />
+        <div className="absolute inset-0 bg-[#0b1120]/80" />
+      </div>
+<br/>
+<br/>
+      {/* ===== Dashboard Content ===== */}
       <m.div
-        className="mx-auto max-w-7xl"
+        className="relative z-10 mx-auto max-w-7xl"
         variants={containerVariants}
         initial="hidden"
         animate={isLoaded ? "visible" : "hidden"}
       >
-        {/* Profile Header Section */}
+        {/* ---------------- Profile Header ---------------- */}
         <m.section
           variants={itemVariants}
           className="p-6 mb-8 overflow-hidden border shadow-lg rounded-xl bg-slate-900/70 backdrop-blur-xl border-white/10"
         >
           <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
             <div className="flex items-center gap-6">
-              <div className="relative">
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="w-24 h-24 border-4 rounded-full border-blue-500/20"
-                />
-                <div className="absolute bottom-0 right-0 w-6 h-6 border-4 rounded-full bg-emerald-500 border-slate-900"></div>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-3">
-                  <h1 className="text-2xl font-bold text-white">{user.name}</h1>
-                  <span className="px-2 py-0.5 text-xs font-bold tracking-wider uppercase border rounded-full bg-blue-500/20 text-blue-400 border-blue-500/30">
-                    {user.plan}
-                  </span>
-                </div>
+              <img
+                src={user.avatar}
+                alt={user.name}
+                className="w-24 h-24 border-4 rounded-full border-blue-500/20"
+              />
+              <div>
+                <h1 className="text-2xl font-bold text-white">{user.name}</h1>
                 <p className="flex items-center gap-2 text-sm text-slate-400">
                   <Calendar className="w-4 h-4" /> Joined {user.joinedDate}
                 </p>
@@ -179,83 +162,31 @@ const Dashboard = memo(function Dashboard() {
                 </p>
               </div>
             </div>
-            <div className="flex w-full gap-3 md:w-auto">
-              <m.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex-1 px-6 py-2.5 text-sm font-semibold text-white transition-all border rounded-lg md:flex-none bg-slate-800 border-slate-700 hover:bg-slate-700"
-              >
-                Edit Profile
-              </m.button>
-              <m.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex-1 px-6 py-2.5 text-sm font-semibold text-white transition-all rounded-lg shadow-lg md:flex-none bg-blue-600 hover:bg-blue-500 shadow-blue-500/20"
-              >
-                Share Profile
-              </m.button>
-            </div>
           </div>
         </m.section>
 
-
-        {/* Quick Actions Grid */}
-        <m.section
-          variants={itemVariants}
-          className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2"
-        >
-          {/* Start Coding Card */}
+        {/* ---------------- Quick Actions ---------------- */}
+        <m.section variants={itemVariants} className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2">
           <m.div
             variants={cardHoverVariants}
             initial="rest"
             whileHover="hover"
-            onClick={() => navigate("/problems")} // ✅ Add this
-            className="relative p-8 overflow-hidden border shadow-lg cursor-pointer rounded-xl bg-slate-900/70 backdrop-blur-xl border-white/10 hover:border-emerald-500/50 group"
+            onClick={() => navigate("/problems")}
+            className="relative p-8 border cursor-pointer rounded-xl bg-slate-900/70 border-white/10 hover:border-emerald-500/50"
           >
-            <div className="absolute top-0 right-0 p-8 transition-opacity opacity-10 group-hover:opacity-20">
-              <Code className="text-9xl text-emerald-500" />
-            </div>
-            <div className="relative z-10 space-y-4">
-              <div className="flex items-center justify-center rounded-lg size-12 bg-emerald-500/20 text-emerald-500">
-                <Code className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white">Start Coding</h3>
-                <p className="mt-1 text-slate-400">
-                  Master 1,000+ data structures & algorithms problems in our cloud IDE.
-                </p>
-              </div>
-              <button className="flex items-center gap-2 mt-4 text-sm font-bold text-emerald-500">
-                Go to Playground <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
+            <h3 className="text-xl font-bold">Start Coding</h3>
+            <p className="text-slate-400">Practice DSA in our cloud IDE.</p>
           </m.div>
 
-          {/* Mock Interview Card */}
           <m.div
             variants={cardHoverVariants}
             initial="rest"
             whileHover="hover"
-            onClick={() => navigate("/interview")} // ✅ Add this
-            className="relative p-8 overflow-hidden border shadow-lg cursor-pointer rounded-xl bg-slate-900/70 backdrop-blur-xl border-white/10 hover:border-blue-500/50 group"
+            onClick={() => navigate("/interview")}
+            className="relative p-8 border cursor-pointer rounded-xl bg-slate-900/70 border-white/10 hover:border-blue-500/50"
           >
-            <div className="absolute top-0 right-0 p-8 transition-opacity opacity-10 group-hover:opacity-20">
-              <Target className="text-blue-500 text-9xl" />
-            </div>
-            <div className="relative z-10 space-y-4">
-              <div className="flex items-center justify-center text-blue-500 rounded-lg size-12 bg-blue-500/20">
-                <Target className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white">Mock Interview</h3>
-                <p className="mt-1 text-slate-400">
-                  AI-powered behavioral and technical rounds with real-time feedback.
-                </p>
-              </div>
-              <button className="flex items-center gap-2 mt-4 text-sm font-bold text-blue-500">
-                Launch AI Interview <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
+            <h3 className="text-xl font-bold">Mock Interview</h3>
+            <p className="text-slate-400">AI-powered interview simulations.</p>
           </m.div>
         </m.section>
 
@@ -279,12 +210,12 @@ const Dashboard = memo(function Dashboard() {
                 {/* Progress Bars */}
                 {Object.entries(progress).map(([difficulty, { solved, total }], index) => {
                   const percentage = Math.round((solved / total) * 100);
-                  const color = difficulty === 'easy' ? 'emerald' : difficulty === 'medium' ? 'amber' : 'rose';
-                  
+                  const styles = difficultyStyles[difficulty];
+
                   return (
                     <div key={difficulty} className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className={`font-medium capitalize text-${color}-400`}>
+                        <span className={`font-medium capitalize ${styles.text}`}>
                           {difficulty}
                         </span>
                         <span className="text-white">{solved}/{total}</span>
@@ -294,7 +225,7 @@ const Dashboard = memo(function Dashboard() {
                           initial={{ width: 0 }}
                           animate={{ width: `${percentage}%` }}
                           transition={{ duration: 1, delay: 0.2 + index * 0.1 }}
-                          className={`h-full rounded-full bg-${color}-500`}
+                          className={`h-full rounded-full ${styles.bar}`}
                         />
                       </div>
                     </div>

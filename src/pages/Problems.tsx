@@ -4,6 +4,8 @@ import { Search, CheckCircle, Circle, Lock, Filter, ChevronLeft, ChevronRight, A
 import { problems, allTags, type Difficulty } from "../data/problems";
 import { m, AnimatePresence, type Variants } from "framer-motion";
 
+import { StripedPattern } from "../components/magicui/striped-pattern";
+
 type StatusFilter = "All" | "Solved" | "Attempted" | "Todo";
 
 // Animation variants
@@ -151,7 +153,10 @@ export default function Problems() {
   // Pagination
   const totalPages = Math.ceil(filteredProblems.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProblems = filteredProblems.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedProblems = filteredProblems.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   // Stats
   const stats = {
@@ -211,14 +216,33 @@ export default function Problems() {
     setCurrentPage(1);
   };
 
-  return (
-    <main className="min-h-screen bg-[#0b1120] text-slate-100 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
+return (
+  <main className="relative min-h-screen bg-[#0b1120] text-slate-100 pt-20 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
+   {/* Background Pattern */}
+    <div className="absolute inset-0 z-0 pointer-events-none">
+      <StripedPattern
+        className="
+          opacity-[0.15]
+          [mask-image:radial-gradient(600px_circle_at_top,white,transparent)]"
+      />
+    </div>
+
+    {/* Foreground Content */}
+    <m.div
+      className="relative z-10 mx-auto max-w-7xl"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >  
+      </m.div>
       <m.div
         className="mx-auto max-w-7xl"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
+        <br/>
+        <br/>
         {/* Header */}
         <div className="flex flex-col justify-between gap-4 mb-8 md:flex-row md:items-end">
           <div className="flex flex-col gap-1">
@@ -628,7 +652,7 @@ export default function Problems() {
                 <ChevronLeft className="w-5 h-5" />
               </m.button>
               
-              {[...Array(Math.min(3, totalPages))].map((_, i) => {
+              {Array.from({ length: totalPages }, (_, i) => {
                 const pageNum = i + 1;
                 return (
                   <m.button
@@ -639,7 +663,7 @@ export default function Problems() {
                     className={`px-3.5 py-1.5 text-sm font-bold rounded-lg transition-colors ${
                       currentPage === pageNum
                         ? "bg-blue-600 text-white"
-                        : "hover:bg-slate-800"
+                        : "hover:bg-slate-800 text-slate-400"
                     }`}
                   >
                     {pageNum}

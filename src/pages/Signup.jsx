@@ -12,6 +12,10 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState({
+    score: 0,
+    message: 'Choose a strong password'
+  });
 
   useEffect(() => {
     if (!success) return;
@@ -20,8 +24,54 @@ export default function Signup() {
   }, [success]);
 
   function handleChange(e) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    setErrors((prev) => ({ ...prev, [e.target.name]: undefined }));
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+    
+    // Check password strength when password field changes
+    if (name === 'password') {
+      checkPasswordStrength(value);
+    }
+  }
+
+  function checkPasswordStrength(password) {
+    let score = 0;
+
+    if (password.length >= 8) {
+      // Length check
+      if (password.length >= 12) score += 20;
+      
+      // Contains number check
+      if (/[0-9]/.test(password)) score += 20;
+      
+      // Contains lowercase check
+      if (/[a-z]/.test(password)) score += 20;
+      
+      // Contains uppercase check
+      if (/[A-Z]/.test(password)) score += 20;
+
+      // Contains special character check
+      if (/[^A-Za-z0-9]/.test(password)) score += 20;
+    } else if (password.length > 0) {
+      score = 10;
+    }
+
+    let message = '';
+    if (score === 0) {
+      message = 'Choose a strong password';
+    } else if (score === 10) {
+      message = 'Too short!';
+    } else if (score <= 30) {
+      message = 'Weak';
+    } else if (score <= 60) {
+      message = 'Medium';
+    } else if (score <= 80) {
+      message = 'Strong';
+    } else {
+      message = 'Very strong!';
+    }
+
+    setPasswordStrength({ score, message });
   }
 
   function validate(values) {
@@ -184,6 +234,47 @@ export default function Signup() {
                   aria-invalid={!!errors.password}
                 />
               </div>
+              
+              {/* Progress Bar */}
+              {form.password && (
+                <div
+                  className="h-1.5 w-full rounded-full bg-[#1a1f2e]"
+                  role="progressbar"
+                  aria-label="Password strength"
+                  aria-valuenow={passwordStrength.score}
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                >
+                  <div
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      passwordStrength.score <= 30
+                        ? 'bg-rose-500'
+                        : passwordStrength.score <= 60
+                        ? 'bg-orange-500'
+                        : 'bg-emerald-500'
+                    }`}
+                    style={{ width: `${passwordStrength.score}%` }}
+                  />
+                </div>
+              )}
+              
+              {/* Strength Message */}
+              {form.password && (
+                <p
+                  className={`text-sm font-medium transition-all ${
+                    passwordStrength.score === 0
+                      ? 'text-[#9ca6ba]'
+                      : passwordStrength.score <= 30
+                      ? 'text-rose-400'
+                      : passwordStrength.score <= 60
+                      ? 'text-orange-400'
+                      : 'text-emerald-400'
+                  }`}
+                >
+                  {passwordStrength.message}
+                </p>
+              )}
+              
               {errors.password && (
                 <p className="text-xs text-red-400">{errors.password}</p>
               )}
