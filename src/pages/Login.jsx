@@ -214,22 +214,23 @@ export default function Login() {
               </div>
 
               {/* Submit Button */}
-              <m.button
-                type="submit"
-                disabled={loading}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full py-4 text-base font-bold text-white transition-all bg-blue-600 rounded-full shadow-lg hover:bg-blue-500 shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <span className="w-5 h-5 border-2 rounded-full animate-spin border-white/30 border-t-white" />
-                    Signing in...
-                  </span>
-                ) : (
-                  "Sign in"
-                )}
-              </m.button>
+              <div className="flex justify-center">
+                <m.button
+                  type="submit"
+                  disabled={loading}
+                  aria-busy={loading}
+                  whileTap={{ scale: 0.97 }}
+                  className="push-button-scale"
+                >
+                  <div className="push-button">
+                    <div className="button-outer">
+                      <div className="button-inner">
+                        <span>{loading ? "Signing in..." : "Sign in"}</span>
+                      </div>
+                    </div>
+                  </div>
+                </m.button>
+              </div>
             </form>
 
             {/* Divider */}
@@ -287,13 +288,20 @@ export default function Login() {
 
             {/* Interviewer Button */}
             <m.button
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => navigate("/interviewer/signup")}
-              className="flex items-center justify-center w-full gap-3 py-4 font-bold text-white transition-all rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90"
+              className="interviewer-btn-scale"
             >
-              <Building2 className="w-5 h-5" />
-              Continue as an Interviewer
+              <div className="interviewer-button-wrap">
+                <button type="button" className="interviewer-button">
+                  <span className="flex items-center gap-3">
+                    <Building2 className="w-5 h-5" />
+                    Continue as an Interviewer
+                  </span>
+                </button>
+                <div className="interviewer-button-shadow"></div>
+              </div>
             </m.button>
           </m.div>
         </div>
