@@ -1,221 +1,177 @@
-import { useState, useEffect } from "react";
-import { ArrowRight, Zap, Code2, CheckCircle } from "lucide-react";
-import { m, useReducedMotion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import { MorphingText } from "../components/ui/morphing-text";
-
-/* ================= CAREERS ================= */
-
-const careers = [
-  { text: "Software Engineer", font: "font-mono" },
-  { text: "Doctor", font: "font-serif" },
-  { text: "Data Scientist", font: "font-mono" },
-  { text: "Product Manager", font: "font-sans" },
-  { text: "UX Designer", font: "font-sans italic" },
-  { text: "Marketing Manager", font: "font-sans" },
-  { text: "Financial Analyst", font: "font-serif" },
-  { text: "Mechanical Engineer", font: "font-mono" },
-  { text: "Teacher", font: "font-serif" },
-  { text: "Nurse", font: "font-sans" },
-  { text: "Lawyer", font: "font-serif" },
-  { text: "Architect", font: "font-sans italic" },
-  { text: "Accountant", font: "font-mono" },
-  { text: "Sales Manager", font: "font-sans" },
-  { text: "Civil Engineer", font: "font-mono" },
-  { text: "Pharmacist", font: "font-serif" },
-  { text: "Graphic Designer", font: "font-sans italic" },
-  { text: "Business Analyst", font: "font-sans" },
-  { text: "HR Manager", font: "font-sans" },
-  { text: "Electrical Engineer", font: "font-mono" },
-  { text: "Dentist", font: "font-serif" },
-  { text: "Chemical Engineer", font: "font-mono" },
-  { text: "Project Manager", font: "font-sans" },
-  { text: "Content Writer", font: "font-serif italic" },
-  { text: "Cybersecurity Analyst", font: "font-mono" },
-  { text: "Investment Banker", font: "font-serif" },
-  { text: "DevOps Engineer", font: "font-mono" },
-  { text: "Psychologist", font: "font-serif" },
-  { text: "Surgeon", font: "font-serif" },
-  { text: "Management Consultant", font: "font-sans" },
-  { text: "Frontend Developer", font: "font-mono" },
-  { text: "Backend Developer", font: "font-mono" },
-  { text: "Full Stack Developer", font: "font-mono" },
-  { text: "Mobile App Developer", font: "font-mono" },
-  { text: "AI/ML Engineer", font: "font-mono" },
-  { text: "Cloud Architect", font: "font-mono" },
-  { text: "Database Administrator", font: "font-mono" },
-  { text: "Network Engineer", font: "font-mono" },
-  { text: "Quality Assurance Engineer", font: "font-mono" },
-  { text: "Blockchain Developer", font: "font-mono" },
-  { text: "Game Developer", font: "font-mono" },
-  { text: "SEO Specialist", font: "font-sans" },
-  { text: "Social Media Manager", font: "font-sans" },
-  { text: "Brand Manager", font: "font-sans" },
-  { text: "Operations Manager", font: "font-sans" },
-  { text: "Supply Chain Manager", font: "font-sans" },
-  { text: "Biomedical Engineer", font: "font-mono" },
-  { text: "Aerospace Engineer", font: "font-mono" },
-  { text: "Veterinarian", font: "font-serif" },
-  { text: "Research Scientist", font: "font-serif" }
-];
-
-/* ================= FEATURES ================= */
-
-const features = [
-  {
-    icon: <Zap className="w-10 h-10" />,
-    text: "AI-Powered Feedback",
-    label: "Real-time feedback",
-    gradient: "from-yellow-400 via-orange-500 to-red-500"
-  },
-  {
-    icon: <Code2 className="w-10 h-10" />,
-    text: "Real Coding Practice",
-    label: "Hands-on coding",
-    gradient: "from-blue-400 via-cyan-500 to-teal-500"
-  },
-  {
-    icon: <CheckCircle className="w-10 h-10" />,
-    text: "Track Progress",
-    label: "Data-driven insights",
-    gradient: "from-purple-400 via-pink-500 to-rose-500"
-  }
-];
-
-/* ================= HERO ================= */
+import { ArrowRight, ChevronDown, Play, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { codeExamples, floatingCards } from "../data/CodeExamples";
+import { nightOwl } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 export default function Hero() {
-  const navigate = useNavigate();
-  const prefersReducedMotion = useReducedMotion();
-  const isAuthenticated = !!localStorage.getItem("accessToken");
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [activeTab, setActiveTab] = useState("App.jsx");
 
-  const handleStartPracticing = () => {
-    navigate(isAuthenticated ? "/dashboard" : "/signup");
-  };
+  useEffect(() => {
+    function handleMouseMove(e) {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    }
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
-  const morphingJobs = careers.map((c) => c.text);
+  const currentFloatingCard = floatingCards[activeTab];
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[#020618]">
-      {/* ===== BACKGROUND ===== */}
-      <div className="absolute inset-0 z-0">
-        <div
-          className="absolute inset-0 bg-cover bg-center brightness-[0.3]"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop')"
-          }}
-        />
+    <section className="relative min-h-screen flex items-center justify-center pt-16 sm:pt-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div
+        className="absolute inset-0 opacity-30"
+        style={{
+          background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(59, 130, 246, 0.15), transparent 40%)`,
+        }}
+      />
+      <div className="absolute top-20 left-4 sm:left-10 w-48 sm:w-72 h-48 sm:h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 right-4 sm:right-10 w-64 sm:w-96 h-64 sm:h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
 
-        <m.div
-          animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-blue-500/20 rounded-full blur-3xl"
-        />
-
-        <m.div
-          animate={{ scale: [1.1, 1, 1.1], opacity: [0.1, 0.2, 0.1] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-3xl"
-        />
-      </div>
-
-      {/* ===== CONTENT ===== */}
-      <div className="relative z-10 flex flex-col min-h-screen">
-        <div className="flex flex-col items-center justify-center flex-1 px-6 py-24">
-          <m.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-6xl mx-auto space-y-8 text-center"
-          > 
-            <br/>
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <div className="w-12 h-[2px] bg-blue-400" />
-              <h2 className="text-sm md:text-base font-bold text-gray-300 tracking-[0.3em] uppercase">
-                You can be a
-              </h2>
-              <div className="w-12 h-[2px] bg-blue-400" />
+      <div className="max-w-7xl mx-auto text-center relative w-full">
+        <div className="max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 text-center lg:text-left gap-6 sm:gap-8 lg:gap-12 items-center relative">
+          <div>
+            <div className="inline-flex items-center space-x-2 px-3 sm:px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full mb-4 sm:mb-6 animate-in slide-in-from-bottom duration-700">
+              <Sparkles className="w-4 h-4 text-blue-400" />
+              <span className="text-xs sm:text-sm text-blue-300">
+                Meet Mockmate AI – Interview Redefined
+              </span>
             </div>
 
-            {/* 🔥 ONLY CHANGE IS HERE */}
-            <m.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="flex justify-center"
-            >
-              <MorphingText
-                texts={morphingJobs}
-                duration={prefersReducedMotion ? 0 : 2.5}
-                className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]"
-              />
-            </m.div>
-
-            <m.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="max-w-2xl mx-auto mt-6 text-lg leading-relaxed text-gray-300 md:text-xl"
-            >
-              <br/>
-              Accelerate your preparation with adaptive mock questions,
-              <span className="font-semibold text-blue-300">
-                {" "}
-                instant AI feedback
+            <h1 className="text-5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-semibold mb-4 sm:mb-6 animate-in slide-in-from-bottom duration-700 delay-100 leading-tight">
+              <span className="bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent block mb-1 sm:mb-2">
+                Practice Smarter
               </span>
-              , and
-              <span className="font-semibold text-purple-300">
-                {" "}
-                data-driven insights
+              <span className="bg-gradient-to-b from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent block mb-1 sm:mb-2">
+                Ace Every Interview
               </span>
-              .
-            </m.p>
-          </m.div>
-        </div>
+              <span className="bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent block mb-1 sm:mb-2">
+                With Mockmate AI
+              </span>
+            </h1>
 
-        {/* ===== FEATURES ===== */}
-        <div className="relative z-20 pb-8">
-          <div className="grid grid-cols-1 gap-6 px-6 mx-auto max-w-7xl md:grid-cols-3 md:gap-8">
-            {features.map((feature, i) => (
-              <m.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.6,
-                  delay: 0.8 + i * 0.1,
-                  ease: [0.16, 1, 0.3, 1]
-                }}
-                whileHover={{ y: -8 }}
-                className="group relative overflow-hidden bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl rounded-3xl border border-white/10 hover:border-white/20 transition-all duration-500 shadow-xl"
-              >
-                <div
-                  className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.gradient}`}
-                />
+            <p className="text-md sm:text-base lg:text-lg text-gray-400 max-w-2xl mx-auto lg:mx-0 mb-6 sm:mb-8 animate-in slide-in-from-bottom duration-700 delay-200 leading-relaxed">
+              Accelerate your prep with adaptive mock questions, instant AI feedback, and data-driven insights—so you’re always ready for the real thing.
+            </p>
 
-                <div className="flex flex-col items-center justify-center p-8 text-center md:p-10">
-                  <div
-                    className={`mb-5 p-4 rounded-2xl bg-gradient-to-br ${feature.gradient}`}
-                  >
-                    {feature.icon}
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 mb-8 sm:mb-12 animate-in slide-in-from-bottom duration-700 delay-300">
+              <button className="group w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-b from-blue-600 to-blue-400 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 hover:scale-102 flex items-center justify-center space-x-2">
+                <span>Start Practicing Free</span>
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-300" />
+              </button>
+
+              <button className="group w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 hover:bg-white/10 flex items-center justify-center space-x-2">
+                <div className="p-2 bg-white/10 rounded-full group-hover:bg-white/20 duration-300 transition-colors">
+                  <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
+                </div>
+                <span>See How It Works</span>
+              </button>
+            </div>
+          </div>
+          <div className="relative order-2 w-full">
+            <div className="relative bg-white/5 backdrop-blur-xl rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-2xl border border-white/10">
+              <div className="bg-gradient-to-br from-gray-900/20 to-gray-800/20 backdrop-blur-sm rounded-lg overflow-hidden h-[280px] sm:h-[350px] lg:h-[450px] border border-white/5">
+
+                {/* IDE HEADER */}
+                <div className="flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3 bg-white/5 backdrop-blur-sm border-b border-white/10">
+                  <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1 sm:space-x-2">
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500" />
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500" />
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500" />
+                    </div>
+                    <span className="text-xs sm:text-sm text-gray-300">
+                      Mockmate AI
+                    </span>
+                  </div>
+                  <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+                </div>
+
+                <div className="p-3 sm:p-4 relative h-full">
+                  {/* file tabs */}
+                  <div className="flex space-x-1 sm:space-x-2 mb-3 sm:mb-4 overflow-x-auto">
+                    <button
+                      onClick={() => setActiveTab("App.jsx")}
+                      className={`px-3 py-2 backdrop-blur-sm tex-xs sm:text-sm rounded-t-lg border ${
+                        activeTab === "App.jsx"
+                          ? "bg-blue-500/30 text-white border-blue-400/20"
+                          : "bg-white/5 text-gray-300 border-white/10 hover:bg-white/10"
+                      }  transition-all duration-200 whitespace-nowrap`}
+                    >
+                      App.jsx
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("Hero.jsx")}
+                      className={`px-3 py-2 backdrop-blur-sm tex-xs sm:text-sm rounded-t-lg border ${
+                        activeTab === "Hero.jsx"
+                          ? "bg-blue-500/30 text-white border-blue-400/20"
+                          : "bg-white/5 text-gray-300 border-white/10 hover:bg-white/10"
+                      }  transition-all duration-200 whitespace-nowrap`}
+                    >
+                      Hero.jsx
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("Navbar.jsx")}
+                      className={`px-3 py-2 backdrop-blur-sm tex-xs sm:text-sm rounded-t-lg border ${
+                        activeTab === "Navbar.jsx"
+                          ? "bg-blue-500/30 text-white border-blue-400/20"
+                          : "bg-white/5 text-gray-300 border-white/10 hover:bg-white/10"
+                      }  transition-all duration-200 whitespace-nowrap`}
+                    >
+                      Navbar.jsx
+                    </button>
                   </div>
 
-                  <h3 className="mb-2 text-xl font-bold text-white md:text-2xl">
-                    {feature.text}
-                  </h3>
-
-                  <p className="text-sm tracking-wider text-gray-400 uppercase">
-                    {feature.label}
-                  </p>
+                  {/* Code Content */}
+                  <div className="relative overflow-hidden flex-grow">
+                    <SyntaxHighlighter
+                      language="javascript"
+                      style={nightOwl}
+                      customStyle={{
+                        margin: 0,
+                        borderRadius: "8px",
+                        fontSize: "11px",
+                        lineHeight: "1.4",
+                        height: "100%",
+                        border: "1px solid #3c3c3c",
+                        wordWrap: "break-word",
+                        whiteSpace: "pre-wrap",
+                        textAlign: "left",
+                      }}
+                    >
+                      {codeExamples[activeTab]}
+                    </SyntaxHighlighter>
+                  </div>
                 </div>
-              </m.div>
-            ))}
+              </div>
+
+              {/* Floating Cards */}
+              <div
+                className={`hidden lg:block absolute bottom-4 right-4 transform translate-x-8 translate-y-8 w-72 ${currentFloatingCard.bgColor} backdrop-blur-xl rounded-lg p-4 border border-white/20 shadow-2xl`}
+              >
+                <div className="flex items-center space-x-2 mb-2">
+                  <div
+                    className={`w-6 h-6 ${currentFloatingCard.iconColor} flex items-center justify-center text-sm font-bold`}
+                  >
+                    {currentFloatingCard.icon}
+                  </div>
+                  <span
+                    className={`text-sm font-medium ${currentFloatingCard.textColor}`}
+                  >
+                    {currentFloatingCard.title}
+                  </span>
+                </div>
+                <div
+                  className={`text-sm text-left ${currentFloatingCard.contentColor}`}
+                >
+                  {currentFloatingCard.content}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#020618] to-transparent pointer-events-none" />
     </section>
   );
 }
