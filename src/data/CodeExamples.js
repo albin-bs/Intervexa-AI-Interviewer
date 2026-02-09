@@ -3,84 +3,126 @@ export const codeExamples = {
 import { MockmateAI } from "@mockmate/ai";
 
 function App() {
-  const [question, setQuestion] = useState("");
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleAIFeedback = async () => {
-    const suggestion = await MockmateAI.complete(question);
-    setQuestion(suggestion);
+  const startInterview = async (role) => {
+    setLoading(true);
+    try {
+      const newSession = await MockmateAI.createSession({
+        role,
+        difficulty: "medium",
+        type: "behavioral"
+      });
+      setSession(newSession);
+    } catch (error) {
+      console.error("Failed to start:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="app">
-      <InterviewEditor 
-        onChange={setQuestion} 
-        onAI={handleAIFeedback} 
+      <InterviewDashboard 
+        session={session}
+        onStart={startInterview}
+        loading={loading}
       />
     </div>
   );
-}`,
-  "Hero.jsx": `import { useState, useEffect } from "react";
-import { MockmateAI } from "@mockmate/ai";
+}
+
+export default App;`,
+
+  "Hero.jsx": `import { m } from "framer-motion";
+import { Sparkles, ArrowRight } from "lucide-react";
 
 export default function Hero() {
-  const [isReady, setIsReady] = useState(false);
-  
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleAISuggestion = async () => {
-    const suggestion = await MockmateAI.suggest("mock interview hero message");
-    return suggestion;
-  };
-
   return (
-    <section className="hero">
-      <h1 className="text-4xl font-bold">
-        {isReady ? "Ace Your Next Interview with AI" : "Loading..."}
-      </h1>
-      <button onClick={handleAISuggestion}>
-        Try AI Suggestion
-      </button>
+    <section className="hero-section">
+      <m.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <h1 className="text-5xl font-bold gradient-text">
+          Practice Smarter, Ace Every Interview
+        </h1>
+        
+        <p className="mt-4 text-xl text-gray-400">
+          AI-powered mock interviews with instant feedback
+        </p>
+
+        <div className="flex gap-4 mt-8">
+          <button className="btn-primary">
+            <Sparkles className="w-5 h-5" />
+            Start Practicing Free
+            <ArrowRight className="w-5 h-5" />
+          </button>
+          
+          <button className="btn-secondary">
+            Watch Demo
+          </button>
+        </div>
+      </m.div>
     </section>
   );
 }`,
-  "Navbar.jsx": `import { useState } from "react";
-import { MockmateAI } from "@mockmate/ai";
+
+  "Navbar.jsx": `import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
 
-  const handleSearch = async () => {
-    const results = await MockmateAI.search(searchQuery);
-    return results;
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const navLinks = [
+    { to: "/interview", label: "Practice" },
+    { to: "/dashboard", label: "Dashboard" },
+    { to: "/pricing", label: "Pricing" }
+  ];
 
   return (
-    <nav className="navbar">
-      <div className="nav-brand">
-        <h2>Mockmate AI</h2>
+    <nav className={\`navbar \${scrolled ? "scrolled" : ""}\`}>
+      <Link to="/" className="logo">
+        <span>Mock</span>
+        <span className="text-blue-400">Mate</span>
+        <span>AI</span>
+      </Link>
+
+      <div className="nav-links">
+        {navLinks.map(link => (
+          <Link 
+            key={link.to}
+            to={link.to}
+            className={location.pathname === link.to ? "active" : ""}
+          >
+            {link.label}
+          </Link>
+        ))}
       </div>
-      
-      <div className="nav-search">
-        <input 
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search interview topics..."
-        />
-        <button onClick={handleSearch}>Search</button>
-      </div>
-      
+
+      <button className="btn-primary">
+        Get Started
+      </button>
+
       <button 
         className="menu-toggle"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setMenuOpen(!menuOpen)}
       >
-        ☰
+        {menuOpen ? <X /> : <Menu />}
       </button>
     </nav>
   );
@@ -89,30 +131,30 @@ export default function Navbar() {
 
 export const floatingCards = {
   "App.jsx": {
-    bgColor: "bg-blue-500/20",
-    iconColor: "text-blue-400",
-    textColor: "text-blue-200",
-    contentColor: "text-blue-300",
-    icon: "AI",
-    title: "Instant Interview Prompts",
-    content: "AI-generated questions for realistic mock sessions",
+    bgColor: "bg-gradient-to-br from-blue-500/20 to-cyan-500/20",
+    iconColor: "bg-blue-500",
+    textColor: "text-white",
+    contentColor: "text-blue-100",
+    icon: "⚡",
+    title: "AI Interview Sessions",
+    content: "Create realistic mock interviews with adaptive AI questions tailored to your role and experience level.",
   },
   "Hero.jsx": {
-    bgColor: "bg-purple-500/20",
-    iconColor: "text-purple-400",
-    textColor: "text-purple-200",
-    contentColor: "text-purple-300",
-    icon: "🎤",
-    title: "Live Feedback",
-    content: "Dynamic, actionable advice powered by Mockmate AI",
+    bgColor: "bg-gradient-to-br from-purple-500/20 to-pink-500/20",
+    iconColor: "bg-purple-500",
+    textColor: "text-white",
+    contentColor: "text-purple-100",
+    icon: "✨",
+    title: "Smooth Animations",
+    content: "Framer m creates engaging, professional micro-interactions that enhance user experience.",
   },
   "Navbar.jsx": {
-    bgColor: "bg-emerald-500/20",
-    iconColor: "text-emerald-400",
-    textColor: "text-emerald-200",
-    contentColor: "text-emerald-300",
-    icon: "🔍",
-    title: "Smart Topic Search",
-    content: "Find interview themes, tips, and past questions fast",
+    bgColor: "bg-gradient-to-br from-emerald-500/20 to-teal-500/20",
+    iconColor: "bg-emerald-500",
+    textColor: "text-white",
+    contentColor: "text-emerald-100",
+    icon: "🎯",
+    title: "Smart Navigation",
+    content: "Dynamic navbar with scroll detection, active states, and responsive mobile menu for seamless browsing.",
   },
 };
