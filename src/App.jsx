@@ -9,6 +9,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Footer from "./components/Footer";
+import SplashScreen from "./components/SplashScreen";
 import CompanyJobIntake from './pages/CompanyJobIntake';
 import AuthCallback from './pages/AuthCallback';
 
@@ -58,6 +59,7 @@ const Home = () => (
 );
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [hideNavbarOverride, setHideNavbarOverride] = useState(false);
   const [hideFooterOverride, setHideFooterOverride] = useState(false);
@@ -95,6 +97,15 @@ export default function App() {
     window.addEventListener("navbar-visibility", handleNavbarVisibility);
     return () => window.removeEventListener("navbar-visibility", handleNavbarVisibility);
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
 
   if (isMaintenanceMode) {
     return (
