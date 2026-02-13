@@ -2,6 +2,7 @@ import { useState } from "react";
 import { m } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { User, Briefcase, MapPin, Upload, ArrowRight, ArrowLeft, Check, Sparkles, GraduationCap } from "lucide-react";
+import { getCurrentUser, getUserProfile, upsertUserProfile } from "../services/authService";
 
 
 export default function UserOnboarding() {
@@ -59,15 +60,62 @@ export default function UserOnboarding() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("Submitting profile:", formData);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const { user } = await getCurrentUser();
+      if (!user) {
+        const localProfile = {
+          full_name: `${formData.firstName} ${formData.lastName}`.trim(),
+          email: formData.email || "",
+          job_title: formData.currentRole || "",
+          company_name: formData.company || "",
+          years_of_experience: formData.yearsOfExperience || "",
+          user_role: formData.skillLevel || "",
+          country: formData.country || "",
+          city: formData.city || "",
+          bio: formData.bio || "",
+          onboarding_completed: true,
+        };
+        localStorage.setItem("mockmate-local-profile", JSON.stringify(localProfile));
+        localStorage.removeItem("needsOnboarding");
+        localStorage.setItem("profileComplete", "true");
+        navigate("/dashboard", { replace: true });
+        return;
+      }
+
+      const existingProfile = await getUserProfile(user.id);
+      const existing = existingProfile.success ? existingProfile.data : null;
+
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+
+      const updates = {
+        full_name: fullName || undefined,
+        email: formData.email || user.email,
+        job_title: formData.currentRole || undefined,
+        company_name: formData.company || undefined,
+        years_of_experience: formData.yearsOfExperience
+          ? Number(formData.yearsOfExperience)
+          : undefined,
+        user_role: formData.skillLevel || undefined,
+        country: formData.country || undefined,
+        city: formData.city || undefined,
+        bio: formData.bio || undefined,
+        user_type: existing?.user_type || user.user_metadata?.user_type || "candidate",
+        is_active: existing?.is_active ?? true,
+        is_verified: existing?.is_verified ?? !!user.email_confirmed_at,
+        remember_me: existing?.remember_me ?? false,
+        onboarding_completed: true,
+      };
+
+      const result = await upsertUserProfile({ id: user.id, ...updates });
+      if (!result.success) {
+        throw new Error(result.error || "Failed to save profile");
+      }
       
       localStorage.removeItem("needsOnboarding");
       localStorage.setItem("profileComplete", "true");
       navigate("/dashboard", { replace: true });
     } catch (error) {
       console.error("Profile save error:", error);
-      alert("Failed to save profile. Please try again.");
+      alert(`Failed to save profile. ${error?.message || "Please try again."}`);
     }
   };
 

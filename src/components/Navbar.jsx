@@ -1,4 +1,4 @@
-import { Menu, X, User, LogOut, Settings, LayoutDashboard, Sparkles } from "lucide-react";
+import { Menu, X, User, LogOut, Settings, LayoutDashboard, Sparkles, Puzzle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { m, AnimatePresence } from "framer-motion";
@@ -31,7 +31,7 @@ export default function Navbar({ scrolled }) {
   const authenticatedLinks = [
     { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
     { to: "/interview", label: "Practice", icon: <Sparkles className="w-4 h-4" /> },
-    { to: "/problems", label: "Problems" },
+    { to: "/problems", label: "Problems", icon: <Puzzle className="w-4 h-4" /> },
   ];
 
 
@@ -168,14 +168,15 @@ export default function Navbar({ scrolled }) {
               >
                 <Link
                   to={link.to}
-                  className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all rounded-lg ${
+                  className={`relative inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all rounded-lg group ${
                     isActive(link.to)
                       ? "text-blue-500 font-bold"
                       : "text-gray-400 hover:text-gray-300"
                   }`}
                 >
                   {link.icon && <span className="text-blue-400">{link.icon}</span>}
-                  {link.label}
+                  <span>{link.label}</span>
+                  <span className="absolute left-4 right-4 -bottom-0.5 h-0.5 max-w-0 group-hover:max-w-full w-full bg-gradient-to-r from-blue-400 to-indigo-400 transition-all duration-300 rounded-full" />
                 </Link>
               </m.div>
               
@@ -203,7 +204,7 @@ export default function Navbar({ scrolled }) {
 
 
         {/* Right Side: Auth Only */}
-        <div className="items-center hidden gap-3 md:flex">
+        <div className="flex items-center gap-3">
           {isAuthenticated ? (
             // ✅ User Menu - MATCHING "GET STARTED" BUTTON STYLE
             <div className="relative user-menu-container">
@@ -326,162 +327,10 @@ export default function Navbar({ scrolled }) {
             </div>
           )}
         </div>
-
-
-
-        {/* Mobile Menu Toggle */}
-        <m.button
-          whileTap={{ scale: 0.9 }}
-          className="flex items-center p-2 text-gray-300 rounded-lg md:hidden hover:text-white hover:bg-white/5"
-          onClick={() => setMobileMenuIsOpen(!mobileMenuIsOpen)}
-          aria-label="Toggle menu"
-        >
-          <AnimatePresence mode="wait">
-            {mobileMenuIsOpen ? (
-              <m.div
-                key="close"
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 90, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <X className="w-6 h-6" />
-              </m.div>
-            ) : (
-              <m.div
-                key="menu"
-                initial={{ rotate: 90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: -90, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Menu className="w-6 h-6" />
-              </m.div>
-            )}
-          </AnimatePresence>
-        </m.button>
       </div>
 
 
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileMenuIsOpen && (
-          <>
-            {/* Backdrop */}
-            <m.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-gray-800/50 md:hidden"
-              onClick={() => setMobileMenuIsOpen(false)}
-            />
-            
-            {/* Sidebar */}
-            <m.nav
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "tween", duration: 0.3 }}
-              className="fixed top-0 bottom-0 left-0 z-50 flex flex-col w-5/6 max-w-sm px-6 py-6 overflow-y-auto bg-white border-r md:hidden"
-            >
-              {/* Header */}
-              <div className="flex items-center mb-8">
-                <Link to="/" className="flex items-center gap-2 mr-auto" onClick={() => setMobileMenuIsOpen(false)}>
-                  <img src="/logo.png" alt="MockMateAI" className="w-10 h-10 rounded-lg" />
-                  <span className="text-2xl font-bold">
-                    <span className="text-gray-900">Mock</span>
-                    <span className="text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text">Mate</span>
-                    <span className="text-gray-900">AI</span>
-                  </span>
-                </Link>
-                <button
-                  onClick={() => setMobileMenuIsOpen(false)}
-                  className="text-gray-400 transition-colors hover:text-gray-500"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-
-
-
-              {/* Navigation Links */}
-              <div>
-                <ul>
-                  {navLinks.map((link) => (
-                    <li key={link.to} className="mb-1">
-                      <m.div whileHover={{ x: 4 }}>
-                        <Link
-                          to={link.to}
-                          onClick={() => setMobileMenuIsOpen(false)}
-                          className={`flex items-center gap-3 p-4 text-sm font-semibold transition-colors rounded ${
-                            isActive(link.to)
-                              ? "text-blue-600 bg-blue-50"
-                              : "text-gray-400 hover:bg-blue-50 hover:text-blue-600"
-                          }`}
-                        >
-                          {link.icon}
-                          {link.label}
-                        </Link>
-                      </m.div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-
-
-              {/* Auth Buttons */}
-              <div className="mt-auto">
-                <div className="pt-6">
-                  {isAuthenticated ? (
-                    <>
-                      <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                        <Link
-                          to="/settings"
-                          onClick={() => setMobileMenuIsOpen(false)}
-                          className="flex items-center justify-center gap-2 px-4 py-3 mb-3 text-xs font-semibold leading-none text-center bg-gray-50 hover:bg-gray-100 rounded-xl"
-                        >
-                          <Settings className="w-4 h-4" />
-                          Settings
-                        </Link>
-                      </m.div>
-                      <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                        <button
-                          onClick={() => {
-                            handleLogout();
-                            setMobileMenuIsOpen(false);
-                          }}
-                          className="flex items-center justify-center w-full gap-2 px-4 py-3 mb-2 text-xs font-semibold leading-none text-center text-white bg-red-600 hover:bg-red-700 rounded-xl"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          Logout
-                        </button>
-                      </m.div>
-                    </>
-                  ) : (
-                    <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <button
-                        onClick={() => {
-                          navigate("/contact");
-                          setMobileMenuIsOpen(false);
-                        }}
-                        className="flex items-center justify-center w-full gap-2 px-4 py-3 mb-2 text-xs font-semibold leading-none text-center text-white bg-blue-600 rounded-full hover:bg-blue-700"
-                      >
-                        <Sparkles className="w-5 h-5" />
-                        Let's work together
-                      </button>
-                    </m.div>
-                  )}
-                </div>
-                <p className="my-4 text-xs text-center text-gray-400">
-                  <span>© 2026 MockMateAI</span>
-                </p>
-              </div>
-            </m.nav>
-          </>
-        )}
-      </AnimatePresence>
     </nav>
   );
 }

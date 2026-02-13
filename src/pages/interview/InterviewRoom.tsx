@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { m, AnimatePresence } from "framer-motion";
+import CodeDemo from "../CodeDemo";
+import AptitudeTest from "../AptitudeTest";
 import { 
   Mic, 
   MicOff, 
@@ -12,9 +14,7 @@ import {
   Volume2,
   VolumeX,
   User,
-  Send,
   Lightbulb,
-  TrendingUp,
   Clock,
   AlertTriangle,
   Camera,
@@ -22,21 +22,20 @@ import {
   Headphones,
   Wifi,
   X,
-  Bot,
-  BarChart3
+  Code,
+  Brain
 } from "lucide-react";
 
 export default function InterviewRoom({ config, sessionId, onEnd }: any) {
   const [isMicOn, setIsMicOn] = useState(config.useAudio);
   const [isCameraOn, setIsCameraOn] = useState(config.useVideo);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
-  const [showChat, setShowChat] = useState(false);
-  const [showFeedback, setShowFeedback] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
+  const [showCodeCompiler, setShowCodeCompiler] = useState(false);
+  const [showAptitude, setShowAptitude] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(config.duration * 60);
   const [chatMessages, setChatMessages] = useState<any[]>([]);
-  const [newMessage, setNewMessage] = useState("");
   
   // Settings state
   const [selectedMicrophone, setSelectedMicrophone] = useState<string>('');
@@ -101,11 +100,6 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
       setPermissionsGranted(true);
       setShowPermissionPrompt(false);
       setIsLoadingMedia(false);
-
-      // Attach stream to video element
-      if (videoRef.current && config.useVideo) {
-        videoRef.current.srcObject = stream;
-      }
       
       // Enumerate devices after permission granted
       await enumerateDevices();
@@ -154,6 +148,18 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
     }
   }, [isMicOn, mediaStream]);
 
+  // Attach video stream to video element
+  useEffect(() => {
+    if (!videoRef.current) return;
+    if (!mediaStream || !isCameraOn) {
+      videoRef.current.pause();
+      videoRef.current.srcObject = null;
+      return;
+    }
+    videoRef.current.srcObject = mediaStream;
+    videoRef.current.play().catch(err => console.error('Video play error:', err));
+  }, [mediaStream, isCameraOn]);
+
   // Timer countdown
   useEffect(() => {
     if (!permissionsGranted) return;
@@ -182,16 +188,68 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
     }
   }, [permissionsGranted]);
 
+
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const sendMessage = () => {
-    if (!newMessage.trim()) return;
-    setChatMessages([...chatMessages, { text: newMessage, sender: "user", time: new Date() }]);
-    setNewMessage("");
+  const pushAiMessage = (text: string) => {
+    setChatMessages((prev) => [
+      ...prev,
+      {
+        text,
+        sender: "ai",
+        time: new Date(),
+      },
+    ]);
+  };
+
+  const handleCodeComplete = (result: any) => {
+    if (!result) return;
+    const testsInfo =
+      typeof result.tests_total === "number" && typeof result.tests_passed === "number"
+        ? `Tests: ${result.tests_passed}/${result.tests_total}.`
+        : "Tests: Completed.";
+    const clarityInfo = result.clarity
+      ? `Clarity: ${result.clarity.label} (${result.clarity.score}/100).`
+      : "Clarity: Pending.";
+    const statusInfo = result.status ? `Result: ${result.status}.` : "Result: Completed.";
+    pushAiMessage(
+      `Great work completing the coding task. ${statusInfo} ${testsInfo} ${clarityInfo} Nice job — your effort shows strong problem-solving and clarity.`
+    );
+  };
+
+  const handleAptitudeComplete = (result: any) => {
+    if (!result) return;
+    const score = `${result.correctCount}/${result.totalQuestions}`;
+    const percent = result.percentage ?? Math.round((result.correctCount / result.totalQuestions) * 100);
+    const evaluation =
+      percent >= 85
+        ? "Excellent performance with strong accuracy."
+        : percent >= 70
+        ? "Solid performance with good fundamentals."
+        : percent >= 50
+        ? "Decent effort — keep practicing to improve accuracy."
+        : "Keep going — practice will sharpen your aptitude."
+    pushAiMessage(
+      `Aptitude test completed. Score: ${score} (${percent}%). ${evaluation} Great job finishing the assessment!`
+    );
+    try {
+      localStorage.setItem(
+        "mockmate-aptitude-result",
+        JSON.stringify({
+          correctCount: result.correctCount,
+          totalQuestions: result.totalQuestions,
+          percentage: percent,
+          completedAt: new Date().toISOString(),
+        })
+      );
+    } catch {
+      // ignore
+    }
   };
 
   return (
@@ -415,12 +473,8 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
       {permissionsGranted && (
         <>
           {/* Top Header */}
-          <header className="flex items-center justify-between border-b border-white/10 px-8 py-4 bg-[#020617]/50 backdrop-blur-md z-20">
+          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 sm:px-6 lg:px-8 py-4 bg-[#020617]/50 backdrop-blur-md z-20">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center bg-blue-500 rounded-lg size-8">
-                <Bot className="w-5 h-5 text-white" />
-              </div>
-              <h1 className="text-xl font-bold tracking-tight">MockMate AI</h1>
             </div>
 
             <div className="flex items-center justify-center flex-1">
@@ -437,7 +491,27 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Code Compiler Button */}
+              <button
+                onClick={() => setShowCodeCompiler(true)}
+                className="flex items-center gap-2 px-4 py-2 transition border rounded-lg bg-slate-800/50 border-slate-700 hover:bg-slate-700 group"
+                title="Open Code Compiler"
+              >
+                <Code className="w-4 h-4 text-blue-400 group-hover:text-blue-300" />
+                <span className="hidden text-sm font-medium text-slate-300 group-hover:text-white sm:inline">Code Compiler</span>
+              </button>
+
+              {/* Aptitude Button */}
+              <button
+                onClick={() => setShowAptitude(true)}
+                className="flex items-center gap-2 px-4 py-2 transition border rounded-lg bg-slate-800/50 border-slate-700 hover:bg-slate-700 group"
+                title="Open Aptitude Test"
+              >
+                <Brain className="w-4 h-4 text-purple-400 group-hover:text-purple-300" />
+                <span className="hidden text-sm font-medium text-slate-300 group-hover:text-white sm:inline">Aptitude</span>
+              </button>
+
               <div className="flex items-center gap-2 px-3 py-1 border rounded-full bg-green-500/10 border-green-500/20">
                 <div className="bg-green-500 rounded-full size-2 animate-pulse"></div>
                 <span className="text-xs font-medium text-green-500">Live Connection</span>
@@ -445,80 +519,73 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
             </div>
           </header>
 
-          <main className="relative flex flex-1 overflow-hidden">
-            {/* Main Content Area */}
-            <div className="flex-1 flex flex-col relative bg-[#0a0e14]">
-              {/* AI Avatar Area */}
-              <div className="flex flex-col items-center justify-center flex-1 p-8">
-                <div className="relative flex items-center justify-center">
-                  {/* Outer Glow Rings */}
-                  <div className="absolute rounded-full w-96 h-96 bg-blue-500/5 blur-3xl"></div>
-                  <div className="absolute w-64 h-64 border rounded-full border-blue-500/20"></div>
-                  
-                  {/* AI Identity */}
-                  <div className="relative w-48 h-48 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-[0_0_50px_rgba(37,106,244,0.4)] animate-pulse">
-                    <Sparkles className="w-20 h-20 text-white" />
-                  </div>
-                  
-                  {/* Audio Wave Visualizer */}
-                  <div className="absolute -bottom-16 flex items-center gap-1.5 h-12">
-                    {[0.1, 0.3, 0.2, 0.4, 0.1, 0.3, 0.2].map((delay, i) => (
-                      <m.div
-                        key={i}
-                        animate={{ height: ['10px', '35px', '10px'] }}
-                        transition={{
-                          duration: 1.2,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                          delay
-                        }}
-                        className="w-1 bg-blue-500 rounded-full"
-                      />
-                    ))}
-                  </div>
-                </div>
+          <main className="relative flex flex-col flex-1 gap-4 p-4 overflow-hidden lg:flex-row">
+            {/* Main Content Area - Split Screen Layout */}
+            <div className="flex-1 flex relative bg-[#0a0e14] rounded-2xl overflow-hidden">
+              {/* Video Grid Container */}
+              <div className="grid flex-1 w-full h-full grid-cols-2 gap-4 p-4 pb-24 place-items-stretch">
                 
-                <div className="mt-24 text-center">
-                  <p className="text-white/40 text-sm uppercase tracking-[0.2em] mb-2">Interviewer</p>
-                  <h2 className="text-2xl font-semibold text-white">AI Assistant is speaking...</h2>
+                {/* AI Interviewer Panel */}
+                <div className="relative flex flex-col items-center justify-center order-2 w-full overflow-hidden lg:order-1 bg-slate-900 rounded-2xl aspect-square">
+                  <div className="relative flex items-center justify-center">
+                    {/* Outer Glow Rings */}
+                    <div className="absolute rounded-full w-96 h-96 bg-blue-500/5 blur-3xl"></div>
+                    <div className="absolute w-64 h-64 border rounded-full border-blue-500/20"></div>
+                    
+                    {/* AI Identity */}
+                    <div className="relative w-48 h-48 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-[0_0_50px_rgba(37,106,244,0.4)] animate-pulse">
+                      <Sparkles className="w-20 h-20 text-white" />
+                    </div>
+                    
+                    {/* Audio Wave Visualizer */}
+                    <div className="absolute -bottom-16 flex items-center gap-1.5 h-12">
+                      {[0.1, 0.3, 0.2, 0.4, 0.1, 0.3, 0.2].map((delay, i) => (
+                        <m.div
+                          key={i}
+                          animate={{ height: ['10px', '35px', '10px'] }}
+                          transition={{
+                            duration: 1.2,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                            delay
+                          }}
+                          className="w-1 bg-blue-500 rounded-full"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="mt-14 text-center">
+                    <p className="text-white/40 text-sm uppercase tracking-[0.2em] mb-1">Interviewer</p>
+                    <h2 className="text-lg font-semibold text-white">AI Assistant is speaking...</h2>
+                  </div>
                 </div>
-              </div>
 
-              {/* User PIP (Picture-in-Picture) */}
-              <div className="absolute w-48 h-48 overflow-hidden bg-black border-2 border-blue-500 shadow-2xl bottom-24 left-8 rounded-2xl">
-                {isCameraOn && mediaStream ? (
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="object-cover w-full h-full"
-                    style={{ transform: 'scaleX(-1)' }}
-                  />
-                ) : (
-                  <div className="flex items-center justify-center w-full h-full bg-slate-900">
-                    <User className="w-16 h-16 text-slate-600" />
-                  </div>
-                )}
-                
-                <div className="absolute top-2 left-2 px-2 py-0.5 bg-black/50 backdrop-blur rounded text-[10px] font-bold">YOU</div>
-                
-                {isMicOn && (
-                  <div className="absolute flex gap-1 bottom-2 right-2">
-                    {[0, 0.2, 0.4].map((delay, i) => (
-                      <m.div
-                        key={i}
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ duration: 0.6, repeat: Infinity, delay }}
-                        className="size-1.5 bg-blue-500 rounded-full"
-                      />
-                    ))}
-                  </div>
-                )}
+                {/* User Video Panel */}
+                <div className="relative order-1 w-full overflow-hidden bg-black lg:order-2 rounded-2xl aspect-square">
+                  {isCameraOn && mediaStream ? (
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      muted
+                      className="object-cover w-full h-full"
+                      style={{ transform: 'scaleX(-1)' }}
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center w-full h-full bg-slate-900">
+                      <User className="w-32 h-32 mb-4 text-slate-600" />
+                      <p className="text-sm text-slate-400">Camera Off</p>
+                    </div>
+                  )}
+                  
+                  <div className="absolute top-4 left-4 px-3 py-1.5 bg-black/50 backdrop-blur rounded-lg text-sm font-bold">YOU</div>
+
+                </div>
               </div>
 
               {/* Control Bar Wrapper */}
-              <div className="absolute flex items-center gap-6 -translate-x-1/2 bottom-6 left-1/2">
+              <div className="absolute flex items-center gap-4 px-4 -translate-x-1/2 bottom-3 left-1/2">
 
                 {/* Controls */}
                 <div className="flex gap-4 px-6 py-3 border rounded-full shadow-2xl bg-slate-900/80 backdrop-blur-xl border-white/10">
@@ -555,19 +622,6 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
                   >
                     {isSpeakerOn ? <Volume2 /> : <VolumeX />}
                   </m.button>
-
-                  <div className="w-px h-8 mx-2 bg-white/10" />
-
-                  <m.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setShowSettings(true)}
-                    className="emboss-btn"
-                    data-char="⚙"
-                    aria-label="Open settings"
-                  >
-                    <Settings />
-                  </m.button>
                 </div>
 
                 {/* End Interview (Destructive Action) */}
@@ -588,179 +642,121 @@ export default function InterviewRoom({ config, sessionId, onEnd }: any) {
               </div>
             </div>
 
-            {/* Sidebar (Feedback and Chat) */}
-            <aside className="w-[400px] border-l border-white/10 flex flex-col bg-slate-900 overflow-y-auto">
-              <div className="p-6">
-                {/* Tabs */}
-                <div className="flex gap-2 p-1 mb-8 rounded-full bg-white/5">
-                  <button
-                    onClick={() => { setShowFeedback(true); setShowChat(false); }}
-                    className={`flex-1 py-2 px-4 rounded-full text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
-                      showFeedback ? "bg-blue-500 text-white" : "text-white/60 hover:bg-white/5"
-                    }`}
-                  >
-                    <BarChart3 className="w-4 h-4" />
-                    Feedback
-                  </button>
-                  <button
-                    onClick={() => { setShowChat(true); setShowFeedback(false); }}
-                    className={`flex-1 py-2 px-4 rounded-full text-sm font-medium flex items-center justify-center gap-2 transition-colors ${
-                      showChat ? "bg-blue-500 text-white" : "text-white/60 hover:bg-white/5"
-                    }`}
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                    Chat
-                  </button>
+            {/* Transcript Sidebar */}
+            <aside className="w-full lg:w-[400px] border border-white/10 flex flex-col bg-slate-900 rounded-2xl overflow-hidden">
+              <div className="p-6 border-b border-white/10">
+                <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-blue-400 font-bold">
+                  <Lightbulb className="w-4 h-4" />
+                  Current Question
                 </div>
+                <p className="mt-3 text-base font-medium leading-relaxed text-white">
+                  "Tell me about a time you handled a difficult conflict with a coworker. How did you resolve it?"
+                </p>
+              </div>
 
-                {/* Live Analysis Section */}
-                {showFeedback && (
-                  <div className="space-y-6">
-                    <div className="flex flex-col">
-                      <h3 className="flex items-center gap-2 mb-4 font-bold text-white">
-                        <TrendingUp className="w-5 h-5 text-blue-400" />
-                        Live Performance
-                      </h3>
-                      
-                      <div className="space-y-4">
-                        {/* Metric 1 */}
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-white/60">Confidence</span>
-                            <span className="font-bold text-blue-400">84%</span>
-                          </div>
-                          <div className="w-full h-2 overflow-hidden rounded-full bg-white/5">
-                            <div className="h-full bg-blue-500 rounded-full shadow-[0_0_10px_rgba(37,106,244,0.5)]" style={{ width: '84%' }}></div>
-                          </div>
-                        </div>
-
-                        {/* Metric 2 */}
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-white/60">Speech Clarity</span>
-                            <span className="font-bold text-blue-400">92%</span>
-                          </div>
-                          <div className="w-full h-2 overflow-hidden rounded-full bg-white/5">
-                            <div className="h-full bg-blue-500 rounded-full shadow-[0_0_10px_rgba(37,106,244,0.5)]" style={{ width: '92%' }}></div>
-                          </div>
-                        </div>
-
-                        {/* Metric 3 */}
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-white/60">Pacing</span>
-                            <span className="font-bold text-green-400">Optimal</span>
-                          </div>
-                          <div className="w-full h-2 overflow-hidden rounded-full bg-white/5">
-                            <div className="h-full bg-green-500 rounded-full" style={{ width: '75%' }}></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Current Question Card */}
-                    <div className="p-5 space-y-4 border bg-white/5 border-white/10 rounded-2xl">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] uppercase tracking-widest text-blue-400 font-bold">Current Question</span>
-                        <Lightbulb className="w-5 h-5 text-white/20" />
-                      </div>
-                      <p className="text-lg font-medium leading-relaxed text-white">
-                        "Tell me about a time you handled a difficult conflict with a coworker. How did you resolve it?"
-                      </p>
-                      <div className="flex items-center gap-2 text-xs text-white/40">
-                        <Lightbulb className="w-4 h-4" />
-                        Focus on: STAR method, emotional intelligence
-                      </div>
-                    </div>
-
-                    {/* Quick Suggestions */}
-                    <div className="space-y-3">
-                      <h4 className="text-xs font-bold tracking-widest uppercase text-white/30">AI Insights</h4>
-                      <div className="flex gap-3 p-3 border rounded-xl bg-blue-500/10 border-blue-500/20">
-                        <Sparkles className="w-5 h-5 text-blue-400 shrink-0" />
-                        <p className="text-sm text-blue-100">Try to maintain eye contact with the camera more frequently.</p>
-                      </div>
+              <div className="flex-1 p-6 space-y-4 overflow-auto">
+                {chatMessages.length === 0 ? (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center">
+                      <MessageSquare className="w-10 h-10 mx-auto mb-3 text-slate-700" />
+                      <p className="text-sm text-slate-500">Transcript will appear here</p>
+                      <p className="text-xs text-slate-600">Waiting for the interview to begin</p>
                     </div>
                   </div>
+                ) : (
+                  chatMessages.map((msg, i) => {
+                    const isBot = msg.sender === "ai";
+                    return (
+                      <div key={i} className={`flex ${isBot ? "justify-start" : "justify-end"}`}>
+                        <div className={`max-w-[85%] px-4 py-3 rounded-2xl ${isBot ? "bg-slate-800 border border-white/5" : "bg-blue-600"}`}>
+                          <div className="text-[10px] uppercase tracking-widest text-white/50">
+                            {isBot ? "Interviewer" : "Candidate"}
+                          </div>
+                          <p className="mt-1 text-sm leading-relaxed text-white">{msg.text}</p>
+                          <span className="mt-2 block text-[11px] text-white/40">
+                            {new Date(msg.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })
                 )}
-
-                {/* Chat Section */}
-                {showChat && (
-                  <div className="flex flex-col h-[calc(100vh-200px)]">
-                    {/* Chat Messages Area */}
-                    <div className="flex flex-col p-4 overflow-auto grow">
-                      {chatMessages.length === 0 ? (
-                        <div className="flex items-center justify-center flex-1">
-                          <div className="text-center">
-                            <MessageSquare className="w-12 h-12 mx-auto mb-3 text-slate-700" />
-                            <p className="text-sm text-slate-500">No messages yet</p>
-                            <p className="text-xs text-slate-600">Start a conversation with the AI</p>
-                          </div>
-                        </div>
-                      ) : (
-                        <>
-                          {chatMessages.map((msg, i) => (
-                            msg.sender === "ai" ? (
-                              // AI Message (Left side)
-                              <div key={i} className="flex w-full max-w-xs mt-2 space-x-3">
-                                <div className="flex items-center justify-center w-10 h-10 bg-blue-500 rounded-full shrink-0">
-                                  <Bot className="w-6 h-6 text-white" />
-                                </div>
-                                <div>
-                                  <div className="p-3 rounded-r-lg rounded-bl-lg bg-slate-800">
-                                    <p className="text-sm text-white">{msg.text}</p>
-                                  </div>
-                                  <span className="text-xs leading-none text-slate-500">
-                                    {new Date(msg.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                  </span>
-                                </div>
-                              </div>
-                            ) : (
-                              // User Message (Right side)
-                              <div key={i} className="flex justify-end w-full max-w-xs mt-2 ml-auto space-x-3">
-                                <div>
-                                  <div className="p-3 text-white bg-blue-600 rounded-l-lg rounded-br-lg">
-                                    <p className="text-sm">{msg.text}</p>
-                                  </div>
-                                  <span className="text-xs leading-none text-slate-500">
-                                    {new Date(msg.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                  </span>
-                                </div>
-                                <div className="flex items-center justify-center w-10 h-10 rounded-full shrink-0 bg-slate-700">
-                                  <User className="w-6 h-6 text-white" />
-                                </div>
-                              </div>
-                            )
-                          ))}
-                        </>
-                      )}
-                    </div>
-
-                    {/* Input Area */}
-                    <div className="pt-4 mt-4 border-t border-white/10">
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={newMessage}
-                          onChange={(e) => setNewMessage(e.target.value)}
-                          onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-                          placeholder="Type a message..."
-                          className="flex-1 px-4 py-3 text-sm border rounded-lg bg-slate-950 border-slate-800 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <button
-                          onClick={sendMessage}
-                          className="p-3 transition-colors bg-blue-600 rounded-lg hover:bg-blue-500"
-                        >
-                          <Send className="w-5 h-5 text-white" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}              </div>
+              </div>
             </aside>
           </main>
         </>
       )}
+
+      {/* Code Compiler Modal */}
+      <AnimatePresence>
+        {showCodeCompiler && (
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+          >
+            <m.div
+              initial={{ scale: 0.96, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.96, y: 20 }}
+              className="flex flex-col w-[94vw] h-[94vh] max-w-[1400px] max-h-[900px] min-w-[320px] min-h-[360px] bg-[#020617] border border-slate-800 overflow-hidden shadow-2xl resize"
+            >
+              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-900/60 shrink-0">
+                <div className="text-sm font-semibold text-white">Code Compiler</div>
+                <button
+                  onClick={() => setShowCodeCompiler(false)}
+                  className="px-3 py-1.5 text-xs font-semibold text-slate-300 rounded bg-slate-800 hover:bg-slate-700"
+                >
+                  Close
+                </button>
+              </div>
+              <div className="flex-1 min-h-0">
+                <CodeDemo
+                  embedded
+                  onReturnToInterview={() => setShowCodeCompiler(false)}
+                  onSubmissionComplete={handleCodeComplete}
+                />
+              </div>
+            </m.div>
+          </m.div>
+        )}
+      </AnimatePresence>
+
+      {/* Aptitude Modal */}
+      <AnimatePresence>
+        {showAptitude && (
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+          >
+            <m.div
+              initial={{ scale: 0.96, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.96, y: 20 }}
+              className="w-screen h-screen bg-[#0a0e1a] border border-slate-800 overflow-hidden shadow-2xl"
+            >
+              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-900/60">
+                <div className="text-sm font-semibold text-white">Aptitude Test</div>
+                <button
+                  onClick={() => setShowAptitude(false)}
+                  className="px-3 py-1.5 text-xs font-semibold text-slate-300 rounded bg-slate-800 hover:bg-slate-700"
+                >
+                  Close
+                </button>
+              </div>
+              <div className="h-[calc(100vh-52px)]">
+                <AptitudeTest
+                  embedded
+                  onComplete={handleAptitudeComplete}
+                />
+              </div>
+            </m.div>
+          </m.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

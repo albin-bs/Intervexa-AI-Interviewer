@@ -1,5 +1,4 @@
 import { memo, useMemo, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 import { Sparkles, BarChart3, Code2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -12,7 +11,7 @@ const FEATURES_DATA = [
     id: "demo",
     icon: <Sparkles className="w-6 h-6" />,
     title: "AI INTERVIEW SIMULATION",
-    heading: "Mobile friendly AI practice",
+    heading: "Friendly question practice",
     description:
       "Practice with realistic, adaptive interview questions tailored by Mockmate's AI.",
     ctaTo: "/interview",
@@ -97,7 +96,7 @@ class Spotlight {
 /* ---------------- NFT CARD ---------------- */
 
 const NFTCard = memo(({ feature }) => (
-  <Link to={feature.ctaTo} className="nft-card spotlight-card">
+  <div className="nft-card spotlight-card">
     <div className="card-inner">
       <div className="card-glow">
         <div className="card-glow-inner" />
@@ -129,7 +128,7 @@ const NFTCard = memo(({ feature }) => (
         </div>
       </div>
     </div>
-  </Link>
+  </div>
 ));
 
 /* ---------------- MAIN ---------------- */
@@ -169,7 +168,7 @@ const Features = memo(function Features() {
           <h2 className="text-3xl font-bold text-white sm:text-5xl">
             Everything you need to{" "}
             <span className="text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-orange-400 bg-clip-text">
-              prep smarter
+              prepare smarter
             </span>
           </h2>
           <p className="mt-4 text-lg text-gray-400">
@@ -236,8 +235,10 @@ const Features = memo(function Features() {
           background: #0f172a;
           border-radius: 1.5rem;
           padding: 1.5rem;
+          padding-bottom: 2rem;
           position: relative;
           z-index: 10;
+          height: 100%;
         }
 
         .card-glow {

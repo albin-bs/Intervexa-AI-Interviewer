@@ -446,49 +446,6 @@ export const problems: ProblemConfig[] = [
       "Keep track of the maximum sum ending at each position",
     ],
   },
-  {
-    id: "regular-expression",
-    slug: "regular-expression-matching",
-    number: 10,
-    title: "Regular Expression Matching",
-    difficulty: "Hard",
-    tags: ["String", "Dynamic Programming", "Recursion"],
-    acceptance: "28.5%",
-    locked: true,
-    timeComplexity: "O(m * n)",
-    spaceComplexity: "O(m * n)",
-    companies: ["Google", "Facebook", "Amazon"],
-    relatedProblems: [44, 65],
-    description:
-      "Given an input string s and a pattern p, implement regular expression matching with support for '.' and '*' where '.' matches any single character and '*' matches zero or more of the preceding element.",
-    samples: [
-      {
-        input: 's = "aa", p = "a"',
-        output: "false",
-        explanation: '"a" does not match the entire string "aa"',
-      },
-      {
-        input: 's = "aa", p = "a*"',
-        output: "true",
-        explanation: '"*" means zero or more of the preceding element, \'a\', therefore it matches "aa"',
-      },
-    ],
-    constraints: [
-      "1 ≤ s.length ≤ 20",
-      "1 ≤ p.length ≤ 20",
-      "s contains only lowercase English letters",
-      "p contains only lowercase English letters, '.', and '*'",
-    ],
-    edgeCases: [
-      "Empty string with pattern",
-      "Pattern with multiple consecutive stars",
-      "Pattern longer than string",
-    ],
-    hints: [
-      "This is a classic dynamic programming problem",
-      "Consider using a 2D DP table",
-    ],
-  },
 ];
 
 // ✅ KEEP AS ARRAYS (not functions)

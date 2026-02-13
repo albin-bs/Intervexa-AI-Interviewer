@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, CheckCircle, Circle, Lock, Filter, ChevronLeft, ChevronRight, Award } from "lucide-react";
+import { Search, CheckCircle, Circle, Lock, Filter } from "lucide-react";
 import { problems, allTags, type Difficulty } from "../data/problems";
 import { m, AnimatePresence, type Variants } from "framer-motion";
 
@@ -90,8 +90,6 @@ export default function Problems() {
   const [selectedStatus, setSelectedStatus] = useState<StatusFilter>("All");
   const [solvedProblems, setSolvedProblems] = useState<Set<string>>(new Set());
   const [attemptedProblems, setAttemptedProblems] = useState<Set<string>>(new Set());
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
 
   // Load user progress from localStorage
   useEffect(() => {
@@ -150,14 +148,6 @@ export default function Problems() {
     return matchesSearch && matchesDifficulty && matchesTag && matchesStatus;
   });
 
-  // Pagination
-  const totalPages = Math.ceil(filteredProblems.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProblems = filteredProblems.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
-
   // Stats
   const stats = {
     total: problems.filter((p) => !p.locked).length,
@@ -213,7 +203,6 @@ export default function Problems() {
     setSelectedDifficulty("All");
     setSelectedTag("All");
     setSelectedStatus("All");
-    setCurrentPage(1);
   };
 
 return (
@@ -263,17 +252,6 @@ return (
               Sharpen your skills with our curated coding challenges.
             </m.p>
           </div>
-          <m.button
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-bold transition-colors rounded-lg bg-slate-800 hover:bg-slate-700"
-          >
-            <Award className="w-4 h-4 text-amber-500" />
-            Premium Access
-          </m.button>
         </div>
 
         {/* Stats Grid */}
@@ -293,7 +271,6 @@ return (
                 {stats.solved}
                 <span className="text-sm font-normal text-slate-400">/{stats.total}</span>
               </p>
-              <span className="mb-1 text-xs font-bold text-emerald-500">+12%</span>
             </div>
           </m.div>
 
@@ -307,9 +284,8 @@ return (
             <div className="flex items-end gap-2">
               <p className="text-2xl font-bold">
                 {stats.easy}
-                <span className="text-sm font-normal text-slate-400">/150</span>
+                <span className="text-sm font-normal text-slate-400">/5</span>
               </p>
-              <span className="mb-1 text-xs font-bold text-emerald-500">+5%</span>
             </div>
           </m.div>
 
@@ -323,9 +299,8 @@ return (
             <div className="flex items-end gap-2">
               <p className="text-2xl font-bold">
                 {stats.medium}
-                <span className="text-sm font-normal text-slate-400">/250</span>
+                <span className="text-sm font-normal text-slate-400">/4</span>
               </p>
-              <span className="mb-1 text-xs font-bold text-emerald-500">+8%</span>
             </div>
           </m.div>
 
@@ -339,9 +314,8 @@ return (
             <div className="flex items-end gap-2">
               <p className="text-2xl font-bold">
                 {stats.hard}
-                <span className="text-sm font-normal text-slate-400">/100</span>
+                <span className="text-sm font-normal text-slate-400">/1</span>
               </p>
-              <span className="mb-1 text-xs font-bold text-emerald-500">+2%</span>
             </div>
           </m.div>
 
@@ -354,7 +328,6 @@ return (
             <p className="mb-1 text-sm font-medium text-white/80">Completion %</p>
             <div className="flex items-end gap-2">
               <p className="text-2xl font-bold">{completionPercentage}%</p>
-              <span className="mb-1 text-xs font-bold text-white/90">+4%</span>
             </div>
             <div className="w-full h-1.5 rounded-full bg-white/20 mt-3">
               <m.div
@@ -534,7 +507,7 @@ return (
               </thead>
               <tbody className="divide-y divide-slate-800">
                 <AnimatePresence>
-                  {paginatedProblems.length === 0 ? (
+                  {filteredProblems.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
                         <m.div
@@ -559,7 +532,7 @@ return (
                       </td>
                     </tr>
                   ) : (
-                    paginatedProblems.map((problem, index) => (
+                    filteredProblems.map((problem, index) => (
                       <m.tr
                         key={problem.id}
                         custom={index}
@@ -626,61 +599,6 @@ return (
                 </AnimatePresence>
               </tbody>
             </table>
-          </div>
-
-          {/* Table Footer with Pagination */}
-          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-800">
-            <p className="text-sm text-slate-400">
-              Showing{" "}
-              <span className="font-bold text-white">
-                {filteredProblems.length > 0 ? startIndex + 1 : 0}
-              </span>{" "}
-              to{" "}
-              <span className="font-bold text-white">
-                {Math.min(startIndex + itemsPerPage, filteredProblems.length)}
-              </span>{" "}
-              of <span className="font-bold text-white">{filteredProblems.length}</span> problems
-            </p>
-            <div className="flex gap-2">
-              <m.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="p-2 transition-colors border rounded-lg border-slate-700 hover:bg-slate-800 text-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </m.button>
-              
-              {Array.from({ length: totalPages }, (_, i) => {
-                const pageNum = i + 1;
-                return (
-                  <m.button
-                    key={pageNum}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setCurrentPage(pageNum)}
-                    className={`px-3.5 py-1.5 text-sm font-bold rounded-lg transition-colors ${
-                      currentPage === pageNum
-                        ? "bg-blue-600 text-white"
-                        : "hover:bg-slate-800 text-slate-400"
-                    }`}
-                  >
-                    {pageNum}
-                  </m.button>
-                );
-              })}
-
-              <m.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="p-2 transition-colors border rounded-lg border-slate-700 hover:bg-slate-800 text-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </m.button>
-            </div>
           </div>
         </m.div>
       </m.div>

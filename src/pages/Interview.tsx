@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import InterviewSetup from "./interview/InterviewSetup";
 import InterviewRoom from "./interview/InterviewRoom";
@@ -20,6 +20,22 @@ export default function Interview() {
   const [config, setConfig] = useState<InterviewConfig | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
 
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("navbar-visibility", {
+        detail: { hidden: stage === "active", hideFooter: stage === "active" },
+      })
+    );
+
+    return () => {
+      window.dispatchEvent(
+        new CustomEvent("navbar-visibility", {
+          detail: { hidden: false, hideFooter: false },
+        })
+      );
+    };
+  }, [stage]);
+
   const handleStartInterview = (interviewConfig: InterviewConfig) => {
     setConfig(interviewConfig);
     setSessionId(`session-${Date.now()}`);
@@ -31,7 +47,7 @@ export default function Interview() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0b1120] text-slate-100 pt-20">
+    <main className={`min-h-screen bg-[#0b1120] text-slate-100 ${stage === "active" ? "" : "pt-20"}`}>
       <AnimatePresence mode="wait">
         {stage === "setup" && (
           <m.div

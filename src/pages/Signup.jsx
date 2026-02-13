@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { signUpWithEmail } from "../services/authService";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -109,19 +110,24 @@ export default function Signup() {
     setSuccess(false);
     
     try {
-      // TODO: Replace with your actual backend API call
-      await new Promise((r) => setTimeout(r, 1200));
-      
-      const data = {
-        accessToken: "mock-token-" + Date.now(),
-        userId: "user-" + Date.now(),
+      const result = await signUpWithEmail({
         email: form.email,
-      };
+        password: form.password,
+        full_name: form.name,
+        user_type: "company",
+      });
 
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("userId", data.userId);
-      localStorage.setItem("userEmail", data.email);
-      localStorage.setItem("userName", form.name);
+      if (!result.success) {
+        throw new Error(result.error || "Failed to create account");
+      }
+
+      if (result.user) {
+        localStorage.setItem("accessToken", result.user.id);
+        localStorage.setItem("userId", result.user.id);
+        localStorage.setItem("userEmail", result.user.email || form.email);
+        localStorage.setItem("userName", form.name);
+      }
+
       localStorage.setItem("needsOnboarding", "true");
       
       console.log("Signup successful:", form);
@@ -133,7 +139,7 @@ export default function Signup() {
 
     } catch (error) {
       console.error("Signup error:", error);
-      setErrors({ submit: "Something went wrong. Please try again." });
+      setErrors({ submit: error.message || "Something went wrong. Please try again." });
     } finally {
       setLoading(false);
     }

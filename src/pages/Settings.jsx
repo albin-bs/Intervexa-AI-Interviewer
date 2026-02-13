@@ -9,16 +9,16 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState("profile");
   const [isCancelling, setIsCancelling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [formData, setFormData] = useState({
-    displayName: "Alex Rivera",
-    headline: "Senior Backend Engineer",
-    targetRole: "Backend Engineer",
-    difficulty: "Senior / Lead",
-    language: "JavaScript (TypeScript)",
-    editorTheme: "VS Dark",
-    weeklySummary: true,
-    productUpdates: false,
-  });
+  const [formData, setFormData] = useState(() => ({
+    displayName: localStorage.getItem("mockmate-display-name") || "Alex Rivera",
+    headline: localStorage.getItem("mockmate-headline") || "Senior Backend Engineer",
+    targetRole: localStorage.getItem("mockmate-target-role") || "Backend Engineer",
+    difficulty: localStorage.getItem("mockmate-interview-difficulty") || "Senior / Lead",
+    language: localStorage.getItem("mockmate-preferred-language") || "JavaScript (TypeScript)",
+    editorTheme: localStorage.getItem("mockmate-editor-theme") || "VS Dark",
+    weeklySummary: localStorage.getItem("mockmate-weekly-summary") !== "false",
+    productUpdates: localStorage.getItem("mockmate-product-updates") === "true",
+  }));
 
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -50,7 +50,15 @@ export default function Settings() {
   }
 
   const handleSaveChanges = () => {
-    console.log("Saving changes:", formData);
+    localStorage.setItem("mockmate-display-name", formData.displayName);
+    localStorage.setItem("mockmate-headline", formData.headline);
+    localStorage.setItem("mockmate-target-role", formData.targetRole);
+    localStorage.setItem("mockmate-interview-difficulty", formData.difficulty);
+    localStorage.setItem("mockmate-preferred-language", formData.language);
+    localStorage.setItem("mockmate-editor-theme", formData.editorTheme);
+    localStorage.setItem("mockmate-weekly-summary", String(formData.weeklySummary));
+    localStorage.setItem("mockmate-product-updates", String(formData.productUpdates));
+    window.dispatchEvent(new Event("mockmate-settings-updated"));
     alert("Changes saved successfully!");
   };
 

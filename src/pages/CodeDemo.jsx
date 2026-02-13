@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { problems } from "../data/problems";
 import axios from "axios";
 import Editor from "@monaco-editor/react";
@@ -81,7 +81,46 @@ function getDifficultyColor(difficulty) {
   }
 }
 
-export default function CodeDemo() {
+function evaluateClarity(code) {
+  const lines = code.split("\n");
+  const nonEmpty = lines.filter((l) => l.trim().length > 0);
+  const commentLines = lines.filter((l) => /^\s*(#|\/\/|\/\*|\*)/.test(l)).length;
+  const avgLength = nonEmpty.length
+    ? Math.round(nonEmpty.reduce((s, l) => s + l.length, 0) / nonEmpty.length)
+    : 0;
+  const longLines = nonEmpty.filter((l) => l.length > 120).length;
+  const identifiers = code.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) || [];
+  const singleLetters = identifiers.filter((id) => id.length === 1).length;
+  const commentRatio = nonEmpty.length ? commentLines / nonEmpty.length : 0;
+  const singleLetterRatio = identifiers.length ? singleLetters / identifiers.length : 0;
+
+  let score = 70;
+  if (commentRatio >= 0.05) score += 10;
+  if (avgLength <= 100) score += 5;
+  score -= Math.min(longLines * 2, 10);
+  if (singleLetterRatio > 0.2) score -= 10;
+
+  score = Math.max(0, Math.min(100, score));
+  const label =
+    score >= 85
+      ? "Excellent"
+      : score >= 70
+      ? "Good"
+      : score >= 50
+      ? "Needs improvement"
+      : "Poor";
+
+  const notes = [
+    `Average line length: ${avgLength}`,
+    `Comment coverage: ${Math.round(commentRatio * 100)}%`,
+  ];
+  if (longLines > 0) notes.push(`Long lines: ${longLines}`);
+  if (singleLetterRatio > 0.2) notes.push("Consider more descriptive variable names.");
+
+  return { score, label, notes };
+}
+
+export default function CodeDemo({ embedded = false, onReturnToInterview, onSubmissionComplete } = {}) {
   const [searchParams] = useSearchParams();
   const problemId = searchParams.get("problem") || "two-sum";
   const currentProblem = problems.find((p) => p.id === problemId) || problems[0];
@@ -105,6 +144,10 @@ export default function CodeDemo() {
   const [aiFeedbackLoading, setAiFeedbackLoading] = useState(false);
   const [aiFeedback, setAiFeedback] = useState(null);
 
+  const [clarityLoading, setClarityLoading] = useState(false);
+  const [clarityResult, setClarityResult] = useState(null);
+  const [submissionComplete, setSubmissionComplete] = useState(false);
+
   const [editorFontSize, setEditorFontSize] = useState(
     Number(localStorage.getItem("mockmate-editor-font-size") || 14)
   );
@@ -119,6 +162,7 @@ export default function CodeDemo() {
 
   const [generatedTestsLoading, setGeneratedTestsLoading] = useState(false);
   const [generatedTests, setGeneratedTests] = useState([]);
+  const languageSelectRef = useRef(null);
 
   // Persist editor prefs
   useEffect(() => {
@@ -148,6 +192,8 @@ export default function CodeDemo() {
       setHistory([]);
     }
     setFailedRuns(0);
+    setSubmissionComplete(false);
+    setClarityResult(null);
   }, [problemId]);
 
   // Autosave code
@@ -159,6 +205,11 @@ export default function CodeDemo() {
   useEffect(() => {
     localStorage.setItem(`mockmate-history-${problemId}`, JSON.stringify(history));
   }, [history, problemId]);
+
+  useEffect(() => {
+    setSubmissionComplete(false);
+    setClarityResult(null);
+  }, [languageKey]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -188,14 +239,17 @@ export default function CodeDemo() {
       trimmed.startsWith("# write your solution here")
     ) {
       setStatusText("Please write a solution before running.");
-      setOutput("No code to run.");
-      return;
+      setOutput("Type your code in the editor before running.");
+      return null;
     }
 
     setIsRunning(true);
     setOutput("");
     setStatusText("Running...");
     setAiExplain(null);
+    setAiFeedback(null);
+    setClarityResult(null);
+    setSubmissionComplete(false);
 
     const payload = {
       sourceCode: code,
@@ -205,6 +259,7 @@ export default function CodeDemo() {
       runMode,
     };
 
+    let runSnapshot = null;
     try {
       const res = await axios.post("http://localhost:4000/api/execute", payload);
 
@@ -250,7 +305,7 @@ export default function CodeDemo() {
         }
       }
 
-      const runSnapshot = {
+      runSnapshot = {
         id: Date.now(),
         timestamp: new Date().toISOString(),
         languageKey,
@@ -273,10 +328,12 @@ export default function CodeDemo() {
       }
     } catch (err) {
       console.error(err);
-      setOutput("Error running code. Please try again.");
+      setOutput("Backend unavailable. Start the server to run code.");
       setStatusText("Request Failed");
       setFailedRuns((c) => c + 1);
-      const runSnapshot = {
+      setClarityResult(null);
+      setSubmissionComplete(false);
+      runSnapshot = {
         id: Date.now(),
         timestamp: new Date().toISOString(),
         languageKey,
@@ -294,6 +351,42 @@ export default function CodeDemo() {
       setHistory((prev) => [runSnapshot, ...prev.slice(0, 19)]);
     } finally {
       setIsRunning(false);
+    }
+    return runSnapshot;
+  }
+
+  async function handleSubmit() {
+    const runSnapshot = await handleRun("all-tests");
+    if (!runSnapshot) return;
+    if (runSnapshot.status === "Request Failed") return;
+    setSubmissionComplete(true);
+    setClarityLoading(true);
+    const clarity = evaluateClarity(code);
+    setClarityResult(clarity);
+    setClarityLoading(false);
+
+    try {
+      localStorage.setItem(
+        "mockmate-coding-result",
+        JSON.stringify({
+          status: runSnapshot.status,
+          tests_total: runSnapshot.tests_total,
+          tests_passed: runSnapshot.tests_passed,
+          clarity,
+          completedAt: new Date().toISOString(),
+        })
+      );
+    } catch {
+      // ignore
+    }
+
+    if (embedded && typeof onSubmissionComplete === "function") {
+      onSubmissionComplete({
+        status: runSnapshot.status,
+        tests_total: runSnapshot.tests_total,
+        tests_passed: runSnapshot.tests_passed,
+        clarity,
+      });
     }
   }
 
@@ -410,15 +503,20 @@ export default function CodeDemo() {
   const lastRun = history[0];
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-[#020617] text-slate-100">
+    <div className={`${embedded ? "h-full" : "h-screen"} flex flex-col overflow-hidden bg-[#020617] text-slate-100`}>
       {/* Top Navigation Bar - This IS your navbar */}
       <header className="flex items-center justify-between h-14 border-b border-slate-800 px-4 bg-[#020617] z-50 relative shrink-0">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2 text-emerald-500">
             <Terminal className="w-7 h-7" />
-            <h2 className="text-lg font-bold leading-tight tracking-tight text-white">
-              MockMate-AI
-            </h2>
+            {!embedded && (
+              <Link
+                to="/dashboard"
+                className="text-xs font-semibold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-md hover:bg-emerald-500/20 transition"
+              >
+                Dashboard
+              </Link>
+            )}
           </div>
           <div className="h-6 w-[1px] bg-slate-800"></div>
           <div className="flex items-center gap-4">
@@ -433,6 +531,28 @@ export default function CodeDemo() {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 lg:hidden">
+            <m.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => handleRun("all-tests")}
+              disabled={isRunning}
+              className="flex items-center gap-2 px-3 py-1 text-xs font-medium transition-all rounded-md text-slate-300 hover:bg-slate-800 disabled:opacity-60"
+            >
+              <Play className="w-4 h-4" />
+              <span>{isRunning ? "Running..." : "Run"}</span>
+            </m.button>
+            <m.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleSubmit}
+              disabled={isRunning}
+              className="flex items-center gap-2 px-3 py-1 text-xs font-bold text-white transition-all rounded-md bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60"
+            >
+              <Upload className="w-4 h-4" />
+              <span>Submit</span>
+            </m.button>
+          </div>
           <div className="relative">
             <m.button
               whileHover={{ scale: 1.02 }}
@@ -488,15 +608,7 @@ export default function CodeDemo() {
               </div>
             )}
           </div>
-          <div className="flex items-center gap-1">
-            <m.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="p-2 transition-colors text-slate-400 hover:text-white"
-            >
-              <Settings className="w-5 h-5" />
-            </m.button>
-          </div>
+          <div className="flex items-center gap-1"></div>
         </div>
       </header>
 
@@ -506,7 +618,7 @@ export default function CodeDemo() {
         <section className="w-[400px] border-r border-slate-800 flex flex-col bg-slate-900/30 overflow-y-auto custom-scrollbar">
           <div className="sticky top-0 bg-[#020617] z-30 border-b border-slate-800">
             <div className="flex px-4">
-              {["description", "editorial", "submissions"].map((tab) => (
+              {["description", "submissions"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveProblemTab(tab)}
@@ -608,15 +720,6 @@ export default function CodeDemo() {
               </>
             )}
 
-            {activeProblemTab === "editorial" && (
-              <div className="space-y-3 text-sm text-slate-300">
-                <p className="mb-2 text-xs text-slate-400">
-                  Editorials are best read after attempting the problem.
-                </p>
-                <p>Editorial content for {currentProblem.title} will be available here.</p>
-              </div>
-            )}
-
             {activeProblemTab === "submissions" && (
               <div className="text-xs text-slate-300">
                 <p>
@@ -631,8 +734,17 @@ export default function CodeDemo() {
         <section className="flex flex-col flex-1 min-w-0 border-r border-slate-800">
           <div className="relative z-20 flex items-center justify-between h-10 px-3 border-b border-slate-800 bg-slate-900/20 shrink-0">
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded bg-slate-800 text-slate-300">
+            <div
+              className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded bg-slate-800 text-slate-300"
+              onClick={() => {
+                if (languageSelectRef.current) {
+                  languageSelectRef.current.focus();
+                  languageSelectRef.current.click?.();
+                }
+              }}
+            >
               <select
+                ref={languageSelectRef}
                 value={languageId}
                 onChange={handleLanguageChange}
                 className="pr-5 text-xs bg-transparent border-none outline-none appearance-none cursor-pointer"
@@ -655,7 +767,7 @@ export default function CodeDemo() {
             </m.button>
           </div>
 
-            <div className="flex items-center gap-3">
+            <div className="items-center hidden gap-3 lg:flex">
               <m.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -669,7 +781,7 @@ export default function CodeDemo() {
               <m.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => handleRun("all-tests")}
+                onClick={handleSubmit}
                 disabled={isRunning}
                 className="flex items-center gap-2 px-4 py-1 text-sm font-bold text-white transition-all rounded-md bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60"
               >
@@ -762,8 +874,39 @@ export default function CodeDemo() {
               )}
 
               <pre className="p-3 font-mono text-xs whitespace-pre-wrap rounded bg-slate-950/60 text-slate-100">
-                {output || "Run code to see output here."}
+                {output || "Type your code and run to see output here."}
               </pre>
+
+              {clarityResult && embedded && submissionComplete && (
+                <m.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 border rounded-xl bg-slate-900/60 border-slate-800"
+                >
+                  <h5 className="flex items-center gap-2 mb-2 text-xs font-bold text-indigo-400">
+                    <Sparkles className="w-4 h-4" />
+                    CLARITY CHECK
+                  </h5>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-white">
+                        {clarityResult.label}
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        Score: {clarityResult.score}/100
+                      </p>
+                    </div>
+                    <div className="text-xs text-slate-400">
+                      {clarityLoading ? "Analyzing..." : "Complete"}
+                    </div>
+                  </div>
+                  <ul className="mt-2 space-y-1 text-[11px] text-slate-400">
+                    {clarityResult.notes?.map((note, i) => (
+                      <li key={i}>• {note}</li>
+                    ))}
+                  </ul>
+                </m.div>
+              )}
 
               {aiFeedback && !aiFeedback.error && (
                 <m.div

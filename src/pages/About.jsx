@@ -57,6 +57,8 @@ function About() {
       <main className="relative z-10 px-6 py-12 mx-auto max-w-7xl lg:py-24">
         {/* Hero Section */}
         <section className="mb-24 text-center">
+          <br/>
+          <br/>
           <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

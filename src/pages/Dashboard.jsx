@@ -129,7 +129,7 @@ const Dashboard = memo(function Dashboard() {
       {/* ===== Retro Grid Background (ONLY ADDITION) ===== */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <RetroGrid />
-        <div className="absolute inset-0 bg-[#0b1120]/80" />
+        <div className="absolute inset-0 bg-[#0b1120]/60" />
       </div>
 <br/>
 <br/>
@@ -175,7 +175,7 @@ const Dashboard = memo(function Dashboard() {
             className="relative p-8 border cursor-pointer rounded-xl bg-slate-900/70 border-white/10 hover:border-emerald-500/50"
           >
             <h3 className="text-xl font-bold">Start Coding</h3>
-            <p className="text-slate-400">Practice DSA in our cloud IDE.</p>
+            <p className="text-slate-400">Practice coding in our IDE.</p>
           </m.div>
 
           <m.div
@@ -186,17 +186,17 @@ const Dashboard = memo(function Dashboard() {
             className="relative p-8 border cursor-pointer rounded-xl bg-slate-900/70 border-white/10 hover:border-blue-500/50"
           >
             <h3 className="text-xl font-bold">Mock Interview</h3>
-            <p className="text-slate-400">AI-powered interview simulations.</p>
+            <p className="text-slate-400">AI-powered interviews.</p>
           </m.div>
         </m.section>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Left Sidebar - Practice Progress */}
-          <section className="space-y-6 lg:col-span-1">
+          <section className="flex flex-col space-y-6 lg:col-span-1">
             {/* Progress Card */}
             <m.div
               variants={itemVariants}
-              className="p-6 border shadow-lg rounded-xl bg-slate-900/70 backdrop-blur-xl border-white/10"
+              className="flex-1 p-6 border shadow-lg rounded-xl bg-slate-900/70 backdrop-blur-xl border-white/10"
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold text-white">Practice Progress</h2>
@@ -249,21 +249,6 @@ const Dashboard = memo(function Dashboard() {
                   ))}
                 </div>
               </div>
-            </m.div>
-
-
-            {/* Upgrade Card */}
-            <m.div
-              variants={itemVariants}
-              className="p-6 border shadow-lg rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent backdrop-blur-xl border-white/10"
-            >
-              <h3 className="mb-2 font-bold text-white">Upgrade to Pro+</h3>
-              <p className="mb-4 text-sm text-slate-400">
-                Get unlimited mock interviews and personalized career coaching.
-              </p>
-              <button className="w-full py-2 text-sm font-bold text-blue-600 bg-white rounded-lg">
-                View Plans
-              </button>
             </m.div>
           </section>
 
@@ -359,9 +344,6 @@ const Dashboard = memo(function Dashboard() {
             >
               <div className="flex items-center justify-between p-6 border-b border-slate-800">
                 <h2 className="text-lg font-bold text-white">Recent Submissions</h2>
-                <Link to="/submissions" className="text-sm font-semibold text-blue-500 hover:underline">
-                  View All
-                </Link>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">

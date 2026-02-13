@@ -1,6 +1,7 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { countries as countryCodes } from "../data/countryCodes";
+import { sendEmailOtp, sendSmsOtp } from "../services/authService";
 
 export default function VerifyStart() {
   const [params] = useSearchParams();
@@ -14,6 +15,7 @@ export default function VerifyStart() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const filteredCountries = useMemo(() => {
     if (!countrySearch.trim()) return countryCodes;
@@ -27,18 +29,38 @@ export default function VerifyStart() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-
     const fullPhone = phone ? `${selectedCountry.dial_code} ${phone}` : "";
+    try {
+      if (preferred === "sms") {
+        if (!fullPhone) throw new Error("Phone number is required");
+        const result = await sendSmsOtp(fullPhone);
+        if (!result.success) {
+          throw new Error(result.error || "Failed to send code");
+        }
+      } else {
+        if (!email) {
+          throw new Error("Email is required");
+        }
 
-    const destination =
-      preferred === "sms" && fullPhone
-        ? { method: "sms", value: fullPhone }
-        : { method: "email", value: email };
+        const result = await sendEmailOtp(email);
+        if (!result.success) {
+          throw new Error(result.error || "Failed to send code");
+        }
+      }
 
-    navigate("/verify/code", { state: destination });
+      const destination =
+        preferred === "sms" && fullPhone
+          ? { method: "sms", value: fullPhone }
+          : { method: "email", value: email };
+
+      navigate("/verify/code", { state: destination });
+    } catch (err) {
+      setError(err.message || "Failed to send verification code");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -115,6 +137,12 @@ export default function VerifyStart() {
                 required
                 className="w-full rounded-lg bg-[#0f1420] border border-slate-700/70 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
+            </div>
+          )}
+
+          {error && (
+            <div className="px-4 py-3 text-sm border text-rose-300 border-rose-500/30 bg-rose-500/10 rounded-xl">
+              {error}
             </div>
           )}
 
