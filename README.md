@@ -14,28 +14,22 @@
 ### 🎯 Core Features
 
 #### **1. AI-Powered Mock Interviews**
-- 🤖 **Multimodal Interview Simulation** — Practice with AI-generated questions; answer via video, audio, or text
-- 🎤 **Real-Time Feedback** — Instant analysis of content, clarity, tone, facial expressions, and confidence
-- 📋 **Role-Specific Questions** — Personalized prompts based on your resume, target job, and experience level
-- 🛡️ **Bias-Aware Scoring** — Fair, transparent feedback calibrated for inclusivity
 
 #### **2. Interactive Code Playground**
-- 💻 **Multi-Language Support** — Python, JavaScript, C++, Java, C#, Go, Ruby, PHP, TypeScript
-- ⚡ **Real-Time Execution** — Powered by Judge0 API with custom test case support
-- 🧪 **Automated Test Judging** — Run against multiple test cases with detailed pass/fail analysis
-- 🤖 **AI Code Assistant**
   - 🔍 Explain failures and suggest fixes
   - 🎨 Refactor code for better performance
   - 🧩 Generate edge test cases
   - 📊 Analyze time/space complexity
-- 📝 **Monaco Editor** — Full-featured code editor with syntax highlighting, themes, and shortcuts
-- 💾 **Auto-Save & History** — Never lose your work; restore previous submissions
 
 #### **4. Progress Analytics Dashboard**
-- 📈 **Performance Metrics** — Visualize acceptance rates, average runtimes, memory usage
-- 🎯 **Skill Gap Analysis** — Identify weak areas with targeted recommendations
-- 📊 **Session History** — Review all past interviews and coding sessions
-- 📥 **Export & Sharing** — Download reports or share highlights with mentors
+
+## 🚀 Getting Started
+
+1. Create a local environment file by copying the template from .env.example to .env.
+2. Fill in the Supabase values for:
+  - VITE_SUPABASE_URL
+  - VITE_SUPABASE_ANON_KEY
+3. Restart the dev server after updating .env.
 
 ---
 
