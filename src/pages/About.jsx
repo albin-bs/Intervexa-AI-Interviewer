@@ -79,7 +79,7 @@ function About() {
             </h1>
 
             <p className="max-w-2xl mx-auto mb-6 text-lg md:text-xl text-slate-400">
-              MockMate is an AI-powered interview practice platform built by
+              Intervexa is an AI-powered interview practice platform built by
               engineers who have gone through dozens of tech interviews
               ourselves.
             </p>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import InterviewSetup from "./interview/InterviewSetup";
 import InterviewRoom from "./interview/InterviewRoom";
-import InterviewSummary from "./interview/InterviewSummary";
+import CandidateSummary from "./interview/CandidateSummary";
 
 type InterviewStage = "setup" | "active" | "summary";
 
@@ -84,8 +84,7 @@ export default function Interview() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <InterviewSummary
-              sessionId={sessionId}
+            <CandidateSummary
               onRestart={() => setStage("setup")}
             />
           </m.div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Check } from "lucide-react";
 import { signUpWithEmail } from "../services/authService";
 
 export default function Signup() {
@@ -13,10 +14,8 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState({
-    score: 0,
-    message: 'Choose a strong password'
-  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     if (!success) return;
@@ -28,52 +27,15 @@ export default function Signup() {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: undefined }));
-    
-    // Check password strength when password field changes
-    if (name === 'password') {
-      checkPasswordStrength(value);
-    }
   }
 
-  function checkPasswordStrength(password) {
-    let score = 0;
-
-    if (password.length >= 8) {
-      // Length check
-      if (password.length >= 12) score += 20;
-      
-      // Contains number check
-      if (/[0-9]/.test(password)) score += 20;
-      
-      // Contains lowercase check
-      if (/[a-z]/.test(password)) score += 20;
-      
-      // Contains uppercase check
-      if (/[A-Z]/.test(password)) score += 20;
-
-      // Contains special character check
-      if (/[^A-Za-z0-9]/.test(password)) score += 20;
-    } else if (password.length > 0) {
-      score = 10;
-    }
-
-    let message = '';
-    if (score === 0) {
-      message = 'Choose a strong password';
-    } else if (score === 10) {
-      message = 'Too short!';
-    } else if (score <= 30) {
-      message = 'Weak';
-    } else if (score <= 60) {
-      message = 'Medium';
-    } else if (score <= 80) {
-      message = 'Strong';
-    } else {
-      message = 'Very strong!';
-    }
-
-    setPasswordStrength({ score, message });
-  }
+  const passwordChecks = [
+    { label: "At least 8 characters", test: form.password.length >= 8 },
+    { label: "At least one uppercase letter", test: /[A-Z]/.test(form.password) },
+    { label: "At least one lowercase letter", test: /[a-z]/.test(form.password) },
+    { label: "At least one number", test: /[0-9]/.test(form.password) },
+    { label: "At least one symbol", test: /[^A-Za-z0-9]/.test(form.password) },
+  ];
 
   function validate(values) {
     const next = {};
@@ -87,8 +49,8 @@ export default function Signup() {
 
     if (!values.password) {
       next.password = "Password is required";
-    } else if (values.password.length < 6) {
-      next.password = "Password must be at least 6 characters";
+    } else if (values.password.length < 8 || !/[A-Z]/.test(values.password) || !/[a-z]/.test(values.password) || !/[0-9]/.test(values.password) || !/[^A-Za-z0-9]/.test(values.password)) {
+      next.password = "Password does not meet all requirements.";
     }
 
     if (!values.confirm) {
@@ -128,18 +90,20 @@ export default function Signup() {
         localStorage.setItem("userName", form.name);
       }
 
-      localStorage.setItem("needsOnboarding", "true");
-      
       console.log("Signup successful:", form);
       setSuccess(true);
 
       setTimeout(() => {
-        navigate("/onboarding");
+        navigate("/");
       }, 1000);
 
     } catch (error) {
       console.error("Signup error:", error);
-      setErrors({ submit: error.message || "Something went wrong. Please try again." });
+      const raw = error.message || "";
+      const friendlyMessage = raw.toLowerCase().includes("password")
+        ? "Passwords must have at least 8 characters and contain at least two of the following: upper case letters, lower case letters, numbers and symbols."
+        : raw || "Something went wrong. Please try again.";
+      setErrors({ submit: friendlyMessage });
     } finally {
       setLoading(false);
     }
@@ -150,16 +114,13 @@ export default function Signup() {
       {/* Left Section: Sign Up Form */}
       <div className="relative z-10 flex flex-col items-center justify-center w-full p-8 lg:w-1/2 md:p-16">
         <div className="w-full max-w-[480px]">
-
+          
+          <br/>
+          <br/>
+          <br/>
           {/* Headline Text Section */}
           <div className="mb-8">
             <h1 className="mb-2 text-3xl font-bold leading-tight text-white">Create your account</h1>
-            <p className="text-[#9ca6ba] text-sm">
-              Already have an account?{" "}
-              <Link to="/login" className="text-[#0d59f2] hover:underline">
-                Sign in
-              </Link>
-            </p>
           </div>
 
           {/* Form Area */}
@@ -229,58 +190,47 @@ export default function Signup() {
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
                   value={form.password}
                   onChange={handleChange}
-                  className={`w-full bg-[#0f1420] border-none rounded-lg h-12 px-4 text-white placeholder:text-[#9ca6ba] focus:ring-2 transition-all outline-none ${
+                  className={`w-full bg-[#0f1420] border-none rounded-lg h-12 px-4 pr-12 text-white placeholder:text-[#9ca6ba] focus:ring-2 transition-all outline-none ${
                     errors.password ? "focus:ring-red-500/50" : "focus:ring-[#0d59f2]/50"
                   }`}
                   placeholder="••••••••"
                   aria-invalid={!!errors.password}
                 />
-              </div>
-              
-              {/* Progress Bar */}
-              {form.password && (
-                <div
-                  className="h-1.5 w-full rounded-full bg-[#1a1f2e]"
-                  role="progressbar"
-                  aria-label="Password strength"
-                  aria-valuenow={passwordStrength.score}
-                  aria-valuemin="0"
-                  aria-valuemax="100"
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute transition-colors -translate-y-1/2 text-slate-500 hover:text-slate-300 right-4 top-1/2"
+                  tabIndex={-1}
                 >
-                  <div
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      passwordStrength.score <= 30
-                        ? 'bg-rose-500'
-                        : passwordStrength.score <= 60
-                        ? 'bg-orange-500'
-                        : 'bg-emerald-500'
-                    }`}
-                    style={{ width: `${passwordStrength.score}%` }}
-                  />
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+
+              {/* Live Password Requirements Checklist */}
+              {form.password && (
+                <div className="mt-1 p-3 rounded-lg bg-[#0f1420] space-y-1.5">
+                  <p className="mb-2 text-xs font-semibold text-slate-400">Your password must:</p>
+                  {passwordChecks.map((check) => (
+                    <div key={check.label} className="flex items-center gap-2">
+                      <div className={`flex items-center justify-center w-4 h-4 rounded-full shrink-0 transition-colors ${
+                        check.test ? "bg-emerald-500" : "bg-slate-700"
+                      }`}>
+                        <Check className="w-2.5 h-2.5 text-white" />
+                      </div>
+                      <span className={`text-xs transition-colors ${
+                        check.test ? "text-emerald-400" : "text-slate-500"
+                      }`}>
+                        {check.label}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               )}
-              
-              {/* Strength Message */}
-              {form.password && (
-                <p
-                  className={`text-sm font-medium transition-all ${
-                    passwordStrength.score === 0
-                      ? 'text-[#9ca6ba]'
-                      : passwordStrength.score <= 30
-                      ? 'text-rose-400'
-                      : passwordStrength.score <= 60
-                      ? 'text-orange-400'
-                      : 'text-emerald-400'
-                  }`}
-                >
-                  {passwordStrength.message}
-                </p>
-              )}
-              
+
               {errors.password && (
                 <p className="text-xs text-red-400">{errors.password}</p>
               )}
@@ -295,16 +245,24 @@ export default function Signup() {
                 <input
                   id="confirm"
                   name="confirm"
-                  type="password"
+                  type={showConfirm ? "text" : "password"}
                   autoComplete="new-password"
                   value={form.confirm}
                   onChange={handleChange}
-                  className={`w-full bg-[#0f1420] border-none rounded-lg h-12 px-4 text-white placeholder:text-[#9ca6ba] focus:ring-2 transition-all outline-none ${
+                  className={`w-full bg-[#0f1420] border-none rounded-lg h-12 px-4 pr-12 text-white placeholder:text-[#9ca6ba] focus:ring-2 transition-all outline-none ${
                     errors.confirm ? "focus:ring-red-500/50" : "focus:ring-[#0d59f2]/50"
                   }`}
                   placeholder="••••••••"
                   aria-invalid={!!errors.confirm}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute transition-colors -translate-y-1/2 text-slate-500 hover:text-slate-300 right-4 top-1/2"
+                  tabIndex={-1}
+                >
+                  {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
               {errors.confirm && (
                 <p className="text-xs text-red-400">{errors.confirm}</p>
@@ -327,20 +285,13 @@ export default function Signup() {
               )}
             </button>
           </form>
-
-          {/* Legal Notice */}
-          <div className="mt-8 text-center">
-            <p className="text-[#9ca6ba] text-xs leading-relaxed">
-              By signing up, you agree to our Terms of Service and Privacy Policy.
-            </p>
-          </div>
         </div>
       </div>
 
       {/* Right Section: Visual Workspace Overlay */}
       <div className="relative hidden lg:block lg:w-1/2">
         <div className="absolute inset-0 bg-[#0d59f2]/20 mix-blend-multiply z-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a] via-transparent to-transparent z-10 opacity-60"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-[#0a0e1a] via-transparent to-transparent z-10 opacity-60"></div>
         <img
           alt="Modern developer workspace with multiple monitors"
           className="object-cover w-full h-full"
@@ -349,28 +300,18 @@ export default function Signup() {
 
         {/* Success Toast Mockup - Shows when success state is true */}
         {success && (
-          <div className="absolute z-20 top-10 right-10 animate-in slide-in-from-top-5">
+          <div className="absolute z-20 bottom-10 right-10 animate-in slide-in-from-top-5">
             <div className="flex items-center gap-3 px-6 py-4 text-white border shadow-2xl bg-emerald-500/90 backdrop-blur-md rounded-xl border-emerald-400/30">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
               <div className="flex flex-col">
                 <p className="text-sm font-bold">Account created!</p>
-                <p className="text-xs text-white/90">Redirecting to onboarding...</p>
+                <p className="text-xs text-white/90">Redirecting to home...</p>
               </div>
             </div>
           </div>
         )}
-
-        {/* Floating Quote/Detail */}
-        <div className="absolute z-20 max-w-md bottom-20 left-20">
-          <h3 className="mb-2 text-2xl font-bold leading-tight text-white">
-            Elevate your mock testing with AI-driven precision.
-          </h3>
-          <p className="text-sm text-white/70">
-            Join over 10,000 developers building reliable systems faster.
-          </p>
-        </div>
       </div>
     </div>
   );

@@ -618,7 +618,7 @@ export default function CodeDemo({ embedded = false, onReturnToInterview, onSubm
         <section className="w-[400px] border-r border-slate-800 flex flex-col bg-slate-900/30 overflow-y-auto custom-scrollbar">
           <div className="sticky top-0 bg-[#020617] z-30 border-b border-slate-800">
             <div className="flex px-4">
-              {["description", "submissions"].map((tab) => (
+              {["description"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveProblemTab(tab)}
@@ -639,7 +639,7 @@ export default function CodeDemo({ embedded = false, onReturnToInterview, onSubm
               <>
                 <div>
                   <h1 className="mb-4 text-2xl font-bold text-white">
-                    {currentProblem.number}. {currentProblem.title}
+                    {currentProblem.title}
                   </h1>
                   <div className="flex flex-wrap gap-2 mb-6">
                     {currentProblem.tags?.map((tag) => (
@@ -720,13 +720,7 @@ export default function CodeDemo({ embedded = false, onReturnToInterview, onSubm
               </>
             )}
 
-            {activeProblemTab === "submissions" && (
-              <div className="text-xs text-slate-300">
-                <p>
-                  View your past runs in the "Run History" dropdown in the top bar.
-                </p>
-              </div>
-            )}
+
           </div>
         </section>
 
@@ -983,10 +977,7 @@ export default function CodeDemo({ embedded = false, onReturnToInterview, onSubm
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Connected to AI Engine</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span>Latency: 12ms</span>
+            <span>Online</span>
           </div>
         </div>
         <div className="flex items-center gap-4">

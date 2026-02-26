@@ -67,7 +67,7 @@ export async function signUpWithEmail({ email, password, full_name, user_type = 
           full_name,
           user_type,
         },
-        emailRedirectTo: `${window.location.origin}/company/job-intake`,
+        emailRedirectTo: `${window.location.origin}/`,
       },
     });
 

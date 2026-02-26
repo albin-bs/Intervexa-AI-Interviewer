@@ -28,10 +28,14 @@ const pages = {
   InterviewerSignup: lazy(() => import("./pages/InterviewerSignup")),
   UserOnboarding: lazy(() => import("./pages/UserOnboarding")),
   Dashboard: lazy(() => import("./pages/Dashboard")),
+  CandidateDashboard: lazy(() => import("./pages/CandidateDashboard")),
   Settings: lazy(() => import("./pages/Settings")),
   Problems: lazy(() => import("./pages/Problems")),
   Interview: lazy(() => import("./pages/Interview")),
   AptitudeTest: lazy(() => import("./pages/AptitudeTest")),
+  CompanyJobPostings: lazy(() => import("./pages/CompanyJobPostings")),
+  InterviewerLogin: lazy(() => import("./pages/InterviewerLogin")),
+  InterviewSummary: lazy(() => import("./pages/interview/InterviewSummary")),
 };
 
 // Loading spinner
@@ -155,16 +159,20 @@ export default function App() {
                 <Route path="/login" element={<pages.Login />} />
                 <Route path="/signup" element={<pages.Signup />} />
                 <Route path="/interviewer/signup" element={<pages.InterviewerSignup />} />
+                <Route path="/interviewer/login" element={<pages.InterviewerLogin />} />
+                <Route path="/interview/summary/:candidateId" element={<pages.InterviewSummary />} />
 
                 {/* Onboarding */}
                 <Route path="/onboarding" element={<Protected needsOnboarding><pages.UserOnboarding /></Protected>} />
 
                 {/* Protected */}
                 <Route path="/dashboard" element={<Protected><pages.Dashboard /></Protected>} />
+                <Route path="/candidate/dashboard" element={<Protected><pages.CandidateDashboard /></Protected>} />
                 <Route path="/settings" element={<Protected><pages.Settings /></Protected>} />
                 <Route path="/problems" element={<Protected><pages.Problems /></Protected>} />
                 <Route path="/aptitude" element={<Protected><pages.AptitudeTest /></Protected>} />
                 <Route path="/interview" element={<Protected><pages.Interview /></Protected>} />
+                <Route path="/company/dashboard" element={<Protected><pages.CompanyJobPostings /></Protected>} />
 
                 {/* 404 */}
                 <Route path="*" element={<Navigate to="/" replace />} />

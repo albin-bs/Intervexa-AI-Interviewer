@@ -113,12 +113,12 @@ const SAMPLE_QUESTIONS = [
 ];
 
 export default function AptitudeTest({ embedded = false, onComplete } = {}) {
-  const [stage, setStage] = useState("difficulty"); // difficulty, test, summary
-  const [selectedDifficulty, setSelectedDifficulty] = useState(null);
+  const [stage, setStage] = useState(embedded ? "test" : "difficulty"); // skip difficulty when embedded
+  const [selectedDifficulty, setSelectedDifficulty] = useState("intermediate"); // default difficulty
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
   const [timeRemaining, setTimeRemaining] = useState(15 * 60); // 15 minutes
-  const [testStarted, setTestStarted] = useState(false);
+  const [testStarted, setTestStarted] = useState(embedded ? true : false);
   const [showSummary, setShowSummary] = useState(false);
   const [reportedSummary, setReportedSummary] = useState(false);
 
@@ -232,21 +232,21 @@ export default function AptitudeTest({ embedded = false, onComplete } = {}) {
   if (stage === "difficulty") {
     return (
       <div className={`${embedded ? "h-full overflow-y-auto" : "min-h-screen"} bg-[#0a0e1a] text-white flex flex-col`}>
-        <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+        <div className="flex flex-col items-center justify-center flex-1 px-4 py-12">
           <m.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
+            className="mb-12 text-center"
           >
-            <h1 className="text-5xl font-bold mb-4">Aptitude Test</h1>
-            <p className="text-slate-400 text-lg">Select difficulty level to begin</p>
+            <h1 className="mb-4 text-5xl font-bold">Aptitude Test</h1>
+            <p className="text-lg text-slate-400">Select difficulty level to begin</p>
           </m.div>
 
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl"
+            className="grid max-w-4xl grid-cols-2 gap-4 md:grid-cols-5"
           >
             {DIFFICULTY_LEVELS.map((level) => (
               <m.button
@@ -262,7 +262,7 @@ export default function AptitudeTest({ embedded = false, onComplete } = {}) {
               >
                 <div className="flex flex-col items-center gap-3">
                   <span className="text-4xl">{level.icon}</span>
-                  <span className="font-semibold text-sm">{level.label}</span>
+                  <span className="text-sm font-semibold">{level.label}</span>
                 </div>
               </m.button>
             ))}
@@ -273,7 +273,7 @@ export default function AptitudeTest({ embedded = false, onComplete } = {}) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             onClick={handleStartTest}
-            className="mt-12 px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition flex items-center gap-2"
+            className="flex items-center gap-2 px-8 py-4 mt-12 font-semibold transition bg-blue-600 rounded-lg hover:bg-blue-700"
           >
             <span>Start Test</span>
             <ChevronRight className="w-5 h-5" />
@@ -322,16 +322,16 @@ export default function AptitudeTest({ embedded = false, onComplete } = {}) {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 max-w-4xl mx-auto w-full px-6 py-12">
+        <main className="flex-1 w-full max-w-4xl min-h-0 px-6 py-6 mx-auto overflow-y-auto">
           <m.div
             key={currentQuestion}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="space-y-8"
+            className="space-y-5"
           >
             {/* Question Header */}
             <div>
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3 mb-3">
                 <span className="text-sm font-semibold text-blue-400">Question {currentQuestion + 1}</span>
                 <span
                   className={`text-xs font-semibold px-3 py-1 rounded-full ${
@@ -345,19 +345,19 @@ export default function AptitudeTest({ embedded = false, onComplete } = {}) {
                   {question.difficulty}
                 </span>
               </div>
-              <h2 className="text-2xl font-bold text-white">{question.text}</h2>
+              <h2 className="text-lg font-bold leading-snug text-white">{question.text}</h2>
             </div>
 
             {/* Answer Options */}
-            <div className="space-y-3">
-              <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Answer</p>
-              <div className="space-y-3">
+            <div className="space-y-2">
+              <p className="text-xs font-semibold tracking-wider uppercase text-slate-400">Answer</p>
+              <div className="space-y-2">
                 {question.options.map((option, idx) => (
                   <m.button
                     key={idx}
                     onClick={() => handleSelectAnswer(question.id, idx)}
-                    whileHover={{ scale: 1.02 }}
-                    className={`w-full p-4 rounded-lg border-2 text-left transition ${
+                    whileHover={{ scale: 1.01 }}
+                    className={`w-full p-3 rounded-lg border text-left transition ${
                       answers[question.id] === idx
                         ? "border-blue-500 bg-blue-500/20"
                         : "border-slate-700 bg-slate-900/30 hover:border-slate-600"
@@ -385,12 +385,12 @@ export default function AptitudeTest({ embedded = false, onComplete } = {}) {
         </main>
 
         {/* Footer Navigation */}
-        <footer className="border-t border-slate-700/50 px-6 py-6 bg-[#0f1424]/50 backdrop-blur">
-          <div className="max-w-4xl mx-auto flex items-center justify-between">
+        <footer className="border-t border-slate-700/50 px-6 py-4 bg-[#0f1424]/50 backdrop-blur shrink-0">
+          <div className="flex items-center justify-between max-w-4xl mx-auto">
             <button
               onClick={handlePreviousQuestion}
               disabled={currentQuestion === 0}
-              className="px-6 py-3 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-semibold flex items-center gap-2 transition"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold transition rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ChevronLeft className="w-5 h-5" />
               Previous
@@ -403,21 +403,21 @@ export default function AptitudeTest({ embedded = false, onComplete } = {}) {
             <div className="flex items-center gap-3">
               <button
                 onClick={handleSkipQuestion}
-                className="px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-lg font-semibold transition"
+                className="px-4 py-2 text-sm font-semibold transition rounded-lg bg-slate-800 hover:bg-slate-700"
               >
                 Skip
               </button>
               {currentQuestion === totalQuestions - 1 ? (
                 <button
                   onClick={() => handleFinishTest()}
-                  className="px-8 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold transition"
+                  className="px-6 py-2 text-sm font-semibold transition bg-green-600 rounded-lg hover:bg-green-700"
                 >
                   Finish Test
                 </button>
               ) : (
                 <button
                   onClick={handleNextQuestion}
-                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold flex items-center gap-2 transition"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-semibold transition bg-blue-600 rounded-lg hover:bg-blue-700"
                 >
                   Next
                   <ChevronRight className="w-5 h-5" />
@@ -436,44 +436,44 @@ export default function AptitudeTest({ embedded = false, onComplete } = {}) {
       <div className={`${embedded ? "h-full overflow-y-auto" : "min-h-screen"} bg-[#0a0e1a] text-white flex flex-col`}>
         {/* Header */}
         <header className="border-b border-slate-700/50 px-6 py-4 bg-[#0f1424]/50 backdrop-blur">
-          <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center justify-between max-w-6xl mx-auto">
             <h1 className="text-2xl font-bold">Aptitude Test</h1>
             <div />
           </div>
         </header>
 
-        <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-12 overflow-y-auto">
+        <main className="flex-1 w-full max-w-6xl px-6 py-12 mx-auto overflow-y-auto">
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+            className="grid grid-cols-1 gap-8 lg:grid-cols-3"
           >
             {/* Left: Score */}
             <div className="lg:col-span-1">
               <div className="space-y-8">
                 {/* Score Card */}
-                <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-8 text-center">
-                  <p className="text-slate-300 mb-2">Total Score</p>
-                  <div className="text-6xl font-bold text-white mb-2">{correctCount}/{totalQuestions}</div>
+                <div className="p-8 text-center bg-linear-to-br from-blue-600 to-blue-800 rounded-2xl">
+                  <p className="mb-2 text-slate-300">Total Score</p>
+                  <div className="mb-2 text-6xl font-bold text-white">{correctCount}/{totalQuestions}</div>
                   <p className="text-slate-200">{percentage}%</p>
                 </div>
 
                 {/* Metrics */}
                 <div className="space-y-4">
-                  <div className="bg-slate-800/50 rounded-lg p-4">
-                    <p className="text-slate-400 text-sm mb-1">Questions Attempted</p>
+                  <div className="p-4 rounded-lg bg-slate-800/50">
+                    <p className="mb-1 text-sm text-slate-400">Questions Attempted</p>
                     <p className="text-2xl font-bold text-white">{totalQuestions - skippedCount}</p>
                   </div>
-                  <div className="bg-slate-800/50 rounded-lg p-4">
-                    <p className="text-slate-400 text-sm mb-1">Questions Skipped</p>
+                  <div className="p-4 rounded-lg bg-slate-800/50">
+                    <p className="mb-1 text-sm text-slate-400">Questions Skipped</p>
                     <p className="text-2xl font-bold text-slate-300">{skippedCount}</p>
                   </div>
-                  <div className="bg-slate-800/50 rounded-lg p-4">
-                    <p className="text-slate-400 text-sm mb-1">Correct</p>
+                  <div className="p-4 rounded-lg bg-slate-800/50">
+                    <p className="mb-1 text-sm text-slate-400">Correct</p>
                     <p className="text-2xl font-bold text-green-400">{correctCount}</p>
                   </div>
-                  <div className="bg-slate-800/50 rounded-lg p-4">
-                    <p className="text-slate-400 text-sm mb-1">Incorrect</p>
+                  <div className="p-4 rounded-lg bg-slate-800/50">
+                    <p className="mb-1 text-sm text-slate-400">Incorrect</p>
                     <p className="text-2xl font-bold text-red-400">{totalQuestions - correctCount}</p>
                   </div>
                 </div>
@@ -482,8 +482,8 @@ export default function AptitudeTest({ embedded = false, onComplete } = {}) {
 
             {/* Right: Question Review */}
             <div className="lg:col-span-2">
-              <h2 className="text-2xl font-bold mb-6">Question Review</h2>
-              <div className="space-y-4 max-h-96 overflow-y-auto">
+              <h2 className="mb-6 text-2xl font-bold">Question Review</h2>
+              <div className="space-y-4 overflow-y-auto max-h-96">
                 {SAMPLE_QUESTIONS.map((q, idx) => {
                   const isCorrect = answers[q.id] === q.correct;
                   const isAnswered = answers[q.id] !== undefined;
@@ -493,26 +493,26 @@ export default function AptitudeTest({ embedded = false, onComplete } = {}) {
                       key={q.id}
                       whileHover={{ scale: 1.02 }}
                       onClick={() => handleJumpToQuestion(idx)}
-                      className="p-4 rounded-lg bg-slate-800/50 border border-slate-700 hover:border-slate-600 cursor-pointer transition"
+                      className="p-4 transition border rounded-lg cursor-pointer bg-slate-800/50 border-slate-700 hover:border-slate-600"
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
                           <p className="font-semibold text-white">Question {idx + 1}</p>
-                          <p className="text-sm text-slate-400 text-slate-400 mt-1 line-clamp-2">
+                          <p className="mt-1 text-sm text-slate-400 line-clamp-2">
                             {q.text}
                           </p>
                         </div>
                         <div className="shrink-0">
                           {!isAnswered ? (
-                            <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
+                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-700">
                               <span className="text-xs text-slate-400">⊘</span>
                             </div>
                           ) : isCorrect ? (
-                            <div className="w-8 h-8 rounded-full bg-green-600/20 border border-green-500 flex items-center justify-center">
+                            <div className="flex items-center justify-center w-8 h-8 border border-green-500 rounded-full bg-green-600/20">
                               <span className="text-green-400">✓</span>
                             </div>
                           ) : (
-                            <div className="w-8 h-8 rounded-full bg-red-600/20 border border-red-500 flex items-center justify-center">
+                            <div className="flex items-center justify-center w-8 h-8 border border-red-500 rounded-full bg-red-600/20">
                               <span className="text-red-400">✕</span>
                             </div>
                           )}

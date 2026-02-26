@@ -50,6 +50,11 @@ type FormData = {
       measurement_method: string;
     }>;
     failure_conditions: string;
+    kpis_for_first_90_days: Array<{
+      kpi_name: string;
+      target_value: string;
+      measurement_frequency: string; // weekly, monthly, quarterly
+    }>;
   };
   role_responsibilities: {
     core_responsibilities: string[];
@@ -75,6 +80,7 @@ type FormData = {
     testing_expectation: string;
     code_review_experience_required: boolean;
     system_design_depth_required_1_to_5: number;
+    coding_vs_theory_weight: number;
   };
   problem_solving_expectations: {
     dsa_importance_level_1_to_5: number;
@@ -89,6 +95,7 @@ type FormData = {
     teamwork_importance_1_to_5: number;
     adaptability_importance_1_to_5: number;
     leadership_potential_evaluated: boolean;
+    preferred_work_style: string;
     must_have_behavioral_traits: string[];
     red_flag_behaviors: string[];
   };
@@ -122,6 +129,7 @@ type FormData = {
       culture_alignment: number;
     };
     minimum_passing_score_threshold: number;
+    evaluation_format: string;
     critical_must_pass_sections: string[];
     automatic_rejection_conditions: string[];
   };
@@ -259,6 +267,7 @@ export default function CompanyJobIntake() {
       expected_impact_in_first_1_year: "",
       success_metrics: [],
       failure_conditions: "",
+      kpis_for_first_90_days: [],
     },
     role_responsibilities: {
       core_responsibilities: [],
@@ -276,6 +285,7 @@ export default function CompanyJobIntake() {
       testing_expectation: "",
       code_review_experience_required: true,
       system_design_depth_required_1_to_5: 0,
+      coding_vs_theory_weight: 50,
     },
     problem_solving_expectations: {
       dsa_importance_level_1_to_5: 0,
@@ -290,6 +300,7 @@ export default function CompanyJobIntake() {
       teamwork_importance_1_to_5: 0,
       adaptability_importance_1_to_5: 0,
       leadership_potential_evaluated: false,
+      preferred_work_style: "Collaborative",
       must_have_behavioral_traits: [],
       red_flag_behaviors: [],
     },
@@ -318,6 +329,7 @@ export default function CompanyJobIntake() {
         culture_alignment: 10,
       },
       minimum_passing_score_threshold: 0,
+      evaluation_format: "Graded (A-F)",
       critical_must_pass_sections: [],
       automatic_rejection_conditions: [],
     },
@@ -525,6 +537,8 @@ export default function CompanyJobIntake() {
     quals: ["Bachelor's in Computer Science", "Master's Degree", "Ph.D.", "Self-Taught / No Degree"],
     replacementOptions: ["Replacement", "New Headcount"],
     roundTypes: ["Coding", "System Design", "Behavioral", "Managerial"],
+    evaluationFormats: ["Pass/Fail", "Graded (A-F)", "Percentage-based", "Score (0-100)"],
+    workStyles: ["Collaborative / Team-first", "Independent / Solo", "Balanced Mix"],
   };
 
 
@@ -1058,7 +1072,16 @@ export default function CompanyJobIntake() {
                 />
                 <span className="text-sm text-slate-300">Code review experience required</span>
               </div>
+              <Input
+                label="Coding vs Theoretical Knowledge Priority (%)"
+                value={formData.technical_expectations.coding_vs_theory_weight}
+                onChange={(v: string) => updateField("technical_expectations.coding_vs_theory_weight", Number(v))}
+                type="number"
+                min={0}
+                max={100}
+              />
             </div>
+            <p className="mt-2 text-xs text-slate-500">Set how much coding ability is prioritised over theoretical knowledge. E.g. 70 means 70% coding, 30% theory.</p>
           </Section>
 
           {/* Section 6: Problem Solving Expectations */}
@@ -1168,6 +1191,12 @@ export default function CompanyJobIntake() {
                 />
                 <span className="text-sm text-slate-300">Leadership potential evaluated</span>
               </div>
+              <Select
+                label="Preferred Work Style"
+                value={formData.behavioral_and_cultural_expectations.preferred_work_style}
+                onChange={(v: string) => updateField("behavioral_and_cultural_expectations.preferred_work_style", v)}
+                options={opts.workStyles}
+              />
             </div>
             <div className="grid grid-cols-1 gap-6 mt-6">
               <TagInput
@@ -1401,6 +1430,12 @@ export default function CompanyJobIntake() {
                 step="0.1"
                 min={0}
               />
+              <Select
+                label="Evaluation Format"
+                value={formData.evaluation_strategy.evaluation_format}
+                onChange={(v: string) => updateField("evaluation_strategy.evaluation_format", v)}
+                options={opts.evaluationFormats}
+              />
               <TagInput
                 label="Critical Must-Pass Sections"
                 items={formData.evaluation_strategy.critical_must_pass_sections}
@@ -1604,10 +1639,6 @@ export default function CompanyJobIntake() {
                 )}
               </div>
             </m.button>
-            <p className="flex items-center gap-2 text-sm text-slate-500">
-              <AlertCircle className="w-4 h-4" />
-              Ready to generate the interview module
-            </p>
           </div>
         </form>
       </main>

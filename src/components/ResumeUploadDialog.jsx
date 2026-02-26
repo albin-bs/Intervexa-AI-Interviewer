@@ -7,6 +7,7 @@ export default function ResumeUploadDialog({ isOpen, onClose, onSubmit }) {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [additionalNotes, setAdditionalNotes] = useState("");
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
   const ALLOWED_TYPES = [
@@ -86,15 +87,47 @@ export default function ResumeUploadDialog({ isOpen, onClose, onSubmit }) {
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
         transition={{ duration: 0.2 }}
-        className="w-full max-w-md mx-4 rounded-2xl bg-[#0f1424] border border-slate-700/50 shadow-2xl overflow-hidden"
+        className="relative w-full max-w-md mx-4 rounded-2xl bg-[#0f1424] border border-slate-700/50 shadow-2xl overflow-hidden"
       >
+        {/* Loading Overlay */}
+        {uploading && (
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center rounded-2xl bg-[#0f1424]/95 backdrop-blur-sm"
+          >
+            {/* Spinning ring with icon */}
+            <div className="relative w-20 h-20 mb-5">
+              <div className="absolute inset-0 border-4 rounded-full border-slate-700" />
+              <div className="absolute inset-0 border-4 border-transparent rounded-full border-t-blue-500 animate-spin" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <svg className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+              </div>
+            </div>
+            <p className="mb-1 text-lg font-bold text-white">Uploading Resume</p>
+            <p className="mb-5 text-sm text-slate-400">Please wait a moment...</p>
+            {/* Animated dots */}
+            <div className="flex gap-2">
+              {[0, 0.18, 0.36].map((delay, i) => (
+                <m.div
+                  key={i}
+                  animate={{ scale: [1, 1.6, 1], opacity: [0.4, 1, 0.4] }}
+                  transition={{ duration: 0.75, repeat: Infinity, delay }}
+                  className="w-2.5 h-2.5 rounded-full bg-blue-500"
+                />
+              ))}
+            </div>
+          </m.div>
+        )}
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-700/30">
           <h2 className="text-xl font-bold text-white">Upload Your Resume</h2>
           <button
             onClick={onClose}
             disabled={uploading}
-            className="p-1 rounded-lg hover:bg-slate-800 transition disabled:opacity-50"
+            className="p-1 transition rounded-lg hover:bg-slate-800 disabled:opacity-50"
           >
             <X className="w-5 h-5 text-slate-400" />
           </button>
@@ -148,23 +181,19 @@ export default function ResumeUploadDialog({ isOpen, onClose, onSubmit }) {
             </div>
           </div>
 
-          {/* Change File Button */}
-          {file && (
-            <button
-              onClick={() => setFile(null)}
+          {/* Additional Notes */}
+          <div>
+            <label className="block mb-2 text-sm font-medium text-slate-300">
+              Additional Notes <span className="text-xs text-slate-500">(optional)</span>
+            </label>
+            <textarea
+              value={additionalNotes}
+              onChange={(e) => setAdditionalNotes(e.target.value)}
+              placeholder="Any additional context about your experience, key highlights, or things you'd like the interviewer to know..."
+              rows={3}
               disabled={uploading}
-              className="w-full px-4 py-2 text-sm font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-lg transition disabled:opacity-50"
-            >
-              Choose Different File
-            </button>
-          )}
-
-          {/* Info */}
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-            <p className="text-sm text-blue-300">
-              We'll use your resume to tailor the interview questions to your
-              background and experience.
-            </p>
+              className="w-full px-4 py-3 text-sm text-white border rounded-lg resize-none bg-slate-900/50 border-slate-600/50 placeholder-slate-500 focus:outline-none focus:border-blue-500/50 disabled:opacity-50"
+            />
           </div>
         </div>
 
@@ -173,14 +202,14 @@ export default function ResumeUploadDialog({ isOpen, onClose, onSubmit }) {
           <button
             onClick={onClose}
             disabled={uploading}
-            className="flex-1 px-4 py-3 font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-lg transition disabled:opacity-50"
+            className="flex-1 px-4 py-3 font-semibold transition rounded-lg text-slate-300 bg-slate-800 hover:bg-slate-700 disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={!file || uploading}
-            className="flex-1 px-4 py-3 font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition disabled:bg-blue-500/50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex items-center justify-center flex-1 gap-2 px-4 py-3 font-semibold text-white transition bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-blue-500/50 disabled:cursor-not-allowed"
           >
             {uploading ? (
               <>

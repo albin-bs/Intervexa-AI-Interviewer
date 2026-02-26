@@ -8,15 +8,12 @@ import { MorphingText } from "../components/ui/morphing-text";
 
 const careers = [
   { text: "Software Engineer", font: "font-mono" },
-  { text: "Doctor", font: "font-serif" },
   { text: "Data Scientist", font: "font-mono" },
   { text: "Product Manager", font: "font-sans" },
   { text: "UX Designer", font: "font-sans italic" },
   { text: "Marketing Manager", font: "font-sans" },
   { text: "Financial Analyst", font: "font-serif" },
   { text: "Mechanical Engineer", font: "font-mono" },
-  { text: "Teacher", font: "font-serif" },
-  { text: "Nurse", font: "font-sans" },
 ];
 
 /* ================= FEATURES ================= */
@@ -30,7 +27,7 @@ const features = [
   },
   {
     icon: <Code2 className="w-10 h-10" />,
-    text: "Real Coding Practice",
+    text: "Coding module",
     label: "Hands-on coding",
     gradient: "from-blue-400 via-cyan-500 to-teal-500"
   },
@@ -92,11 +89,11 @@ export default function Hero() {
             <br/>
             <br/>
             <div className="flex items-center justify-center gap-4 mb-4">
-              <div className="w-12 h-[2px] bg-blue-400" />
+              <div className="w-12 h-0.5 bg-blue-400" />
               <h2 className="text-sm md:text-base font-bold text-gray-300 tracking-[0.3em] uppercase">
                 You can be a
               </h2>
-              <div className="w-12 h-[2px] bg-blue-400" />
+              <div className="w-12 h-0.5 bg-blue-400" />
             </div>
 
             <m.div
@@ -119,7 +116,7 @@ export default function Hero() {
               transition={{ duration: 0.8, delay: 0.5 }}
               className="max-w-2xl mx-auto mt-6 text-lg leading-relaxed text-gray-300 md:text-xl"
             >
-              Accelerate your preparation with adaptive mock questions,
+              Accelerate your preparation with adaptive questions,
               <span className="font-semibold text-blue-300">
                 {" "}
                 instant AI feedback
@@ -135,7 +132,7 @@ export default function Hero() {
         </div>
 
         {/* ===== FEATURES ===== */}
-        <div className="relative z-20 pb-8">
+        <div className="relative z-20 pb-8 -mt-10 md:-mt-16">
           <div className="grid grid-cols-1 gap-6 px-6 mx-auto max-w-7xl md:grid-cols-3 md:gap-8">
             {features.map((feature, i) => (
               <m.div
@@ -148,15 +145,15 @@ export default function Hero() {
                   ease: [0.16, 1, 0.3, 1]
                 }}
                 whileHover={{ y: -8 }}
-                className="group relative overflow-hidden bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl rounded-3xl border border-white/10 hover:border-white/20 transition-all duration-500 shadow-xl"
+                className="relative overflow-hidden transition-all duration-500 border shadow-xl group bg-linear-to-br from-white/5 to-white/2 backdrop-blur-xl rounded-3xl border-white/10 hover:border-white/20"
               >
                 <div
-                  className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.gradient}`}
+                  className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${feature.gradient}`}
                 />
 
                 <div className="flex flex-col items-center justify-center p-8 text-center md:p-10">
                   <div
-                    className={`mb-5 p-4 rounded-2xl bg-gradient-to-br ${feature.gradient}`}
+                    className={`mb-5 p-4 rounded-2xl bg-linear-to-br ${feature.gradient}`}
                   >
                     {feature.icon}
                   </div>
@@ -175,7 +172,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#020618] to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-[#020618] to-transparent pointer-events-none" />
     </section>
   );
 }

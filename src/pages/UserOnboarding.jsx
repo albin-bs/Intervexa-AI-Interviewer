@@ -137,16 +137,18 @@ export default function UserOnboarding() {
         <div className="mb-10 text-center">
           <br/>
           <br/>
-          <h1 className="mb-3 text-4xl font-bold text-white">Welcome to MockMate-AI</h1>
+          <br/>
+          <br/>
+          <h1 className="mb-3 text-4xl font-bold text-white">Welcome to Intervexa</h1>
           <p className="text-lg text-slate-400">Let's personalize your interview preparation experience.</p>
         </div>
 
 
         {/* Onboarding Container */}
-        <div className="w-full max-w-3xl backdrop-blur-md bg-white/[0.03] border border-white/10 rounded-xl overflow-hidden shadow-2xl">
+        <div className="w-full max-w-3xl backdrop-blur-md bg-white/3 border border-white/10 rounded-xl overflow-hidden shadow-2xl">
           
           {/* Enhanced Stepper (from the image) */}
-          <div className="relative px-6 pt-6 pb-8 bg-gradient-to-br from-purple-900/10 via-transparent to-transparent">
+          <div className="relative px-6 pt-6 pb-8 bg-linear-to-br from-purple-900/10 via-transparent to-transparent">
             <div className="flex items-center justify-between text-sm">
               {steps.map((s, idx) => {
                 const Icon = s.icon;
@@ -184,11 +186,11 @@ export default function UserOnboarding() {
             </div>
 
           {/* Progress line - Background */}
-          <div className="absolute left-6 right-6 top-[79px] h-0.5 bg-white/10 rounded-full -z-0"></div>
+          <div className="absolute left-6 right-6 top-[79px] h-0.5 bg-white/10 rounded-full z-0"></div>
 
           {/* Progress line - Active */}
           <div 
-            className="absolute left-6 top-[79px] h-0.5 bg-gradient-to-r from-fuchsia-500 via-purple-500 to-indigo-500 rounded-full transition-all duration-500 -z-0"
+            className="absolute left-6 top-[79px] h-0.5 bg-linear-to-r from-fuchsia-500 via-purple-500 to-indigo-500 rounded-full transition-all duration-500 z-0"
             style={{ width: `calc(${progress}% - 24px + ${progress / 100 * 24}px)` }}
           ></div>
           </div>

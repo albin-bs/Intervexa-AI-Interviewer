@@ -26,29 +26,38 @@ import {
   TrendingDown
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
-interface InterviewSummaryProps {
-  sessionId: string;
-  onRestart: () => void;
-}
-
-export default function InterviewSummary({ sessionId, onRestart }: InterviewSummaryProps) {
+export default function InterviewSummary() {
+  const { candidateId } = useParams<{ candidateId: string }>();
+  const navigate = useNavigate();
+  const sessionId = candidateId ?? "";
   const [expandedSkill, setExpandedSkill] = useState<number | null>(null);
   const [showTranscript, setShowTranscript] = useState(false);
   const [aptitudeResult, setAptitudeResult] = useState<any | null>(null);
   const [codingResult, setCodingResult] = useState<any | null>(null);
+  const [candidateJudgment, setCandidateJudgment] = useState<"pass" | "fail" | null>(null);
+  const [feedbackText, setFeedbackText] = useState("");
+  const [judgmentSubmitted, setJudgmentSubmitted] = useState(false);
 
   useEffect(() => {
     try {
       const aptitude = localStorage.getItem("mockmate-aptitude-result");
       const coding = localStorage.getItem("mockmate-coding-result");
+      const judgment = localStorage.getItem(`intervexa-candidate-judgment-${sessionId}`);
       setAptitudeResult(aptitude ? JSON.parse(aptitude) : null);
       setCodingResult(coding ? JSON.parse(coding) : null);
+      if (judgment) {
+        const parsed = JSON.parse(judgment);
+        setCandidateJudgment(parsed.result);
+        setFeedbackText(parsed.feedback);
+        setJudgmentSubmitted(true);
+      }
     } catch {
       setAptitudeResult(null);
       setCodingResult(null);
     }
-  }, []);
+  }, [sessionId]);
 
   // Mock data - replace with actual data from backend
   const summary = {
@@ -222,6 +231,21 @@ export default function InterviewSummary({ sessionId, onRestart }: InterviewSumm
     return styles[badgeColor as keyof typeof styles] || styles.primary;
   };
 
+  const handleJudgmentSubmit = () => {
+    if (!candidateJudgment) return;
+    try {
+      const data = {
+        result: candidateJudgment,
+        feedback: feedbackText,
+        submittedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(`intervexa-candidate-judgment-${sessionId}`, JSON.stringify(data));
+      setJudgmentSubmitted(true);
+    } catch (err) {
+      console.error("Failed to save judgment", err);
+    }
+  };
+
   // Calculate circle progress for overall score
   const circleRadius = 58;
   const circleCircumference = 2 * Math.PI * circleRadius;
@@ -263,7 +287,7 @@ export default function InterviewSummary({ sessionId, onRestart }: InterviewSumm
 
       {/* Foreground Content */}
       <div className="relative z-10 flex flex-col w-full min-h-screen">
-        <main className="flex-1 max-w-[1200px] mx-auto w-full px-4 md:px-10 py-8">
+        <main className="flex-1 max-w-[1200px] mx-auto w-full px-4 md:px-10 pb-8 pt-32">
         {/* Headline Text & Meta Text */}
         <m.div 
           initial={{ opacity: 0, y: -20 }}
@@ -474,7 +498,7 @@ export default function InterviewSummary({ sessionId, onRestart }: InterviewSumm
                   transition={{ delay: 0.8 + index * 0.1 }}
                   className="flex gap-3"
                 >
-                  <CheckCircle className="text-success w-5 h-5 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="text-success w-5 h-5 shrink-0 mt-0.5" />
                   <p className="text-sm text-slate-300">{strength}</p>
                 </m.li>
               ))}
@@ -500,7 +524,7 @@ export default function InterviewSummary({ sessionId, onRestart }: InterviewSumm
                   transition={{ delay: 0.8 + index * 0.1 }}
                   className="flex gap-3"
                 >
-                  <AlertCircle className="text-warning w-5 h-5 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="text-warning w-5 h-5 shrink-0 mt-0.5" />
                   <p className="text-sm text-slate-300">{improvement}</p>
                 </m.li>
               ))}
@@ -754,7 +778,7 @@ export default function InterviewSummary({ sessionId, onRestart }: InterviewSumm
                       key={index}
                       className={`flex gap-3 ${entry.speaker === 'user' ? 'flex-row-reverse' : ''}`}
                     >
-                      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                      <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                         entry.speaker === 'bot' ? 'bg-[#256af4]/20' : 'bg-slate-700'
                       }`}>
                         {entry.speaker === 'bot' ? (
@@ -821,28 +845,105 @@ export default function InterviewSummary({ sessionId, onRestart }: InterviewSumm
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2 }}
-          className="mt-16 pt-8 border-t border-[#282e39] flex flex-wrap gap-4 justify-center md:justify-between items-center mb-10"
+          className="mt-16 pt-8 border-t border-[#282e39] mb-10"
         >
-          <div className="flex gap-2">
-            <button className="flex items-center gap-2 bg-[#282e39] text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:opacity-90 transition-opacity">
-              <Download className="w-5 h-5" /> Download PDF
-            </button>
-            <button className="flex items-center gap-2 bg-[#282e39] text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:opacity-90 transition-opacity">
-              <Share2 className="w-5 h-5" /> Share
-            </button>
+          {/* Judge Candidate Section */}
+          <div className="mb-10 bg-[#1a2130] p-8 rounded-xl border border-[#3b4354]">
+            <h3 className="flex items-center gap-2 mb-6 text-lg font-bold text-white">
+              <Award className="w-5 h-5 text-[#256af4]" />
+              Judge Candidate
+            </h3>
+            
+            {!judgmentSubmitted ? (
+              <div className="space-y-6">
+                <div>
+                  <label className="block mb-3 text-sm font-semibold text-slate-300">Verdict</label>
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => setCandidateJudgment("pass")}
+                      className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all border ${
+                        candidateJudgment === "pass"
+                          ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
+                          : "bg-slate-800/50 border-slate-700 text-slate-300 hover:border-emerald-500"
+                      }`}
+                    >
+                      <CheckCircle className="inline w-5 h-5 mr-2" /> Pass
+                    </button>
+                    <button
+                      onClick={() => setCandidateJudgment("fail")}
+                      className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all border ${
+                        candidateJudgment === "fail"
+                          ? "bg-rose-500/20 border-rose-500 text-rose-400"
+                          : "bg-slate-800/50 border-slate-700 text-slate-300 hover:border-rose-500"
+                      }`}
+                    >
+                      <AlertCircle className="inline w-5 h-5 mr-2" /> Fail
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block mb-3 text-sm font-semibold text-slate-300">Interviewer Feedback</label>
+                  <textarea
+                    value={feedbackText}
+                    onChange={(e) => setFeedbackText(e.target.value)}
+                    placeholder="Add any additional notes or feedback about the candidate's performance..."
+                    className="w-full p-4 bg-slate-900/50 border border-slate-700 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#256af4] resize-none h-24"
+                  />
+                </div>
+
+                <button
+                  onClick={handleJudgmentSubmit}
+                  disabled={!candidateJudgment}
+                  className="w-full py-3 px-4 bg-[#256af4] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-all"
+                >
+                  Submit Judgment
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className={`p-4 rounded-lg border ${
+                  candidateJudgment === "pass"
+                    ? "bg-emerald-500/20 border-emerald-500/50"
+                    : "bg-rose-500/20 border-rose-500/50"
+                }`}>
+                  <p className={`font-semibold text-sm mb-2 ${
+                    candidateJudgment === "pass" ? "text-emerald-400" : "text-rose-400"
+                  }`}>
+                    Verdict: {candidateJudgment === "pass" ? "✓ PASSED" : "✗ FAILED"}
+                  </p>
+                  {feedbackText && (
+                    <p className="text-sm text-slate-300">{feedbackText}</p>
+                  )}
+                </div>
+                <button
+                  onClick={() => {
+                    setCandidateJudgment(null);
+                    setFeedbackText("");
+                    setJudgmentSubmitted(false);
+                    localStorage.removeItem(`intervexa-candidate-judgment-${sessionId}`);
+                  }}
+                  className="w-full px-4 py-2 text-sm font-semibold transition-all rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"
+                >
+                  Edit Judgment
+                </button>
+              </div>
+            )}
           </div>
-          <div className="flex gap-4">
+
+          {/* Navigation Buttons - Centered */}
+          <div className="flex flex-col items-center gap-4">
             <Link
               to="/dashboard"
-              className="flex items-center gap-2 bg-[#282e39] text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:opacity-90 transition-opacity"
+              className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-semibold text-sm transition-colors"
             >
               Dashboard
             </Link>
             <button
-              onClick={onRestart}
-              className="flex items-center gap-2 bg-[#256af4] text-white px-8 py-2.5 rounded-lg font-bold text-sm hover:brightness-110 shadow-lg shadow-[#256af4]/20 transition-all"
+              onClick={() => navigate("/company/dashboard")}
+              className="flex items-center gap-2 bg-[#256af4] hover:brightness-110 text-white px-8 py-2.5 rounded-lg font-bold text-sm shadow-lg shadow-[#256af4]/20 transition-all"
             >
-              <RotateCcw className="w-5 h-5" /> Try Again
+              <RotateCcw className="w-5 h-5" /> View All Candidates
             </button>
           </div>
         </m.div>
@@ -850,7 +951,6 @@ export default function InterviewSummary({ sessionId, onRestart }: InterviewSumm
 
         {/* Footer */}
         <footer className="py-6 px-10 border-t border-[#282e39] text-center">
-          <p className="text-xs text-slate-400">© 2024 MockMate-AI Inc. All sessions are encrypted and confidential.</p>
         </footer>
       </div>
     </div>

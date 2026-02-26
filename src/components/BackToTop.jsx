@@ -5,6 +5,7 @@ import { ChevronUp } from "lucide-react";
 export default function BackToTop() {
   const [visible, setVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [ripple, setRipple] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
@@ -21,6 +22,8 @@ export default function BackToTop() {
   }, []);
 
   const scrollToTop = () => {
+    setRipple(true);
+    setTimeout(() => setRipple(false), 700);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -33,11 +36,24 @@ export default function BackToTop() {
           exit={{ opacity: 0, scale: 0.8, y: 20 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
           whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
+          whileTap={{ scale: 0.82 }}
           onClick={scrollToTop}
           className="fixed z-40 bottom-20 right-6 group"
           aria-label="Back to top"
         >
+          {/* Ripple ring on click */}
+          <AnimatePresence>
+            {ripple && (
+              <m.span
+                key="ripple"
+                initial={{ scale: 1, opacity: 0.7 }}
+                animate={{ scale: 3.2, opacity: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.65, ease: "easeOut" }}
+                className="absolute inset-0 rounded-full bg-blue-500/40 pointer-events-none"
+              />
+            )}
+          </AnimatePresence>
           {/* Circular progress indicator */}
           <svg
             className="absolute inset-0 w-full h-full -rotate-90"

@@ -13,7 +13,7 @@ const FEATURES_DATA = [
     title: "AI INTERVIEW SIMULATION",
     heading: "Friendly question practice",
     description:
-      "Practice with realistic, adaptive interview questions tailored by Mockmate's AI.",
+      "Realistic interview questions tailored by Intervexa's AI.",
     ctaTo: "/interview",
     image:
       "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&h=300&fit=crop",
@@ -25,7 +25,7 @@ const FEATURES_DATA = [
     title: "INSTANT AI FEEDBACK",
     heading: "Performance you can measure",
     description:
-      "Get actionable feedback on clarity, structure, and communication.",
+      "Get actionable feedback on clarity, structure, and communication using Intervexa.",
     ctaTo: "/dashboard",
     image:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=300&fit=crop",
@@ -34,10 +34,10 @@ const FEATURES_DATA = [
   {
     id: "code",
     icon: <Code2 className="w-6 h-6" />,
-    title: "LIVE CODE PRACTICE",
-    heading: "Practice coding in your browser",
+    title: "LIVE CODE WRITING",
+    heading: "Code in your browser",
     description:
-      "Write and test solutions instantly using MockMate's built-in editor.",
+      "Write and test solutions instantly using Intervexa's built-in editor.",
     ctaTo: "/code-demo",
     image:
       "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=500&h=300&fit=crop",
@@ -157,7 +157,7 @@ const Features = memo(function Features() {
         <DotPattern
           className={cn(
             "absolute inset-0 opacity-25",
-            "[mask-image:radial-gradient(700px_circle_at_center,white,transparent)]"
+            "mask-[radial-gradient(700px_circle_at_center,white,transparent)]"
           )}
         />
       </div>
@@ -167,13 +167,10 @@ const Features = memo(function Features() {
         <div className="mb-20 text-center">
           <h2 className="text-3xl font-bold text-white sm:text-5xl">
             Everything you need to{" "}
-            <span className="text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-orange-400 bg-clip-text">
+            <span className="text-transparent bg-linear-to-r from-blue-400 via-purple-400 to-orange-400 bg-clip-text">
               prepare smarter
             </span>
           </h2>
-          <p className="mt-4 text-lg text-gray-400">
-            AI-powered practice, feedback, and insights
-          </p>
         </div>
 
         <div ref={containerRef} className="nft-cards-container spotlight-group">

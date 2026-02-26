@@ -1,217 +1,200 @@
 import { useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { 
-  Code, 
-  Briefcase, 
-  BarChart3, 
-  Palette,
   Search,
   ChevronLeft,
   ChevronRight,
-  Building2,
   MapPin,
-  Clock,
-  TrendingUp,
-  Users,
-  Filter,
+  CalendarDays,
   X
 } from "lucide-react";
 
 import { BackgroundImageTexture } from "@/components/ui/bg-image-texture"
 import ResumeUploadDialog from "@/components/ResumeUploadDialog"
 
-// Custom loader components
-const LoaderComponents = {
-  cube: () => (
-    <div className="w-12 h-12 cube-loader" style={{ perspective: '150px' }}>
-      <div className="relative w-full h-full cube" style={{ transformStyle: 'preserve-3d', animation: 'cube-rotate 2s ease-in-out infinite' }}>
-        <div className="absolute inset-0 border-2 border-blue-500/30 bg-blue-500/10" style={{ transform: 'rotateY(0deg) translateZ(24px)' }}></div>
-        <div className="absolute inset-0 border-2 border-blue-500/30 bg-blue-500/10" style={{ transform: 'rotateY(90deg) translateZ(24px)' }}></div>
-        <div className="absolute inset-0 border-2 border-blue-500/30 bg-blue-500/10" style={{ transform: 'rotateY(180deg) translateZ(24px)' }}></div>
-        <div className="absolute inset-0 border-2 border-blue-500/30 bg-blue-500/10" style={{ transform: 'rotateY(-90deg) translateZ(24px)' }}></div>
-      </div>
-    </div>
-  ),
-  orbital: () => (
-    <div className="relative w-12 h-12 orbital-loader">
-      <div className="absolute w-12 h-12 border-2 border-transparent rounded-full orbital-ring border-t-blue-500 animate-spin"></div>
-      <div className="absolute w-8 h-8 border-2 border-transparent rounded-full orbital-ring top-2 left-2 border-r-cyan-400 animate-spin-reverse"></div>
-      <div className="orbital-center absolute w-3 h-3 top-[18px] left-[18px] bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full animate-pulse"></div>
-    </div>
-  ),
-  bars: () => (
-    <div className="bars-loader flex gap-1.5 items-end h-12">
-      {[0, 0.1, 0.2, 0.3, 0.4].map((delay, i) => (
-        <div
-          key={i}
-          className="w-1.5 h-8 rounded-full animate-bar-bounce"
-          style={{
-            background: `linear-gradient(180deg, ${['#3b82f6', '#06b6d4', '#22d3ee', '#0ea5e9', '#60a5fa'][i]}, ${['#2563eb', '#0891b2', '#0e7490', '#0284c7', '#3b82f6'][i]})`,
-            animationDelay: `${delay}s`
-          }}
-        ></div>
-      ))}
-    </div>
-  ),
-  neon: () => (
-    <div className="relative w-12 h-12 neon-loader">
-      {[...Array(3)].map((_, i) => (
-        <div
-          key={i}
-          className="absolute border-2 rounded-full animate-neon-pulse"
-          style={{
-            width: `${48 - i * 12}px`,
-            height: `${48 - i * 12}px`,
-            top: `${i * 6}px`,
-            left: `${i * 6}px`,
-            borderColor: i === 0 ? '#3b82f6' : i === 1 ? '#06b6d4' : '#22d3ee',
-            animationDelay: `${i * 0.3}s`
-          }}
-        ></div>
-      ))}
-    </div>
-  ),
-};
-
 // Companies and roles data
 const COMPANIES = [
   { 
     id: "google", 
-    name: "Google", 
-    logo: "🔵",
+    name: "Google",
+    logoUrl: "https://logo.clearbit.com/google.com",
     location: "Mountain View, CA",
     roles: ["Software Engineer", "Product Manager", "Data Analyst"],
-    gradient: "from-blue-500 to-cyan-400"
+    gradient: "from-blue-500 to-cyan-400",
+    datePosted: "Feb 20, 2026",
+    about: "Build scalable products used by billions worldwide.",
+    roleSummary: "Design, develop, and optimize large-scale systems.",
+    employmentType: "Full-time",
+    experienceLevel: "1–3 years",
+    requirements: ["DSA fundamentals", "System design basics", "Strong coding skills"],
+    techStack: ["TypeScript", "React", "Go", "GCP"]
   },
   { 
     id: "meta", 
-    name: "Meta", 
-    logo: "🔷",
+    name: "Meta",
+    logoUrl: "https://logo.clearbit.com/meta.com",
     location: "Menlo Park, CA",
     roles: ["Frontend Engineer", "Product Designer", "Data Scientist"],
-    gradient: "from-blue-600 to-indigo-500"
+    gradient: "from-blue-600 to-indigo-500",
+    datePosted: "Feb 18, 2026",
+    about: "Create social products that connect people globally.",
+    roleSummary: "Build performant UIs and data-driven experiences.",
+    employmentType: "Full-time",
+    experienceLevel: "1–3 years",
+    requirements: ["React proficiency", "API integration", "UI performance"],
+    techStack: ["React", "GraphQL", "Node.js"]
   },
   { 
     id: "amazon", 
-    name: "Amazon", 
-    logo: "🟠",
+    name: "Amazon",
+    logoUrl: "https://logo.clearbit.com/amazon.com",
     location: "Seattle, WA",
     roles: ["SDE II", "Product Manager", "Business Analyst"],
-    gradient: "from-orange-500 to-amber-400"
+    gradient: "from-orange-500 to-amber-400",
+    datePosted: "Feb 22, 2026",
+    about: "Customer-obsessed teams building at massive scale.",
+    roleSummary: "Deliver high-availability services and data pipelines.",
+    employmentType: "Full-time",
+    experienceLevel: "3–5 years",
+    requirements: ["Distributed systems", "AWS basics", "Coding rounds"],
+    techStack: ["Java", "AWS", "DynamoDB"]
   },
   { 
     id: "apple", 
-    name: "Apple", 
-    logo: "🍎",
+    name: "Apple",
+    logoUrl: "https://logo.clearbit.com/apple.com",
     location: "Cupertino, CA",
     roles: ["iOS Engineer", "Product Designer", "Hardware Engineer"],
-    gradient: "from-gray-500 to-slate-400"
+    gradient: "from-gray-500 to-slate-400",
+    datePosted: "Feb 15, 2026",
+    about: "Craft premium user experiences across devices.",
+    roleSummary: "Build elegant iOS features with performance focus.",
+    employmentType: "Full-time",
+    experienceLevel: "1–3 years",
+    requirements: ["Swift fundamentals", "UIKit/SwiftUI", "Testing basics"],
+    techStack: ["Swift", "SwiftUI", "Xcode"]
   },
   { 
     id: "microsoft", 
-    name: "Microsoft", 
-    logo: "🟦",
+    name: "Microsoft",
+    logoUrl: "https://logo.clearbit.com/microsoft.com",
     location: "Redmond, WA",
     roles: ["Software Engineer", "Cloud Architect", "Product Manager"],
-    gradient: "from-blue-500 to-sky-400"
+    gradient: "from-blue-500 to-sky-400",
+    datePosted: "Feb 24, 2026",
+    about: "Empower every person and organization on the planet.",
+    roleSummary: "Build cloud-native services and enterprise features.",
+    employmentType: "Full-time",
+    experienceLevel: "1–3 years",
+    requirements: ["C#/Java", "Cloud fundamentals", "Problem solving"],
+    techStack: ["C#", "Azure", "SQL"]
   },
   { 
     id: "netflix", 
-    name: "Netflix", 
-    logo: "🔴",
+    name: "Netflix",
+    logoUrl: "https://logo.clearbit.com/netflix.com",
     location: "Los Gatos, CA",
     roles: ["Senior Engineer", "Data Engineer", "Product Manager"],
-    gradient: "from-red-600 to-rose-500"
+    gradient: "from-red-600 to-rose-500",
+    datePosted: "Feb 19, 2026",
+    about: "Entertainment experiences at global scale.",
+    roleSummary: "Build resilient backend systems for streaming.",
+    employmentType: "Full-time",
+    experienceLevel: "3–5 years",
+    requirements: ["Microservices", "Observability", "Reliability"],
+    techStack: ["Java", "Kafka", "AWS"]
   },
   { 
     id: "salesforce", 
-    name: "Salesforce", 
-    logo: "☁️",
+    name: "Salesforce",
+    logoUrl: "https://logo.clearbit.com/salesforce.com",
     location: "San Francisco, CA",
     roles: ["Software Engineer", "Solutions Architect", "Product Manager"],
-    gradient: "from-cyan-500 to-blue-400"
+    gradient: "from-cyan-500 to-blue-400",
+    datePosted: "Feb 21, 2026",
+    about: "CRM and enterprise platforms for modern businesses.",
+    roleSummary: "Deliver scalable enterprise applications.",
+    employmentType: "Full-time",
+    experienceLevel: "1–3 years",
+    requirements: ["Apex/Java", "API design", "Testing"],
+    techStack: ["Apex", "Java", "Salesforce Platform"]
   },
   { 
     id: "stripe", 
-    name: "Stripe", 
-    logo: "💜",
+    name: "Stripe",
+    logoUrl: "https://logo.clearbit.com/stripe.com",
     location: "San Francisco, CA",
     roles: ["Backend Engineer", "Product Manager", "Data Analyst"],
-    gradient: "from-purple-500 to-violet-400"
+    gradient: "from-purple-500 to-violet-400",
+    datePosted: "Feb 23, 2026",
+    about: "Payments infrastructure for the internet.",
+    roleSummary: "Build reliable APIs and payment flows.",
+    employmentType: "Full-time",
+    experienceLevel: "1–3 years",
+    requirements: ["API design", "Databases", "Security basics"],
+    techStack: ["Ruby", "Go", "PostgreSQL"]
   },
   { 
     id: "airbnb", 
-    name: "Airbnb", 
-    logo: "🎈",
+    name: "Airbnb",
+    logoUrl: "https://logo.clearbit.com/airbnb.com",
     location: "San Francisco, CA",
     roles: ["Software Engineer", "Product Designer", "Data Scientist"],
-    gradient: "from-pink-500 to-rose-400"
+    gradient: "from-pink-500 to-rose-400",
+    datePosted: "Feb 17, 2026",
+    about: "Travel and hosting platform with global impact.",
+    roleSummary: "Build user-centric product features.",
+    employmentType: "Full-time",
+    experienceLevel: "1–3 years",
+    requirements: ["Frontend or backend", "Testing", "UX focus"],
+    techStack: ["React", "Node.js", "TypeScript"]
   },
   { 
     id: "uber", 
-    name: "Uber", 
-    logo: "⚫",
+    name: "Uber",
+    logoUrl: "https://logo.clearbit.com/uber.com",
     location: "San Francisco, CA",
     roles: ["Software Engineer", "Product Manager", "Data Analyst"],
-    gradient: "from-gray-700 to-slate-600"
+    gradient: "from-gray-700 to-slate-600",
+    datePosted: "Feb 14, 2026",
+    about: "Real‑time mobility and logistics platform.",
+    roleSummary: "Build high-throughput systems for dispatch.",
+    employmentType: "Full-time",
+    experienceLevel: "1–3 years",
+    requirements: ["Distributed systems", "APIs", "Data pipelines"],
+    techStack: ["Go", "Kafka", "MySQL"]
   },
   { 
     id: "linkedin", 
-    name: "LinkedIn", 
-    logo: "💼",
+    name: "LinkedIn",
+    logoUrl: "https://logo.clearbit.com/linkedin.com",
     location: "Sunnyvale, CA",
     roles: ["Software Engineer", "Product Manager", "Data Scientist"],
-    gradient: "from-blue-700 to-blue-500"
+    gradient: "from-blue-700 to-blue-500",
+    datePosted: "Feb 25, 2026",
+    about: "Professional network with global reach.",
+    roleSummary: "Build feed and search experiences.",
+    employmentType: "Full-time",
+    experienceLevel: "1–3 years",
+    requirements: ["Algorithms", "Frontend/Backend", "Analytics"],
+    techStack: ["Java", "React", "Kafka"]
   },
   { 
     id: "tesla", 
-    name: "Tesla", 
-    logo: "⚡",
+    name: "Tesla",
+    logoUrl: "https://logo.clearbit.com/tesla.com",
     location: "Palo Alto, CA",
     roles: ["Software Engineer", "Firmware Engineer", "Product Manager"],
-    gradient: "from-red-500 to-orange-500"
+    gradient: "from-red-500 to-orange-500",
+    datePosted: "Feb 16, 2026",
+    about: "Sustainable energy and automotive innovation.",
+    roleSummary: "Develop software for vehicle systems.",
+    employmentType: "Full-time",
+    experienceLevel: "1–3 years",
+    requirements: ["C/C++", "Embedded basics", "Testing"],
+    techStack: ["C++", "Python", "Linux"]
   },
 ];
-
-const ROLES_DATA = [
-  { 
-    id: "swe", 
-    name: "Software Engineer",
-    icon: Code,
-    loaderType: "cube" as keyof typeof LoaderComponents,
-    gradient: "from-blue-500 to-cyan-400",
-    difficulty: "Medium",
-    avgDuration: "45 min"
-  },
-  { 
-    id: "pm", 
-    name: "Product Manager",
-    icon: Briefcase,
-    loaderType: "orbital" as keyof typeof LoaderComponents,
-    gradient: "from-purple-500 to-pink-500",
-    difficulty: "Medium",
-    avgDuration: "40 min"
-  },
-  { 
-    id: "analyst", 
-    name: "Data Analyst",
-    icon: BarChart3,
-    loaderType: "bars" as keyof typeof LoaderComponents,
-    gradient: "from-emerald-500 to-teal-400",
-    difficulty: "Easy",
-    avgDuration: "35 min"
-  },
-  { 
-    id: "designer", 
-    name: "Product Designer",
-    icon: Palette,
-    loaderType: "neon" as keyof typeof LoaderComponents,
-    gradient: "from-amber-500 to-orange-400",
-    difficulty: "Medium",
-    avgDuration: "50 min"
-  },
-];
-
 
 interface InterviewSetupProps {
   onStart: (config: {
@@ -228,12 +211,13 @@ interface InterviewSetupProps {
 export default function InterviewSetup({ onStart }: InterviewSetupProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
-  const [hoveredRole, setHoveredRole] = useState<string | null>(null);
+  const [resumeUploaded, setResumeUploaded] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showFilters, setShowFilters] = useState(false);
   const [showResumeDialog, setShowResumeDialog] = useState(false);
+  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const itemsPerPage = 6;
+
+  const selectedCompanyData = COMPANIES.find(c => c.id === selectedCompany);
 
   // Filter companies based on search
   const filteredCompanies = COMPANIES.filter(company =>
@@ -248,22 +232,20 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
   const paginatedCompanies = filteredCompanies.slice(startIndex, startIndex + itemsPerPage);
 
   const handleStartInterview = () => {
-    if (!selectedCompany || !selectedRole) return;
+    if (!selectedCompany) return;
     
-    // Show resume dialog first
-    setShowResumeDialog(true);
-  };
-
-  const handleResumeUpload = (file: File) => {
-    // Resume is uploaded, now proceed with interview
     onStart({
-      role: selectedRole,
+      role: selectedCompany,
       difficulty: "medium",
       duration: 45,
       interviewType: "mixed",
       useVideo: true,
       useAudio: true,
     });
+  };
+
+  const handleResumeUpload = (_file: File) => {
+    setResumeUploaded(true);
   };
 
   return (
@@ -315,11 +297,11 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
             className="mb-12 text-center"
           >
             <br/>
-            <h1 className="mb-4 text-4xl font-bold text-transparent md:text-5xl bg-gradient-to-r from-white to-blue-400 bg-clip-text">
+            <h1 className="mb-4 text-4xl font-bold text-transparent md:text-5xl bg-linear-to-r from-white to-blue-400 bg-clip-text">
               Choose Your Interview
             </h1>
             <p className="max-w-2xl mx-auto text-lg text-slate-400">
-              Browse companies and roles, then start your AI-powered mock interview session.
+              Browse companies and roles, then start your AI-powered interview session.
             </p>
           </m.div>
 
@@ -353,19 +335,6 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
                   </button>
                 )}
               </div>
-
-              {/* Filter Button */}
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`px-6 py-4 rounded-xl border transition-all flex items-center gap-2 ${
-                  showFilters 
-                    ? 'bg-blue-500/20 border-blue-500/50 text-blue-400' 
-                    : 'bg-slate-800/50 border-white/10 text-slate-400 hover:border-white/20'
-                }`}
-              >
-                <Filter className="w-5 h-5" />
-                Filters
-              </button>
             </div>
 
             {/* Results count */}
@@ -387,7 +356,10 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * index }}
-                onClick={() => setSelectedCompany(company.id)}
+                onClick={() => {
+                  setSelectedCompany(company.id);
+                  setShowResumeDialog(true);
+                }}
                 className={`group cursor-pointer p-6 rounded-xl border backdrop-blur-sm transition-all ${
                   selectedCompany === company.id
                     ? 'bg-slate-800/70 border-blue-500/50 shadow-lg shadow-blue-500/10'
@@ -397,7 +369,19 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
                 {/* Company Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className={`text-4xl`}>{company.logo}</div>
+                    <img
+                      src={company.logoUrl}
+                      alt={`${company.name} logo`}
+                      className="object-contain w-10 h-10"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
+                    />
+                    <div className={`w-10 h-10 rounded flex items-center justify-center font-bold text-white bg-gradient-to-br ${company.gradient} hidden`}>
+                      {company.name.charAt(0)}
+                    </div>
                     <div>
                       <h3 className="text-lg font-bold text-white">{company.name}</h3>
                       <div className="flex items-center gap-1 mt-1 text-xs text-slate-400">
@@ -411,34 +395,36 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
                   )}
                 </div>
 
-                {/* Roles */}
+                {/* Role */}
                 <div className="space-y-2">
                   <p className="text-xs font-semibold tracking-wider uppercase text-slate-500">
-                    Available Roles
+                    Opening Role
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {company.roles.map((role) => (
-                      <span
-                        key={role}
-                        className="px-3 py-1 text-xs rounded-full bg-slate-700/50 text-slate-300"
-                      >
-                        {role}
-                      </span>
-                    ))}
+                    <span className="px-3 py-1 text-xs text-blue-300 border rounded-full bg-blue-500/15 border-blue-500/20">
+                      {company.roles[0]}
+                    </span>
                   </div>
                 </div>
 
-                {/* Stats */}
-                <div className="flex items-center gap-4 pt-4 mt-4 border-t border-white/5">
-                  <div className="flex items-center gap-1 text-xs text-slate-400">
-                    <Clock className="w-3 h-3" />
-                    45 min avg
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-slate-400">
-                    <Users className="w-3 h-3" />
-                    {Math.floor(Math.random() * 500 + 100)} practiced
-                  </div>
+                {/* Date Posted */}
+                <div className="flex items-center gap-1.5 pt-3 mt-2 border-t border-white/5 text-xs text-slate-500">
+                  <CalendarDays className="w-3 h-3" />
+                  <span>Posted {company.datePosted}</span>
                 </div>
+
+                {/* Details Button */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedCompany(company.id);
+                    setShowDetailsDialog(true);
+                  }}
+                  className="w-full px-3 py-2 mt-4 text-xs font-semibold text-blue-300 border rounded-lg border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20"
+                >
+                  View company & role details
+                </button>
               </m.div>
             ))}
           </m.div>
@@ -483,61 +469,9 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
             </m.div>
           )}
 
-          {/* Role Selection (shows when company is selected) */}
-          <AnimatePresence>
-            {selectedCompany && (
-              <m.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-8"
-              >
-                <div className="p-8 border rounded-xl bg-slate-800/50 border-white/10">
-                  <h2 className="mb-6 text-2xl font-bold text-white">Select Interview Role</h2>
-                  <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                    {ROLES_DATA.map((role) => {
-                      const Icon = role.icon;
-                      const LoaderComponent = LoaderComponents[role.loaderType];
-                      const isSelected = selectedRole === role.id;
-                      const isHovered = hoveredRole === role.id;
-                      
-                      return (
-                        <m.button
-                          key={role.id}
-                          onClick={() => setSelectedRole(role.id)}
-                          onMouseEnter={() => setHoveredRole(role.id)}
-                          onMouseLeave={() => setHoveredRole(null)}
-                          whileHover={{ scale: 1.02, y: -4 }}
-                          whileTap={{ scale: 0.98 }}
-                          className={`p-6 rounded-xl transition-all backdrop-blur-sm ${
-                            isSelected
-                              ? 'bg-slate-800/50 border-2 border-blue-500/50 shadow-lg shadow-blue-500/10'
-                              : 'bg-slate-800/30 border border-white/5 hover:border-white/20'
-                          }`}
-                        >
-                          <div className="flex items-center justify-center mb-4">
-                            {isSelected || isHovered ? (
-                              <LoaderComponent />
-                            ) : (
-                              <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${role.gradient} flex items-center justify-center text-white`}>
-                                <Icon className="w-7 h-7" />
-                              </div>
-                            )}
-                          </div>
-                          <p className="mb-1 text-sm font-bold text-center text-white">{role.name}</p>
-                          <p className="text-xs text-center text-slate-400">{role.avgDuration}</p>
-                        </m.button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </m.div>
-            )}
-          </AnimatePresence>
-
           {/* Start Button */}
           <AnimatePresence>
-            {selectedCompany && selectedRole && (
+            {selectedCompany && resumeUploaded && (
               <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -573,6 +507,85 @@ export default function InterviewSetup({ onStart }: InterviewSetupProps) {
         onClose={() => setShowResumeDialog(false)}
         onSubmit={handleResumeUpload}
       />
+
+      {/* Company Details Popup */}
+      <AnimatePresence>
+        {showDetailsDialog && selectedCompanyData && (
+          <m.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowDetailsDialog(false)}
+          >
+            <m.div
+              className="w-full max-w-lg p-6 text-white border shadow-2xl rounded-xl border-white/10 bg-slate-900/95"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 20, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <img
+                  src={selectedCompanyData.logoUrl}
+                  alt={`${selectedCompanyData.name} logo`}
+                  className="object-contain w-10 h-10"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                    if (fallback) fallback.style.display = 'flex';
+                  }}
+                />
+                <div className={`w-10 h-10 rounded flex items-center justify-center font-bold text-white bg-gradient-to-br ${selectedCompanyData.gradient} hidden`}>
+                  {selectedCompanyData.name.charAt(0)}
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold">{selectedCompanyData.name}</h3>
+                  <p className="text-xs text-slate-400">{selectedCompanyData.location}</p>
+                </div>
+                <button
+                  onClick={() => setShowDetailsDialog(false)}
+                  className="ml-auto text-slate-400 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <p className="mb-3 text-sm text-slate-300">{selectedCompanyData.about}</p>
+              <div className="mb-3 text-sm text-slate-300">
+                <span className="font-semibold text-white">Role:</span> {selectedCompanyData.roles[0]}
+              </div>
+              <p className="mb-3 text-sm text-slate-300">{selectedCompanyData.roleSummary}</p>
+
+              <div className="grid grid-cols-2 gap-3 mb-4 text-xs text-slate-300">
+                <div><span className="font-semibold text-white">Type:</span> {selectedCompanyData.employmentType}</div>
+                <div><span className="font-semibold text-white">Experience:</span> {selectedCompanyData.experienceLevel}</div>
+                <div><span className="font-semibold text-white">Posted:</span> {selectedCompanyData.datePosted}</div>
+              </div>
+
+              <div className="mb-3">
+                <p className="mb-2 text-xs font-semibold text-slate-400">Requirements</p>
+                <ul className="space-y-1 text-xs list-disc list-inside text-slate-300">
+                  {selectedCompanyData.requirements.map((req) => (
+                    <li key={req}>{req}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <p className="mb-2 text-xs font-semibold text-slate-400">Tech Stack</p>
+                <div className="flex flex-wrap gap-2">
+                  {selectedCompanyData.techStack.map((tech) => (
+                    <span key={tech} className="px-2 py-1 text-xs border rounded-full border-white/10 bg-white/5">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </m.div>
+          </m.div>
+        )}
+      </AnimatePresence>
     </BackgroundImageTexture>
     </>
   );

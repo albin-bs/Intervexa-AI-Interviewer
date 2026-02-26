@@ -28,10 +28,13 @@ export default function Navbar({ scrolled }) {
 
 
 
-  const authenticatedLinks = [
-    { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
-    { to: "/interview", label: "Practice", icon: <Sparkles className="w-4 h-4" /> },
-    { to: "/problems", label: "Problems", icon: <Puzzle className="w-4 h-4" /> },
+  const isInterviewer = localStorage.getItem("userType") === "interviewer";
+  const hasJobOpenings = localStorage.getItem("hasJobOpenings") === "true";
+
+  const authenticatedLinks = isInterviewer ? [
+    { to: "/company/dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
+  ] : [
+    { to: "/interview", label: "Job openings", icon: <Sparkles className="w-4 h-4" /> },
   ];
 
 
@@ -150,7 +153,7 @@ export default function Navbar({ scrolled }) {
           >
             <img
               src="/mockmate.png"
-              alt="MockMateAI"
+              alt="Intervexa"
               className="w-auto h-8 md:h-10"
             />
           </m.div>
@@ -175,8 +178,16 @@ export default function Navbar({ scrolled }) {
                   }`}
                 >
                   {link.icon && <span className="text-blue-400">{link.icon}</span>}
-                  <span>{link.label}</span>
-                  <span className="absolute left-4 right-4 -bottom-0.5 h-0.5 max-w-0 group-hover:max-w-full w-full bg-gradient-to-r from-blue-400 to-indigo-400 transition-all duration-300 rounded-full" />
+                  <span className="relative">
+                    {link.label}
+                    {link.label === "Job openings" && hasJobOpenings && (
+                      <span className="absolute -top-1 -right-3 inline-flex h-2.5 w-2.5">
+                        <span className="absolute inline-flex w-full h-full rounded-full opacity-50 animate-ping bg-emerald-400" />
+                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                      </span>
+                    )}
+                    <span className="absolute left-0 right-0 -bottom-0.5 h-0.5 scale-x-0 group-hover:scale-x-100 origin-left bg-linear-to-r from-blue-400 to-indigo-400 transition-transform duration-300 rounded-full" />
+                  </span>
                 </Link>
               </m.div>
               
@@ -216,7 +227,7 @@ export default function Navbar({ scrolled }) {
                   className="group relative inline-flex items-center gap-2 overflow-hidden transition rounded-full px-6 py-2.5 bg-slate-900 border border-blue-500/50"
                 >
                   {/* Spinning conic gradient ring - SLOWER animation */}
-                  <div className="absolute inset-0 flex items-center [container-type:inline-size]">
+                  <div className="absolute inset-0 flex items-center @container">
                     <div 
                       style={{ animationDuration: '3s' }}
                       className="absolute size-[100cqw] animate-spin bg-[conic-gradient(from_0_at_50%_50%,rgba(59,130,246,1)_0deg,transparent_60deg,transparent_300deg,rgba(59,130,246,1)_360deg)] opacity-0 transition duration-300 group-hover:opacity-100"
@@ -259,29 +270,18 @@ export default function Navbar({ scrolled }) {
                         {localStorage.getItem("userEmail") || "user@example.com"}
                       </p>
                     </div>
-                    <div className="py-2">
+
+                    <div className="p-2 border-t border-slate-800">
                       <m.div whileHover={{ x: 4 }}>
                         <Link
-                          to="/dashboard"
+                          to={isInterviewer ? "/company/dashboard" : "/candidate/dashboard"}
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 transition-colors hover:text-white hover:bg-white/5"
+                          className="flex items-center w-full gap-3 px-4 py-2 text-sm transition-colors rounded-lg text-slate-300 hover:text-white hover:bg-slate-800"
                         >
                           <LayoutDashboard className="w-4 h-4" />
                           Dashboard
                         </Link>
                       </m.div>
-                      <m.div whileHover={{ x: 4 }}>
-                        <Link
-                          to="/settings"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 transition-colors hover:text-white hover:bg-white/5"
-                        >
-                          <Settings className="w-4 h-4" />
-                          Settings
-                        </Link>
-                      </m.div>
-                    </div>
-                    <div className="p-2 border-t border-slate-800">
                       <m.div whileHover={{ x: 4 }}>
                         <button
                           onClick={handleLogout}
@@ -305,7 +305,7 @@ export default function Navbar({ scrolled }) {
                 className="group relative inline-flex items-center overflow-hidden transition rounded-lg px-8 py-2.5 bg-slate-900 border border-blue-500/50"
               >
                 {/* Spinning conic gradient ring - SLOWER animation */}
-                <div className="absolute inset-0 flex items-center [container-type:inline-size]">
+                <div className="absolute inset-0 flex items-center @container">
                   <div 
                     style={{ animationDuration: '3s' }}
                     className="absolute size-[100cqw] animate-spin bg-[conic-gradient(from_0_at_50%_50%,rgba(59,130,246,1)_0deg,transparent_60deg,transparent_300deg,rgba(59,130,246,1)_360deg)] opacity-0 transition duration-300 group-hover:opacity-100"

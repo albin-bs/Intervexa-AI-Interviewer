@@ -3,10 +3,8 @@ import { m } from "framer-motion";
 import { Github, ChevronRight } from "lucide-react";
 
 const footerLinks = {
-  Company: [
+  Intervexa: [
     { name: "About us", to: "/about" },
-    { name: "Contact us", to: "/contact" },
-    { name: "FAQ", to: "/faq" },
   ],
 };
 
@@ -76,22 +74,6 @@ export default function Footer() {
             </div>
 
             {/* Bottom Section */}
-            <div className="flex flex-col items-center justify-between gap-4 pt-8 mt-8 border-t sm:flex-row border-slate-800">
-              <p className="text-xs text-center text-slate-500 sm:text-left">
-                © {new Date().getFullYear()} MockMateAI. All rights reserved.
-              </p>
-              
-              {/* GitHub Link */}
-              <m.a
-                whileHover={{ scale: 1.1, y: -2 }}
-                href="https://github.com/albin-bs/MockMate-AI"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center w-8 h-8 transition-colors rounded-full bg-slate-800 hover:bg-blue-600"
-              >
-                <Github className="w-4 h-4 text-slate-300" />
-              </m.a>
-            </div>
           </div>
         </m.div>
       </div>
