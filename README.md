@@ -1,4 +1,4 @@
-<img src="public/intervexa.png" alt="Intervexa" width="800"/>
+<img src="public/mockmate.png" alt="Intervexa" width="800"/>
 
 > **Intervexa is a next-generation AI-powered platform combining realistic mock interviews, interactive coding practice, and community-driven learning. Built for software engineers, students, and technical candidates, Intervexa delivers personalized feedback, real-time code execution, AI-assisted debugging, and comprehensive analytics to help you master technical interviews, ace coding challenges, and land your dream job with confidence.**
 
