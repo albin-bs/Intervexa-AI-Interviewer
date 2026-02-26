@@ -2,8 +2,8 @@
 
 > **Intervexa is a next-generation AI-powered platform combining realistic mock interviews, interactive coding practice, and community-driven learning. Built for software engineers, students, and technical candidates, Intervexa delivers personalized feedback, real-time code execution, AI-assisted debugging, and comprehensive analytics to help you master technical interviews, ace coding challenges, and land your dream job with confidence.**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-intervexa.tech-blue?style=for-the-badge&logo=vercel)](https://intervexa.tech)
-![Website](https://img.shields.io/website-up-down-green-red/https/intervexa.tech?style=for-the-badge)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-intervexa.tech-blue?style=for-the-badge&logo=vercel)](https://mockmate.tech)
+![Website](https://img.shields.io/website-up-down-green-red/https/mockmate.tech?style=for-the-badge)
 
 </div>
 
