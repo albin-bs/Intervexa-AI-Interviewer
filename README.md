@@ -1,9 +1,9 @@
-<img src="public/mockmate.png" alt="Mockmate AI" width="800"/>
+<img src="public/intervexa.png" alt="Intervexa" width="800"/>
 
-> **MockMate is a next-generation AI-powered platform combining realistic mock interviews, interactive coding practice, and community-driven learning. Built for software engineers, students, and technical candidates, MockMate delivers personalized feedback, real-time code execution, AI-assisted debugging, and comprehensive analytics to help you master technical interviews, ace coding challenges, and land your dream job with confidence.**
+> **Intervexa is a next-generation AI-powered platform combining realistic mock interviews, interactive coding practice, and community-driven learning. Built for software engineers, students, and technical candidates, Intervexa delivers personalized feedback, real-time code execution, AI-assisted debugging, and comprehensive analytics to help you master technical interviews, ace coding challenges, and land your dream job with confidence.**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-mockmate.tech-blue?style=for-the-badge&logo=vercel)](https://mockmate.tech)
-![Website](https://img.shields.io/website-up-down-green-red/https/mockmate.tech?style=for-the-badge)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-intervexa.tech-blue?style=for-the-badge&logo=vercel)](https://intervexa.tech)
+![Website](https://img.shields.io/website-up-down-green-red/https/intervexa.tech?style=for-the-badge)
 
 </div>
 
@@ -14,22 +14,46 @@
 ### 🎯 Core Features
 
 #### **1. AI-Powered Mock Interviews**
+- Realistic behavioral & technical interviews with adaptive difficulty
+- Real-time feedback on communication, clarity, and technical depth
+- AI-driven question generation based on role & skill level
 
 #### **2. Interactive Code Playground**
-  - 🔍 Explain failures and suggest fixes
-  - 🎨 Refactor code for better performance
-  - 🧩 Generate edge test cases
-  - 📊 Analyze time/space complexity
+- Multi-language support with instant code execution
+- 🔍 Explain failures and suggest fixes
+- 🎨 Refactor code for better performance
+- 🧩 Generate edge test cases
+- 📊 Analyze time/space complexity
+
+#### **3. Aptitude & Problem-Solving Tests**
+- Curated problem sets across multiple domains
+- Timed assessments with instant result analysis
+- Difficulty-based progression system
 
 #### **4. Progress Analytics Dashboard**
+- Detailed performance metrics & skill radar charts
+- Interview transcripts with AI analysis
+- Comparative performance tracking
+- Comprehensive feedback reports
+
+#### **5. Interviewer Panel**
+- Candidate management & session tracking
+- Real-time verdict & feedback submission
+- Performance analytics per candidate
+
+---
 
 ## 🚀 Getting Started
 
-1. Create a local environment file by copying the template from .env.example to .env.
-2. Fill in the Supabase values for:
-  - VITE_SUPABASE_URL
-  - VITE_SUPABASE_ANON_KEY
-3. Restart the dev server after updating .env.
+1. Create a local environment file by copying the template from `.env.example` to `.env`
+2. Fill in the required values for:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+   - `VITE_JUDGE0_API_KEY` (for code execution)
+   - `VITE_OPENAI_API_KEY` (for AI features)
+3. Install dependencies: `npm install`
+4. Start the dev server: `npm run dev`
+5. Restart the dev server after updating `.env`
 
 ---
 
@@ -40,14 +64,17 @@
 ![Vite](https://img.shields.io/badge/Vite%205-646CFF?style=for-the-badge&logo=vite&logoColor=FFD62E)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind%203-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
-![Framer m](https://img.shields.io/badge/Framer_m-0055FF?style=for-the-badge&logo=framer&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 
 ### **Backend & APIs**
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
-![Judge0](https://img.shields.io/badge/Judge0-FF6C37?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAowAAAKMB8MeazgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAE)
+![Judge0](https://img.shields.io/badge/Judge0-FF6C37?style=for-the-badge&logo=code&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
 
 ### **AI & ML**
+![OpenAI](https://img.shields.io/badge/OpenAI_API-412991?style=for-the-badge&logo=openai&logoColor=white)
 ![Whisper](https://img.shields.io/badge/Whisper_API-412991?style=for-the-badge&logo=openai&logoColor=white)
 
 ### **Dev Tools**
@@ -58,6 +85,15 @@
 ### **Deployment**
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+
+---
+
+## 📊 Key Metrics
+
+- **100+ Companies** integrated for interview preparation
+- **1000+ Coding Problems** across multiple difficulty levels
+- **Real-time Code Execution** with instant feedback
+- **AI-Powered Analytics** for personalized learning paths
 
 ---
 
@@ -72,6 +108,7 @@
         <b>Aswin Asokan</b>
       </a>
       <br />
+      <sub>Full Stack Developer</sub>
     </td>
     <td align="center">
       <a href="https://github.com/albin-bs">
@@ -80,6 +117,7 @@
         <b>Albin B S</b>
       </a>
       <br />
+      <sub>Frontend Developer</sub>
     </td>
     <td align="center">
       <a href="https://github.com/Actinker">
@@ -88,9 +126,18 @@
         <b>Actinker</b>
       </a>
       <br />
+      <sub>Backend Developer</sub>
     </td>
   </tr>
 </table>
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
 
 <div align="center">
 
@@ -100,6 +147,6 @@
 
 ---
 
-**© 2025 MockMate — Empowering the next generation of developers**
+**© 2025 Intervexa — Empowering the next generation of developers**
 
 </div>
