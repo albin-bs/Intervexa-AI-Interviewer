@@ -13,47 +13,26 @@
 
 ### 🎯 Core Features
 
-#### **1. AI-Powered Mock Interviews**
+#### **1. AI-Powered Interviews**
 - Realistic behavioral & technical interviews with adaptive difficulty
 - Real-time feedback on communication, clarity, and technical depth
 - AI-driven question generation based on role & skill level
 
-#### **2. Interactive Code Playground**
-- Multi-language support with instant code execution
-- 🔍 Explain failures and suggest fixes
-- 🎨 Refactor code for better performance
-- 🧩 Generate edge test cases
-- 📊 Analyze time/space complexity
-
-#### **3. Aptitude & Problem-Solving Tests**
+#### **2. Aptitude & Problem-Solving Tests**
 - Curated problem sets across multiple domains
 - Timed assessments with instant result analysis
 - Difficulty-based progression system
 
-#### **4. Progress Analytics Dashboard**
+#### **3. Progress Analytics Dashboard**
 - Detailed performance metrics & skill radar charts
 - Interview transcripts with AI analysis
 - Comparative performance tracking
 - Comprehensive feedback reports
 
-#### **5. Interviewer Panel**
+#### **4. Interviewer Panel**
 - Candidate management & session tracking
 - Real-time verdict & feedback submission
 - Performance analytics per candidate
-
----
-
-## 🚀 Getting Started
-
-1. Create a local environment file by copying the template from `.env.example` to `.env`
-2. Fill in the required values for:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-   - `VITE_JUDGE0_API_KEY` (for code execution)
-   - `VITE_OPENAI_API_KEY` (for AI features)
-3. Install dependencies: `npm install`
-4. Start the dev server: `npm run dev`
-5. Restart the dev server after updating `.env`
 
 ---
 
@@ -85,15 +64,6 @@
 ### **Deployment**
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
-
----
-
-## 📊 Key Metrics
-
-- **100+ Companies** integrated for interview preparation
-- **1000+ Coding Problems** across multiple difficulty levels
-- **Real-time Code Execution** with instant feedback
-- **AI-Powered Analytics** for personalized learning paths
 
 ---
 
@@ -130,12 +100,6 @@
     </td>
   </tr>
 </table>
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
 
